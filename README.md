@@ -1,4 +1,4 @@
-#Authendance
+# Authendance
 For the Global Classroom module in TU Dublin. 2020.
 
 The project “Authendance” is the development of an Android mobile

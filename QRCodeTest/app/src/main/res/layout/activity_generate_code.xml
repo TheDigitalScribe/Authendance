@@ -7,31 +7,15 @@
     android:background="@drawable/background"
     tools:context=".GenerateCode">
 
-    <EditText
-        android:id="@+id/genEditText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="108dp"
-        android:layout_marginEnd="96dp"
-        android:ems="10"
-        android:hint="@string/enter_text"
-        android:inputType="text"
-        android:textColor="#FFFFFF"
-        android:textColorHighlight="#FFFFFF"
-        android:textColorHint="#FFFFFF"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:autofillHints="" />
-
     <Button
         android:id="@+id/genCodeBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="136dp"
+        android:layout_marginTop="48dp"
+        android:layout_marginEnd="144dp"
         android:text="@string/generate_code"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/genEditText" />
+        app:layout_constraintTop_toBottomOf="@+id/codeField" />
 
     <ImageView
         android:id="@+id/qrCode"
@@ -43,5 +27,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/genCodeBtn"
         tools:srcCompat="@tools:sample/avatars" />
+
+    <TextView
+        android:id="@+id/codeField"
+        android:layout_width="130dp"
+        android:layout_height="63dp"
+        android:layout_marginTop="84dp"
+        android:layout_marginEnd="144dp"
+        android:text="TextView"
+        android:textSize="30sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

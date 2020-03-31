@@ -12,6 +12,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.common.BitMatrix;
@@ -19,7 +20,7 @@ import com.google.zxing.qrcode.QRCodeWriter;
 
 public class GenerateCode extends AppCompatActivity {
 
-    private EditText genEditText;
+    private TextView codeField;
     private Button genCodeBtn;
     private ImageView qrCode;
 
@@ -28,7 +29,7 @@ public class GenerateCode extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_generate_code);
 
-        genEditText = findViewById(R.id.genEditText);
+        codeField = findViewById(R.id.codeField);
         genCodeBtn = findViewById(R.id.genCodeBtn);
         qrCode = findViewById(R.id.qrCode);
 
@@ -38,10 +39,14 @@ public class GenerateCode extends AppCompatActivity {
                 QRCodeWriter qrCodeWriter = new QRCodeWriter();
                 int width = 200;
                 int height = 200;
-                String textGen = genEditText.getText().toString();
 
-                //Makes phone keyboard disappear when button is clicked
-                genEditText.onEditorAction(EditorInfo.IME_ACTION_DONE);
+                private String generateString(int length) {
+                    char[] characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
+                    StringBuilder stringBuilder = new StringBuilder();
+                }
+
+                /*Makes phone keyboard disappear when button is clicked
+                genEditText.onEditorAction(EditorInfo.IME_ACTION_DONE);*/
 
                 //Creates and displays QR code
                 try {
@@ -59,27 +64,6 @@ public class GenerateCode extends AppCompatActivity {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
-                //Keeps 'generate code' button disabled until user enters text
-                genEditText.addTextChangedListener(new TextWatcher() {
-                    @Override
-                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                    }
-
-                    @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-                        String fieldContent = genEditText.getText().toString().trim();
-
-                        genCodeBtn.setEnabled(!fieldContent.isEmpty());
-                    }
-
-                    @Override
-                    public void afterTextChanged(Editable s) {
-
-                    }
-                });
-
             }
         });
     }

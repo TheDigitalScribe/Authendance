@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">QR Code Test</string>
+    <string name="app_logo">App Logo</string>
+    <string name="email_address">Email Address</string>
+    <string name="password">Password</string>
+    <string name="scan_code">Scan Code</string>
+    <string name="generate_code">Generate Code</string>
+    <string name="enter_text">Enter some text…</string>
+    <string name="qr_code">QR Code placeholder</string>
+</resources>

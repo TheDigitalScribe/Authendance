@@ -1,16 +1,9 @@
-# Authendance
-For the Global Classroom module in TU Dublin. 2020.
+# Authendance Summary
+For the Global Classroom module in TU Dublin. 2019/2020 academic year. DT282/3.
 
-The project “Authendance” is the development of an Android mobile
-app.
-It’s purpose is to track the attendance of every student and will be
-used as evidence for attendance in class. To ensure the physical
-attendance, the students have to scan a QR code inside the classroom.
-The app will have a login for teachers and one for the students.
-After setting up your class dates as a teacher you will be able to
-set a code and create a QR code. This has to be done for every class.
-Before leaving the classroom students have to scan a created QR code
-from the teachers phone. Then the app will confirm the attendance and
-write the data of the student in the database.
-The teacher can see which student has attended his class and the
-student can see his own attendance in the different classes.
+Authendance is a student attendance tracker app with QR code implementation, built using Java in Android Studio. The app allows lecturers to generate unique QR codes, which students scan with their own phones using to record their attendance for that date. Each QR code generated has a 10 minute timer. Lecturers can add and delete classes and see their students' attendance. 
+
+# Under The Hood
+- Programming Language: Java
+- IDE/Compiler: Android Studio 3.6
+- Minimum SDK version: Android 5.0 (API level 21) **NB: This may change due to libraries, widgets etc requiring higher API levels.**

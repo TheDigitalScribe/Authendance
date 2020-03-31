@@ -30,11 +30,12 @@
 
     <TextView
         android:id="@+id/codeField"
-        android:layout_width="130dp"
-        android:layout_height="63dp"
-        android:layout_marginTop="84dp"
-        android:layout_marginEnd="144dp"
-        android:text="TextView"
+        android:layout_width="194dp"
+        android:layout_height="120dp"
+        android:layout_marginTop="76dp"
+        android:layout_marginEnd="120dp"
+        android:fontFamily="sans-serif"
+        android:text="@string/codePlaceholder"
         android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

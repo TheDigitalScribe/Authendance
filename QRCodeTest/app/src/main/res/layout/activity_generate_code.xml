@@ -9,11 +9,15 @@
 
     <Button
         android:id="@+id/genCodeBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
-        android:layout_marginEnd="144dp"
+        android:layout_width="250dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="52dp"
+        android:layout_marginEnd="80dp"
+        android:background="@drawable/custom_button"
+        android:fontFamily="@font/raleway"
         android:text="@string/generate_code"
+        android:textColor="#330000"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/codeField" />
 
@@ -21,8 +25,8 @@
         android:id="@+id/qrCode"
         android:layout_width="200dp"
         android:layout_height="200dp"
-        android:layout_marginTop="91dp"
-        android:layout_marginEnd="106dp"
+        android:layout_marginTop="84dp"
+        android:layout_marginEnd="104dp"
         android:contentDescription="@string/qr_code"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/genCodeBtn"
@@ -33,10 +37,13 @@
         android:layout_width="194dp"
         android:layout_height="120dp"
         android:layout_marginTop="76dp"
-        android:layout_marginEnd="120dp"
-        android:fontFamily="sans-serif"
+        android:layout_marginEnd="108dp"
+        android:background="#FFFFFF"
+        android:fontFamily="@font/raleway"
+        android:gravity="center"
         android:text="@string/codePlaceholder"
         android:textSize="30sp"
+        android:textColor="#330000"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

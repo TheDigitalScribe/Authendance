@@ -67,7 +67,7 @@ public class GenerateCode extends AppCompatActivity {
         StringBuilder stringBuilder = new StringBuilder();
         Random random = new Random();
 
-        for(int i = 0; i < 25; i++) {
+        for(int i = 0; i < 26; i++) {
             char c = chars[random.nextInt(chars.length)];
             stringBuilder.append(c);
         }

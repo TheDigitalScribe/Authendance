@@ -76,7 +76,9 @@ public class CodeScanner extends AppCompatActivity implements ZXingScannerView.R
                 Toast.makeText(this, "Permission granted.", Toast.LENGTH_SHORT).show();
             }
             else {
-                Toast.makeText(this, "Authendance needs the camera to scan QR codes. Please enable camera permission.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Authendance needs the camera to scan QR codes. Please enable camera permission in settings for this feature.", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(CodeScanner.this, MainActivity.class);
+                startActivity(intent);
             }
         }
     }
@@ -104,6 +106,7 @@ public class CodeScanner extends AppCompatActivity implements ZXingScannerView.R
         scannerView.stopCamera();
     }
 
+    //Shows alert dialog when QR code is scanned
     @Override
     public void handleResult(Result result) {
         //Shows the current date

@@ -1,4 +1,4 @@
-package com.example.qrcodetest;
+package com.example.authendance;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;

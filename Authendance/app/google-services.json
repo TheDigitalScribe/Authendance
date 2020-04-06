@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "348281505658",
+    "firebase_url": "https://global-classroom-575b8.firebaseio.com",
+    "project_id": "global-classroom-575b8",
+    "storage_bucket": "global-classroom-575b8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:348281505658:android:5e492715ff85925aa2b8c3",
+        "android_client_info": {
+          "package_name": "com.example.authendance"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "348281505658-sk97qae99n9ip88e9okjk78kuq2cla8b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBHl5YhFWf2D3YrwemQQ5EoG2HvICE8AkU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "348281505658-sk97qae99n9ip88e9okjk78kuq2cla8b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

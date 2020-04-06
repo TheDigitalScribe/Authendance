@@ -1,4 +1,4 @@
-package com.example.qrcodetest;
+package com.example.authendance;
 
 import androidx.appcompat.app.AppCompatActivity;
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.qrcodetest">
+    package="com.example.authendance">
 
     <uses-permission android:name="android.permission.CAMERA" />
 
@@ -14,9 +14,9 @@
         android:roundIcon="@mipmap/authendancelogo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".GenerateCode" />
-        <activity android:name=".CodeScanner" />
-        <activity android:name=".MainActivity">
+        <activity android:name="com.example.authendance.GenerateCode" />
+        <activity android:name="com.example.authendance.CodeScanner" />
+        <activity android:name="com.example.authendance.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

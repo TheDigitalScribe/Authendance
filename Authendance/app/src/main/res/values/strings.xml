@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">QR Code Test</string>
+    <string name="app_name">Authendance</string>
     <string name="app_logo">App Logo</string>
     <string name="email_address">Email Address</string>
     <string name="password">Password</string>

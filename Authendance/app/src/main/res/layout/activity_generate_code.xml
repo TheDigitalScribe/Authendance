@@ -11,15 +11,16 @@
         android:id="@+id/genCodeBtn"
         android:layout_width="250dp"
         android:layout_height="60dp"
-        android:layout_marginTop="52dp"
+        android:layout_marginTop="60dp"
         android:layout_marginEnd="80dp"
+        android:layout_marginRight="80dp"
         android:background="@drawable/custom_button"
         android:fontFamily="@font/raleway"
         android:text="@string/generate_code"
         android:textColor="#330000"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/codeField" />
+        app:layout_constraintTop_toBottomOf="@+id/countDownTimerText" />
 
     <ImageView
         android:id="@+id/qrCode"
@@ -36,15 +37,31 @@
         android:id="@+id/codeField"
         android:layout_width="194dp"
         android:layout_height="120dp"
-        android:layout_marginTop="76dp"
+        android:layout_marginTop="40dp"
         android:layout_marginEnd="108dp"
+        android:layout_marginRight="108dp"
         android:background="#FFFFFF"
         android:fontFamily="@font/raleway"
         android:gravity="center"
         android:text="@string/codePlaceholder"
-        android:textSize="30sp"
         android:textColor="#330000"
+        android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/countDownTimerText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="56dp"
+        android:layout_marginEnd="164dp"
+        android:layout_marginRight="164dp"
+        android:fontFamily="@font/raleway"
+        android:text="00:30"
+        android:textColor="@color/colorAccent"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/codeField" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

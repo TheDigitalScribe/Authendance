@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -21,6 +22,10 @@ public class GenerateCode extends AppCompatActivity {
     private TextView codeField;
     private Button genCodeBtn;
     private ImageView qrCode;
+    private CountDownTimer countDownTimer;
+    private TextView countDownTimerText;
+    private long timeLeftMilliseconds = 30000;
+    private boolean timeRunning;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +35,7 @@ public class GenerateCode extends AppCompatActivity {
         codeField = findViewById(R.id.codeField);
         genCodeBtn = findViewById(R.id.genCodeBtn);
         qrCode = findViewById(R.id.qrCode);
+        countDownTimerText = findViewById(R.id.countDownTimerText);
 
         genCodeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,8 +63,58 @@ public class GenerateCode extends AppCompatActivity {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+
+                startStop();
             }
         });
+    }
+
+    public void startStop() {
+        if(timeRunning) {
+            stopTimer();
+        }
+        else {
+            startTimer();
+        }
+    }
+
+    public void startTimer() {
+        countDownTimer = new CountDownTimer(timeLeftMilliseconds, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                timeLeftMilliseconds = millisUntilFinished;
+                genCodeBtn.setEnabled(false);
+                updateTimer();
+
+            }
+
+            @Override
+            public void onFinish() {
+                genCodeBtn.setEnabled(true);
+            }
+        }.start();
+
+        timeRunning = true;
+    }
+
+    public void stopTimer() {
+        countDownTimer.cancel();
+        timeRunning = false;
+    }
+
+    public void updateTimer() {
+        int minutes = (int) timeLeftMilliseconds / 30000;
+        int seconds = (int) timeLeftMilliseconds % 30000 / 1000;
+
+        String timeLeft = "" + minutes;
+        timeLeft += ":";
+
+        if(seconds < 10) {
+            timeLeft += "0";
+        }
+        timeLeft += seconds;
+
+        countDownTimerText.setText(timeLeft);
     }
 
     //Method for generating random string for QR code generation

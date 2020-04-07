@@ -19,7 +19,7 @@ import java.util.Locale;
 import java.util.Random;
 
 public class GenerateCode extends AppCompatActivity {
-    private static final long START_TIME_IN_MILLIS = 30000;
+    private static final long START_TIME_IN_MILLIS = 600000;
 
     private TextView codeField;
     private Button genCodeBtn;

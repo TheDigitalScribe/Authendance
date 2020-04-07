@@ -58,7 +58,7 @@ public class CodeScanner extends AppCompatActivity implements ZXingScannerView.R
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                            dialog.dismiss();
-                           Intent intent = new Intent(CodeScanner.this, MainActivity.class);
+                           Intent intent = new Intent(CodeScanner.this, HomeScreen.class);
                            startActivity(intent);
                         }
                     })
@@ -78,7 +78,7 @@ public class CodeScanner extends AppCompatActivity implements ZXingScannerView.R
             }
             else {
                 Toast.makeText(this, "Authendance needs the camera to scan QR codes. Please enable camera permission in settings for this feature.", Toast.LENGTH_SHORT).show();
-                //Intent intent = new Intent(CodeScanner.this, MainActivity.class);
+                //Intent intent = new Intent(CodeScanner.this, HomeScreen.class);
                 ///startActivity(intent);
             }
         }
@@ -121,7 +121,7 @@ public class CodeScanner extends AppCompatActivity implements ZXingScannerView.R
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Intent intent = new Intent(CodeScanner.this, MainActivity.class);
+                Intent intent = new Intent(CodeScanner.this, HomeScreen.class);
                 startActivity(intent);
             }
         });

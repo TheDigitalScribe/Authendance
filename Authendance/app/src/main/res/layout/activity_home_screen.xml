@@ -5,13 +5,43 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background"
-    tools:context=".GenerateCode">
+    tools:context=".HomeScreen">
+
+    <Button
+        android:id="@+id/scanCodeBtn"
+        android:layout_width="200dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="50dp"
+        android:background="@drawable/custom_button"
+        android:fontFamily="@font/raleway"
+        android:text="@string/scan_code"
+        android:textAllCaps="false"
+        android:textColor="#330000"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/genCodeBtn" />
+
+    <Button
+        android:id="@+id/signOutBtn"
+        android:layout_width="200dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="50dp"
+        android:background="@drawable/custom_button"
+        android:fontFamily="@font/raleway"
+        android:text="Sign Out"
+        android:textAllCaps="false"
+        android:textColor="#330000"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/scanCodeBtn" />
 
     <Button
         android:id="@+id/genCodeBtn"
-        android:layout_width="250dp"
+        android:layout_width="200dp"
         android:layout_height="60dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="120dp"
         android:background="@drawable/custom_button"
         android:fontFamily="@font/raleway"
         android:text="@string/generate_code"
@@ -20,47 +50,21 @@
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/countDownTimerText" />
-
-    <ImageView
-        android:id="@+id/qrCode"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_marginTop="50dp"
-        android:contentDescription="@string/qr_code"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/genCodeBtn"
-        tools:srcCompat="@tools:sample/avatars" />
+        app:layout_constraintTop_toBottomOf="@+id/welcomeText" />
 
     <TextView
-        android:id="@+id/codeField"
-        android:layout_width="0dp"
-        android:layout_height="120dp"
-        android:layout_marginTop="40dp"
-        android:background="#FFFFFF"
-        android:fontFamily="@font/raleway"
-        android:gravity="center"
-        android:text="@string/codePlaceholder"
-        android:textColor="#330000"
-        android:textSize="30sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/countDownTimerText"
+        android:id="@+id/welcomeText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:background="#FFFFFF"
+        android:layout_marginTop="100dp"
         android:fontFamily="@font/raleway"
-        android:text="10:00"
-        android:textColor="?android:attr/colorForeground"
-        android:textSize="36sp"
-        android:textStyle="bold"
+        android:hint="Name"
+        android:text="Hello"
+        android:textColor="#FFFFFF"
+        android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.503"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/codeField" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -4,16 +4,30 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background">
+    android:background="@drawable/background"
+    tools:context=".RegisterScreen">
+
+    <TextView
+        android:id="@+id/registerPromptTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:fontFamily="@font/raleway"
+        android:text="Register"
+        android:textColor="@android:color/white"
+        android:textSize="50sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/signInBtn"
+        android:id="@+id/signUpBtn"
         android:layout_width="200dp"
         android:layout_height="60dp"
         android:layout_marginTop="50dp"
         android:background="@drawable/custom_button"
         android:fontFamily="@font/raleway"
-        android:text="Sign In"
+        android:text="Sign Up"
         android:textAllCaps="false"
         android:textColor="#330000"
         android:textSize="18sp"
@@ -29,7 +43,6 @@
         android:autofillHints=""
         android:background="#11000000"
         android:drawableStart="@drawable/ic_action_name"
-        android:drawableLeft="@drawable/ic_action_name"
         android:ems="10"
         android:fontFamily="@font/raleway"
         android:hint="@string/email_address"
@@ -40,7 +53,8 @@
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/loginTextView" />
+        app:layout_constraintTop_toBottomOf="@+id/registerPromptTextView"
+        android:drawableLeft="@drawable/ic_action_name" />
 
     <EditText
         android:id="@+id/passwordField"
@@ -50,42 +64,29 @@
         android:autofillHints=""
         android:background="#11000000"
         android:drawableStart="@drawable/ic_action_pass"
-        android:drawableLeft="@drawable/ic_action_pass"
         android:ems="10"
         android:fontFamily="@font/raleway"
         android:hint="@string/password"
-        android:inputType="textWebPassword"
+        android:inputType="textPassword"
+        android:shadowColor="#FFFFFF"
         android:textColor="#FFFFFF"
         android:textColorHint="#FFFFFF"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/emailField" />
+        app:layout_constraintTop_toBottomOf="@+id/emailField"
+        android:drawableLeft="@drawable/ic_action_pass" />
 
     <TextView
-        android:id="@+id/registerPromptTextView"
+        android:id="@+id/returnSignInPrompt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
         android:fontFamily="@font/raleway"
-        android:text="New user? Click here to sign up"
+        android:text="Sign in instead"
         android:textColor="@android:color/white"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/signInBtn" />
-
-    <TextView
-        android:id="@+id/loginTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
-        android:fontFamily="@font/raleway"
-        android:text="Login"
-        android:textColor="@android:color/white"
-        android:textSize="50sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
+        app:layout_constraintTop_toBottomOf="@+id/signUpBtn" />
 </androidx.constraintlayout.widget.ConstraintLayout>

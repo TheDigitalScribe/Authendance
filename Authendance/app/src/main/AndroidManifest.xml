@@ -3,11 +3,10 @@
     package="com.example.authendance">
 
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
-
 
     <application
         android:allowBackup="true"
@@ -16,9 +15,11 @@
         android:roundIcon="@mipmap/authendancelogo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.example.authendance.GenerateCode" />
-        <activity android:name="com.example.authendance.CodeScanner" />
-        <activity android:name="com.example.authendance.MainActivity">
+        <activity android:name=".RegisterScreen"></activity>
+        <activity android:name=".HomeScreen" />
+        <activity android:name=".GenerateCode" />
+        <activity android:name=".CodeScanner" />
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -28,12 +29,10 @@
 
         <meta-data
             android:name="firebase_analytics_collection_enabled"
-            android:value="true"/>
-
+            android:value="true" />
         <meta-data
             android:name="preloaded_fonts"
-            android:resource="@array/preloaded_fonts"
-            />
+            android:resource="@array/preloaded_fonts" />
     </application>
 
 </manifest>

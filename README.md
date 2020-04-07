@@ -11,12 +11,20 @@ Authendance is a student attendance tracker app with QR code implementation, bui
 # Screenshots
 Login Screen 
 
-<img src="Screenshots/authendancelogin.jpg" width="200">
+<img src="Screenshots/loginscreen.jpg" width="200">
+
+Register Screen
+
+<img src="Screenshots/registerscreen.jpg" width="200">
+
+Home Screen
+
+<img src="Screenshots/homescreen.jpg" width="200">
 
 Scan Screen
 
-<img src="Screenshots/authendancescan.jpg" width="200">
+<img src="Screenshots/codescanned.jpg" width="200">
 
-Generation Screen
+Generate Screen
 
-<img src="Screenshots/authendancegenratecode.jpg" width="200">
+<img src="Screenshots/codegenerated.jpg" width="200">

@@ -7,3 +7,16 @@ Authendance is a student attendance tracker app with QR code implementation, bui
 - Programming Language: Java
 - IDE/Compiler: Android Studio 3.6
 - Minimum SDK version: Android 4.1 (API level 16) **NB: This may change due to libraries, widgets etc requiring higher API levels.**
+
+# Screenshots
+Login Screen 
+
+<img src="Screenshots/authendancelogin.jpg" width="200">
+
+Scan Screen
+
+<img src="Screenshots/authendancescan.jpg" width="200">
+
+Generation Screen
+
+<img src="Screenshots/authendancegenratecode.jpg" width="200">

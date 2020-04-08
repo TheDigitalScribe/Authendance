@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,7 +24,9 @@ public class MainActivity extends AppCompatActivity {
     private EditText emailField;
     private EditText passwordField;
     private Button signInBtn;
-    private TextView registerText;
+    private TextView registerPrompt;
+    private TextView forgotPasswordText;
+
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
 
@@ -35,8 +38,11 @@ public class MainActivity extends AppCompatActivity {
         emailField = findViewById(R.id.emailField);
         passwordField = findViewById(R.id.passwordField);
         signInBtn = findViewById(R.id.signInBtn);
-        registerText = findViewById(R.id.registerPromptTextView);
+        registerPrompt = findViewById(R.id.registerPrompt);
+        forgotPasswordText = findViewById(R.id.forgotPasswordText);
         mAuth = FirebaseAuth.getInstance();
+
+        forgotPasswordText.setVisibility(View.INVISIBLE);
 
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -44,12 +50,12 @@ public class MainActivity extends AppCompatActivity {
                 FirebaseUser mFirebaseUser = mAuth.getCurrentUser();
 
                 if(mFirebaseUser != null) {
-                    Toast.makeText(MainActivity.this, "Login successful!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Login successful", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(MainActivity.this, HomeScreen.class);
                     startActivity(intent);
                 }
                 else {
-                    Toast.makeText(MainActivity.this, "Please login.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Please login", Toast.LENGTH_SHORT).show();
                 }
             }
         };
@@ -57,26 +63,16 @@ public class MainActivity extends AppCompatActivity {
         signInBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String email = emailField.getText().toString();
-                String password = passwordField.getText().toString();
+                String email = emailField.getText().toString().trim();
+                String password = passwordField.getText().toString().trim();
 
-                if(email.isEmpty()) {
-                    emailField.setError("Please enter email address.");
-                    emailField.requestFocus();
-                }
-                else if(password.isEmpty()) {
-                    passwordField.setError("Please enter password.");
-                    passwordField.requestFocus();
-                }
-                else if(email.isEmpty() && password.isEmpty()) {
-                    Toast.makeText(MainActivity.this, "Please enter both email and password.", Toast.LENGTH_SHORT).show();
-                }
-                else if(!(email.isEmpty() && password.isEmpty())) {
+                if(validateEmail() && validatePassword()) {
                     mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(MainActivity.this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if(!task.isSuccessful()) {
-                                Toast.makeText(MainActivity.this, "No user found with these details.", Toast.LENGTH_SHORT).show();
+                                forgotPasswordText.setVisibility(View.VISIBLE);
+                                Toast.makeText(MainActivity.this, "No user found with these details", Toast.LENGTH_LONG).show();
                             }
                             else {
                                 Intent intent = new Intent(MainActivity.this, HomeScreen.class);
@@ -85,13 +81,11 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
                 }
-                else {
-                    Toast.makeText(MainActivity.this, "Error occurred. Please try again.", Toast.LENGTH_SHORT).show();
-                }
             }
         });
 
-        registerText.setOnClickListener(new View.OnClickListener() {
+
+        registerPrompt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, RegisterScreen.class);
@@ -99,9 +93,44 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        forgotPasswordText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-
+            }
+        });
     }
 
+    private boolean validateEmail() {
+        String email = emailField.getText().toString().trim();
 
+        if(email.isEmpty()) {
+            emailField.setError("Please enter your email address");
+            emailField.requestFocus();
+            return false;
+        }
+        else if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            emailField.setError("Please enter a valid email address");
+            emailField.requestFocus();
+            return false;
+        }
+        else {
+            emailField.setError(null);
+            return true;
+        }
+    }
+
+    private boolean validatePassword() {
+        String password = passwordField.getText().toString().trim();
+
+        if(password.isEmpty()) {
+            passwordField.setError("Please enter your password");
+            passwordField.requestFocus();
+            return false;
+        }
+        else {
+            passwordField.setError(null);
+            return true;
+        }
+    }
 }

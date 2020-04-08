@@ -8,7 +8,7 @@
     tools:context=".RegisterScreen">
 
     <TextView
-        android:id="@+id/registerPromptTextView"
+        android:id="@+id/registerTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="100dp"
@@ -24,7 +24,7 @@
         android:id="@+id/signUpBtn"
         android:layout_width="200dp"
         android:layout_height="60dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="60dp"
         android:background="@drawable/custom_button"
         android:fontFamily="@font/raleway"
         android:text="Sign Up"
@@ -43,6 +43,7 @@
         android:autofillHints=""
         android:background="#11000000"
         android:drawableStart="@drawable/ic_action_name"
+        android:drawableLeft="@drawable/ic_action_name"
         android:ems="10"
         android:fontFamily="@font/raleway"
         android:hint="@string/email_address"
@@ -52,9 +53,9 @@
         android:textColorHint="#FFFFFF"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/registerPromptTextView"
-        android:drawableLeft="@drawable/ic_action_name" />
+        app:layout_constraintTop_toBottomOf="@+id/registerTextView" />
 
     <EditText
         android:id="@+id/passwordField"
@@ -63,7 +64,7 @@
         android:layout_marginTop="20dp"
         android:autofillHints=""
         android:background="#11000000"
-        android:drawableStart="@drawable/ic_action_pass"
+        android:drawableLeft="@drawable/ic_action_pass"
         android:ems="10"
         android:fontFamily="@font/raleway"
         android:hint="@string/password"
@@ -73,9 +74,10 @@
         android:textColorHint="#FFFFFF"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/emailField"
-        android:drawableLeft="@drawable/ic_action_pass" />
+        android:drawableStart="@drawable/ic_action_pass"/>
 
     <TextView
         android:id="@+id/returnSignInPrompt"
@@ -89,4 +91,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/signUpBtn" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

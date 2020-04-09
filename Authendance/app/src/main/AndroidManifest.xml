@@ -15,7 +15,9 @@
         android:roundIcon="@mipmap/authendancelogo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".RegisterScreen"></activity>
+        <activity android:name=".Teacher"></activity>
+        <activity android:name=".Student" />
+        <activity android:name=".RegisterScreen" />
         <activity android:name=".HomeScreen" />
         <activity android:name=".GenerateCode" />
         <activity android:name=".CodeScanner" />

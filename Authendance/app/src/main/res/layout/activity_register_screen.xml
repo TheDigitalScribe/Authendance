@@ -24,7 +24,7 @@
         android:id="@+id/signUpBtn"
         android:layout_width="200dp"
         android:layout_height="60dp"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="50dp"
         android:background="@drawable/custom_button"
         android:fontFamily="@font/raleway"
         android:text="Sign Up"

@@ -11,6 +11,8 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class HomeScreen extends AppCompatActivity {
 
@@ -30,6 +32,7 @@ public class HomeScreen extends AppCompatActivity {
         scanCodeBtn = findViewById(R.id.scanCodeBtn);
         signOutBtn = findViewById(R.id.signOutBtn);
         user = FirebaseAuth.getInstance().getCurrentUser();
+
         String email = user.getEmail();
         String name = "Hello, " + email;
 

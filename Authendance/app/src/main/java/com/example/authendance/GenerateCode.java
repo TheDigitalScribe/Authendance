@@ -38,7 +38,7 @@ public class GenerateCode extends AppCompatActivity {
         setContentView(R.layout.activity_generate_code);
 
         codeField = findViewById(R.id.codeField);
-        genCodeBtn = findViewById(R.id.genCodeBtn);
+        genCodeBtn = findViewById(R.id.scanCodeBtn);
         qrCode = findViewById(R.id.qrCode);
         mTextViewCountDown = findViewById(R.id.countDownTimerText);
 

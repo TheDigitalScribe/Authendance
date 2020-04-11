@@ -1,13 +1,10 @@
 package com.example.authendance;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
@@ -27,8 +24,6 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.util.Objects;
-
 public class MainActivity extends AppCompatActivity {
 
     private final static String TAG = "document";
@@ -36,12 +31,10 @@ public class MainActivity extends AppCompatActivity {
     private EditText emailField;
     private EditText passwordField;
     private Button signInBtn;
-    private TextView registerPrompt;
     private TextView forgotPasswordText;
 
     private FirebaseAuth fAuth;
     private FirebaseFirestore db;
-    private FirebaseAuth.AuthStateListener fAuthStateListener;
 
 
     @Override
@@ -52,8 +45,8 @@ public class MainActivity extends AppCompatActivity {
         emailField = findViewById(R.id.emailField);
         passwordField = findViewById(R.id.passwordField);
         signInBtn = findViewById(R.id.signInBtn);
-        registerPrompt = findViewById(R.id.registerPrompt);
         forgotPasswordText = findViewById(R.id.forgotPasswordText);
+        db = FirebaseFirestore.getInstance();
 
         fAuth = FirebaseAuth.getInstance();
 
@@ -65,42 +58,38 @@ public class MainActivity extends AppCompatActivity {
 
                 final String email = emailField.getText().toString();
                 final String password = passwordField.getText().toString();
-                final FirebaseUser user = fAuth.getCurrentUser();
-                db = FirebaseFirestore.getInstance();
 
                 if (validateFields()) {
                     final CollectionReference usersRef = db.collection("School").document("0DKXnQhueh18DH7TSjsb").collection("User");
 
-                    /*User's email is retrieved from Firestore. If user logs in successfully,
-                    their UID is retrieved which finds their record to determine their user type
-                    and direct them to the appropriate activity.
-                     */
+                    //User's email is searched for in Firestore
                     Query query = usersRef.whereEqualTo("email", email);
                     query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @RequiresApi(api = Build.VERSION_CODES.KITKAT)
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                             if (task.isSuccessful()) {
-                                for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                                for (QueryDocumentSnapshot document : task.getResult()) {
                                     fAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                                        @RequiresApi(api = Build.VERSION_CODES.KITKAT)
                                         @Override
                                         public void onComplete(@NonNull Task<AuthResult> task) {
+
+                                            //If user has logged in successfully, their UID is stored. Their UID corresponds to their respective document ID in Firestore
                                             if (task.isSuccessful()) {
-                                                String uid = Objects.requireNonNull(fAuth.getCurrentUser()).getUid();
+                                                FirebaseUser user = fAuth.getCurrentUser();
+                                                String uid = user.getUid();
                                                 usersRef.document(uid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                                     @Override
                                                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                                         if (task.isSuccessful()) {
                                                             DocumentSnapshot document = task.getResult();
-                                                            assert document != null;
+
                                                             if (document.exists()) {
                                                                 String userType = document.getString("user_type");
                                                                 String name = document.getString("name");
                                                                 Toast.makeText(MainActivity.this, "Welcome, " + name, Toast.LENGTH_SHORT).show();
 
-                                                                assert userType != null;
-                                                                switch(userType) {
+                                                                //Redirects user to an approppiate activity based on if they are a student, admin or teacher
+                                                                switch (userType) {
                                                                     case "Admin":
                                                                         Intent adminIntent = new Intent(MainActivity.this, AdminActivity.class);
                                                                         adminIntent.putExtra("FULL_NAME", name);
@@ -120,12 +109,20 @@ public class MainActivity extends AppCompatActivity {
                                                                         Toast.makeText(MainActivity.this, "User type cannot be determined", Toast.LENGTH_SHORT).show();
                                                                 }
                                                             }
+                                                            else {
+                                                                Toast.makeText(MainActivity.this, "Document doesn't exist", Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        }
+                                                        else {
+                                                            Toast.makeText(MainActivity.this, "Document couldn't be retrieved", Toast.LENGTH_SHORT).show();
                                                         }
                                                     }
                                                 });
                                             }
-                                            else if(!task.isSuccessful()) {
+                                            //If login was unsuccessful
+                                            else  {
                                                 Toast.makeText(MainActivity.this, "Error. " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                                forgotPasswordText.setVisibility(View.VISIBLE);
                                             }
                                         }
                                     });
@@ -137,25 +134,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        registerPrompt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                /*Intent intent = new Intent(MainActivity.this, RegisterScreen.class);
-                startActivity(intent);*/
-
-                Log.d("uid", "UID: " + fAuth.getUid());
-            }
-        });
-
         forgotPasswordText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-
+                Intent intent = new Intent(MainActivity.this, PasswordReset.class);
+                startActivity(intent);
             }
         });
     }
 
+    //Ensures email and password fields are filled out correctly before login
     private boolean validateFields() {
         String email = emailField.getText().toString().trim();
         String password = passwordField.getText().toString().trim();

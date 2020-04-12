@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,17 +18,15 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
-    private final static String TAG = "document";
+    private final static String TAG = "login";
 
     private EditText emailField;
     private EditText passwordField;
@@ -47,23 +46,20 @@ public class MainActivity extends AppCompatActivity {
         passwordField = findViewById(R.id.passwordField);
         signInBtn = findViewById(R.id.signInBtn);
         forgotPasswordText = findViewById(R.id.forgotPasswordText);
+
         db = FirebaseFirestore.getInstance();
-
         fAuth = FirebaseAuth.getInstance();
-
         fAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser fUser = firebaseAuth.getCurrentUser();
                 //User is logged in
                 if(fUser != null) {
-                    Log.d("login", "user found");
-                    //Toast.makeText(MainActivity.this, "Login successful", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "user found");
                 }
                 //User is logged out
                 else {
-                    Log.d("login", "user not found");
-                    //Toast.makeText(MainActivity.this, "Login unsuccessful", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "user not found");
                 }
             }
         };
@@ -77,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
                 String password = passwordField.getText().toString();
 
                 //If email and password fields are properly filled in
-                if(validateFields()) {
+                if(validateEmail() && validatePassword()) {
                     fAuth.signInWithEmailAndPassword(email, password)
                             .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                                 @Override
@@ -86,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
                                         Log.d("login", "login successful");
 
                                         //User's UID is retrieved to find their record in the database
-                                        String uid = fAuth.getCurrentUser().getUid();
+                                        String uid = Objects.requireNonNull(fAuth.getCurrentUser()).getUid();
 
                                         //Reference to current user's record in the database
                                         DocumentReference userRef = db.collection("School")
@@ -103,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
                                                     if(document != null) {
                                                         String userType = document.getString("user_type");
 
+                                                        assert userType != null;
                                                         switch(userType) {
                                                             case "Admin":
                                                                 Intent adminIntent = new Intent(MainActivity.this, AdminActivity.class);
@@ -120,18 +117,19 @@ public class MainActivity extends AppCompatActivity {
                                                                 startActivity(studentIntent);
                                                                 break;
                                                             default:
-                                                                Log.d("login", "User type could not be determined");
+                                                                Log.d(TAG, "User type could not be determined");
                                                         }
                                                     }
                                                     else {
-                                                        Toast.makeText(MainActivity.this, "Record doesn't exist", Toast.LENGTH_SHORT).show();
+                                                        Log.d(TAG, "Document not found");
                                                     }
                                                 }
                                             }
                                         });
                                     }
                                     else {
-                                        Log.d("login", "login unsuccessful");
+                                        Toast.makeText(MainActivity.this, Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_LONG).show();
+                                        //Log.d(TAG, task.getException().getMessage());
                                     }
                                 }
                             });
@@ -162,22 +160,35 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //Ensures email and password fields are filled out correctly before login
-    private boolean validateFields() {
+    private boolean validateEmail() {
         String email = emailField.getText().toString().trim();
-        String password = passwordField.getText().toString().trim();
 
         if (email.isEmpty()) {
             emailField.setError("Please enter your email address");
             emailField.requestFocus();
             return false;
         }
-        else if (password.isEmpty()) {
-            passwordField.setError("Please enter your password");
-            passwordField.requestFocus();
+
+        else if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            emailField.setError("Please enter a valid email address");
+            emailField.requestFocus();
             return false;
         }
         else {
             emailField.setError(null);
+            return true;
+        }
+    }
+
+    private boolean validatePassword() {
+        String password = passwordField.getText().toString().trim();
+
+        if(password.isEmpty()) {
+            passwordField.setError("Please enter password");
+            passwordField.requestFocus();
+            return false;
+        }
+        else {
             passwordField.setError(null);
             return true;
         }

@@ -21,8 +21,6 @@ import java.util.Objects;
 public class PasswordReset extends AppCompatActivity {
 
     private EditText resetEmailField;
-    private Button submitBtn;
-    private TextView returnLoginText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,8 +28,8 @@ public class PasswordReset extends AppCompatActivity {
         setContentView(R.layout.activity_password_reset);
 
         resetEmailField = findViewById(R.id.resetEmailField);
-        submitBtn = findViewById(R.id.submitBtn);
-        returnLoginText = findViewById(R.id.returnLoginText);
+        Button submitBtn = findViewById(R.id.submitBtn);
+        TextView returnLoginText = findViewById(R.id.returnLoginText);
 
         submitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -46,7 +44,7 @@ public class PasswordReset extends AppCompatActivity {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
-                                        Toast.makeText(PasswordReset.this, "Reset Password email sent. Please check email", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(PasswordReset.this, "Email sent. Please check your email to reset password", Toast.LENGTH_SHORT).show();
                                     }
                                     else {
                                         Toast.makeText(PasswordReset.this, "Error. " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();

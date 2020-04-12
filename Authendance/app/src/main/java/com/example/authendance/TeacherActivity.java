@@ -10,16 +10,13 @@ import android.widget.TextView;
 
 public class TeacherActivity extends AppCompatActivity {
 
-    private TextView nameDisplay;
-    private CardView genCard;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_teacher);
 
-        nameDisplay = findViewById(R.id.nameDisplay);
-        genCard = findViewById(R.id.genCard);
+        TextView nameDisplay = findViewById(R.id.nameDisplay);
+        CardView genCard = findViewById(R.id.genCard);
 
         Intent intent = getIntent();
         String name = intent.getStringExtra("FULL_NAME");

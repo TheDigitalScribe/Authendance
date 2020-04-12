@@ -4,29 +4,42 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/backgroundapp"
-    tools:context=".PasswordReset">
+    android:background="@drawable/backgroundapp">
+
+    <TextView
+        android:id="@+id/forgotPasswordText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="315dp"
+        android:fontFamily="@font/raleway"
+        android:text="Forgot password?"
+        android:textColor="#000000"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.276"
+        app:layout_constraintStart_toEndOf="@+id/signInBtn"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/submitBtn"
+        android:id="@+id/signInBtn"
         android:layout_width="200dp"
         android:layout_height="60dp"
         android:layout_marginTop="50dp"
         android:background="@drawable/custom_button"
         android:fontFamily="@font/raleway"
-        android:text="Submit"
+        android:text="Sign In"
         android:textAllCaps="false"
         android:textColor="#330000"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/resetEmailField" />
+        app:layout_constraintTop_toBottomOf="@+id/passwordField" />
 
     <EditText
-        android:id="@+id/resetEmailField"
+        android:id="@+id/emailField"
         android:layout_width="300dp"
         android:layout_height="50dp"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="32dp"
         android:autofillHints=""
         android:background="#11000000"
         android:drawableStart="@drawable/ic_action_email"
@@ -41,46 +54,39 @@
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/resetPrompt" />
+        app:layout_constraintTop_toBottomOf="@+id/loginTextView" />
+
+    <EditText
+        android:id="@+id/passwordField"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="20dp"
+        android:autofillHints=""
+        android:background="#11000000"
+        android:drawableStart="@drawable/ic_action_pass"
+        android:drawableLeft="@drawable/ic_action_pass"
+        android:ems="10"
+        android:fontFamily="@font/raleway"
+        android:hint="@string/password"
+        android:inputType="textWebPassword"
+        android:textColor="#000000"
+        android:textColorHint="#000000"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/emailField" />
 
     <TextView
-        android:id="@+id/resetPasswordText"
+        android:id="@+id/loginTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="75dp"
+        android:layout_marginTop="48dp"
         android:fontFamily="@font/raleway"
-        android:text="Reset Password"
-        android:textColor="#FFFFFF"
+        android:text="Login"
+        android:textColor="@android:color/white"
         android:textSize="36sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/resetPrompt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="120dp"
-        android:fontFamily="@font/raleway"
-        android:text="Please enter your email address."
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/resetPasswordText" />
-
-    <TextView
-        android:id="@+id/returnLoginText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:fontFamily="@font/raleway"
-        android:text="Return to login screen"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/submitBtn" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

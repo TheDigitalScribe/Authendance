@@ -4,11 +4,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,11 +29,14 @@ import java.util.Objects;
 public class MainActivity extends AppCompatActivity {
 
     private final static String TAG = "login";
+    public static final String SHARED_PREFS = "sharedPrefs";
+    public static final String EMAIL = "email ";
+    public static final String PASSWORD = "password";
 
     private EditText emailField;
     private EditText passwordField;
-    private Button signInBtn;
-    private TextView forgotPasswordText;
+    private String emailContent;
+    private String passwordContent;
 
     private FirebaseAuth fAuth;
     private FirebaseFirestore db;
@@ -44,8 +49,8 @@ public class MainActivity extends AppCompatActivity {
 
         emailField = findViewById(R.id.emailField);
         passwordField = findViewById(R.id.passwordField);
-        signInBtn = findViewById(R.id.signInBtn);
-        forgotPasswordText = findViewById(R.id.forgotPasswordText);
+        Button signInBtn = findViewById(R.id.signInBtn);
+        final TextView forgotPasswordText = findViewById(R.id.forgotPasswordText);
 
         db = FirebaseFirestore.getInstance();
         fAuth = FirebaseAuth.getInstance();
@@ -79,7 +84,8 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if(task.isSuccessful()) {
-                                        Log.d("login", "login successful");
+                                        Log.d(TAG, "login successful");
+                                        saveData();
 
                                         //User's UID is retrieved to find their record in the database
                                         String uid = Objects.requireNonNull(fAuth.getCurrentUser()).getUid();
@@ -129,6 +135,7 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                     else {
                                         Toast.makeText(MainActivity.this, Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_LONG).show();
+                                        forgotPasswordText.setVisibility(View.VISIBLE);
                                         //Log.d(TAG, task.getException().getMessage());
                                     }
                                 }
@@ -145,6 +152,9 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        loadData();
+        updateFields();
     }
 
     @Override
@@ -193,4 +203,44 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
     }
+
+    public void saveData() {
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        editor.putString(EMAIL, emailField.getText().toString());
+        editor.putString(PASSWORD, passwordField.getText().toString());
+
+        editor.apply();
+
+        Log.d(TAG, "Email: " + emailField.getText().toString() + " and password " + passwordField.getText().toString() + " saved");
+    }
+
+    public void loadData() {
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        emailContent = sharedPreferences.getString(EMAIL, "");
+        passwordContent = sharedPreferences.getString(PASSWORD, "");
+    }
+
+    public void updateFields() {
+        emailField.setText(emailContent);
+        passwordField.setText(passwordContent);
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putString("emailField", emailField.getText().toString());
+        outState.putString("passwordField", passwordField.getText().toString());
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        emailField.setText(savedInstanceState.getString("emailField"));
+        passwordField.setText(savedInstanceState.getString("passwordField"));
+    }
+
 }

@@ -27,10 +27,12 @@ import com.google.zxing.qrcode.QRCodeWriter;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 
 public class GenerateCode extends AppCompatActivity {
     private static final long START_TIME_IN_MILLIS = 600000;
+    private final static String TAG = "GENERATE_CODE";
 
     private TextView codeField;
     private Button genCodeBtn;
@@ -40,11 +42,11 @@ public class GenerateCode extends AppCompatActivity {
     private FirebaseFirestore db;
     private FirebaseUser user;
 
-    private CountDownTimer mCountDownTimer;
-
     private TextView mTextViewCountDown;
-
     private long mTimeLeftInMilliseconds = START_TIME_IN_MILLIS;
+    private long mEndTime;
+    private boolean mTimerRunning;
+    private boolean isClicked = false;
 
 
     @Override
@@ -64,10 +66,10 @@ public class GenerateCode extends AppCompatActivity {
         qrCode.setVisibility(View.INVISIBLE);
 
         if(user != null) {
-            Log.d("login", "User logged in");
+            Log.d(TAG, "User found");
         }
         else {
-            Log.d("login", "User not logged in");
+            Log.d(TAG, "User not found");
         }
 
         genCodeBtn.setOnClickListener(new View.OnClickListener() {
@@ -77,10 +79,12 @@ public class GenerateCode extends AppCompatActivity {
                 int width = 200;
                 int height = 200;
 
+                isClicked = true;
+
                 codeField.setText(genRandString());
                 String code = codeField.getText().toString();
 
-                Log.d("user", user.getEmail());
+                //Log.d(TAG, Objects.requireNonNull(user.getEmail()));
 
                 startTimer();
 
@@ -100,18 +104,21 @@ public class GenerateCode extends AppCompatActivity {
                     Map<String, Object> data = new HashMap<>();
                     data.put("qrcode", codeField.getText().toString());
 
-                    DocumentReference codeRef = db.collection("School").document("0DKXnQhueh18DH7TSjsb").collection("User").document(fAuth.getUid());
+                    DocumentReference codeRef = db.collection("School")
+                            .document("0DKXnQhueh18DH7TSjsb")
+                            .collection("User")
+                            .document(Objects.requireNonNull(fAuth.getUid()));
 
                     codeRef.update("qrcode", codeField.getText().toString()).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
-                            Log.d("code", "Code updated");
+                            Log.d(TAG, "Code added");
                         }
                     })
                             .addOnFailureListener(new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
-                                    Log.d("code", "Code failed to update");
+                                    Log.d(TAG, "Code not added");
                                 }
                             });
 
@@ -123,7 +130,9 @@ public class GenerateCode extends AppCompatActivity {
     }
 
     private void startTimer() {
-        mCountDownTimer = new CountDownTimer(mTimeLeftInMilliseconds, 1000) {
+        //mEndTime ensures timer is correct
+        mEndTime = System.currentTimeMillis() + mTimeLeftInMilliseconds;
+        CountDownTimer mCountDownTimer = new CountDownTimer(mTimeLeftInMilliseconds, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 qrCode.setVisibility(View.VISIBLE);
@@ -134,35 +143,26 @@ public class GenerateCode extends AppCompatActivity {
 
             @Override
             public void onFinish() {
+                mTimerRunning = false;
                 qrCode.setVisibility(View.INVISIBLE);
                 genCodeBtn.setVisibility(View.VISIBLE);
                 mTimeLeftInMilliseconds = START_TIME_IN_MILLIS;
-                codeField.setText("");
+                codeField.setText(null);
                 updateTimer();
 
-                String qrCode = codeField.getText().toString();
+                /*String qrCode = codeField.getText().toString();
                 Intent studentIntent = new Intent(GenerateCode.this, CodeScanner.class);
                 studentIntent.putExtra("QR_CODE", qrCode);
-                startActivity(studentIntent);
+                startActivity(studentIntent);*/
 
                 //Removes QR code text from Firestore
-                DocumentReference codeRef = db.collection("School").document("0DKXnQhueh18DH7TSjsb").collection("User").document(fAuth.getUid());
+                //removeQR();
 
-                codeRef.update("qrcode", null).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d("code", "Code updated");
-                    }
-                })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.d("code", "Code failed to update");
-                            }
-                        });
             }
+
         }
-        .start();
+                .start();
+                mTimerRunning = true;
     }
 
     private void updateTimer() {
@@ -184,5 +184,55 @@ public class GenerateCode extends AppCompatActivity {
             stringBuilder.append(c);
         }
         return stringBuilder.toString();
+    }
+
+    private void removeQR() {
+        DocumentReference codeRef = db.collection("School")
+                .document("0DKXnQhueh18DH7TSjsb")
+                .collection("User")
+                .document(Objects.requireNonNull(fAuth.getUid()));
+
+        codeRef.update("qrcode", null).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.d(TAG, "Code removed");
+            }
+        })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(TAG, "Code not removed");
+                    }
+                });
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putLong("millisLeft", mTimeLeftInMilliseconds);
+        outState.putBoolean("timerRunning", mTimerRunning);
+        outState.putLong("endTime", mEndTime);
+
+        if(isClicked) {
+            outState.putString("codeField", codeField.getText().toString());
+        }
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        mTimeLeftInMilliseconds = savedInstanceState.getLong("millisLeft");
+        mTimerRunning = savedInstanceState.getBoolean("timerRunning");
+        codeField.setText(savedInstanceState.getString("codeField"));
+        Log.d(TAG, codeField.getText().toString());
+        updateTimer();
+
+        if(mTimerRunning) {
+            mEndTime = savedInstanceState.getLong("endTime");
+            mTimeLeftInMilliseconds = mEndTime - System.currentTimeMillis();
+            startTimer();
+        }
     }
 }

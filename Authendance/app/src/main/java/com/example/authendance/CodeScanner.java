@@ -13,13 +13,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.zxing.Result;
 
 import java.text.DateFormat;
@@ -127,6 +124,7 @@ public class CodeScanner extends AppCompatActivity implements ZXingScannerView.R
 
         Query query = codeRef.whereEqualTo("qrcode", qrCode);
 
+        assert qrCode != null;
         if (qrCode.matches(query.get().toString())) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Attendance Authenticated!");

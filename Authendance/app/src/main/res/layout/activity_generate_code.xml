@@ -54,7 +54,7 @@
         android:layout_marginTop="50dp"
         android:background="#FFFFFF"
         android:fontFamily="@font/raleway"
-        android:text="0:30"
+        android:text="10:00"
         android:textColor="?android:attr/colorForeground"
         android:textSize="36sp"
         android:textStyle="bold"

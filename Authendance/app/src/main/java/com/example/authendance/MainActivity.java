@@ -5,7 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Patterns;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,6 +18,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -35,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth fAuth;
     private FirebaseFirestore db;
-
+    private FirebaseAuth.AuthStateListener fAuthListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,86 +51,90 @@ public class MainActivity extends AppCompatActivity {
 
         fAuth = FirebaseAuth.getInstance();
 
+        fAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser fUser = firebaseAuth.getCurrentUser();
+                //User is logged in
+                if(fUser != null) {
+                    Log.d("login", "user found");
+                    //Toast.makeText(MainActivity.this, "Login successful", Toast.LENGTH_SHORT).show();
+                }
+                //User is logged out
+                else {
+                    Log.d("login", "user not found");
+                    //Toast.makeText(MainActivity.this, "Login unsuccessful", Toast.LENGTH_SHORT).show();
+                }
+            }
+        };
+
         forgotPasswordText.setVisibility(View.INVISIBLE);
 
         signInBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String email = emailField.getText().toString();
+                String password = passwordField.getText().toString();
 
-                final String email = emailField.getText().toString();
-                final String password = passwordField.getText().toString();
+                //If email and password fields are properly filled in
+                if(validateFields()) {
+                    fAuth.signInWithEmailAndPassword(email, password)
+                            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    if(task.isSuccessful()) {
+                                        Log.d("login", "login successful");
 
-                if (validateFields()) {
-                    final CollectionReference usersRef = db.collection("School").document("0DKXnQhueh18DH7TSjsb").collection("User");
+                                        //User's UID is retrieved to find their record in the database
+                                        String uid = fAuth.getCurrentUser().getUid();
 
-                    //User's email is searched for in Firestore
-                    Query query = usersRef.whereEqualTo("email", email);
-                    query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful()) {
-                                for (QueryDocumentSnapshot document : task.getResult()) {
-                                    fAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<AuthResult> task) {
+                                        //Reference to current user's record in the database
+                                        DocumentReference userRef = db.collection("School")
+                                                .document("0DKXnQhueh18DH7TSjsb")
+                                                .collection("User")
+                                                .document(uid);
 
-                                            //If user has logged in successfully, their UID is stored. Their UID corresponds to their respective document ID in Firestore
-                                            if (task.isSuccessful()) {
-                                                FirebaseUser user = fAuth.getCurrentUser();
-                                                String uid = user.getUid();
-                                                usersRef.document(uid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                                    @Override
-                                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                        if (task.isSuccessful()) {
-                                                            DocumentSnapshot document = task.getResult();
+                                        //This code retrieves the value of the "user_type" field in the record to determine if the user is a student, teacher or admin
+                                        userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                if(task.isSuccessful()) {
+                                                    DocumentSnapshot document = task.getResult();
+                                                    if(document != null) {
+                                                        String userType = document.getString("user_type");
 
-                                                            if (document.exists()) {
-                                                                String userType = document.getString("user_type");
-                                                                String name = document.getString("name");
-                                                                Toast.makeText(MainActivity.this, "Welcome, " + name, Toast.LENGTH_SHORT).show();
-
-                                                                //Redirects user to an approppiate activity based on if they are a student, admin or teacher
-                                                                switch (userType) {
-                                                                    case "Admin":
-                                                                        Intent adminIntent = new Intent(MainActivity.this, AdminActivity.class);
-                                                                        adminIntent.putExtra("FULL_NAME", name);
-                                                                        startActivity(adminIntent);
-                                                                        break;
-                                                                    case "Teacher":
-                                                                        Intent teacherIntent = new Intent(MainActivity.this, TeacherActivity.class);
-                                                                        teacherIntent.putExtra("FULL_NAME", name);
-                                                                        startActivity(teacherIntent);
-                                                                        break;
-                                                                    case "Student":
-                                                                        Intent studentIntent = new Intent(MainActivity.this, StudentActivity.class);
-                                                                        studentIntent.putExtra("FULL_NAME", name);
-                                                                        startActivity(studentIntent);
-                                                                        break;
-                                                                    default:
-                                                                        Toast.makeText(MainActivity.this, "User type cannot be determined", Toast.LENGTH_SHORT).show();
-                                                                }
-                                                            }
-                                                            else {
-                                                                Toast.makeText(MainActivity.this, "Document doesn't exist", Toast.LENGTH_SHORT).show();
-                                                            }
-                                                        }
-                                                        else {
-                                                            Toast.makeText(MainActivity.this, "Document couldn't be retrieved", Toast.LENGTH_SHORT).show();
+                                                        switch(userType) {
+                                                            case "Admin":
+                                                                Intent adminIntent = new Intent(MainActivity.this, AdminActivity.class);
+                                                                adminIntent.putExtra("FULL_NAME", document.getString("name"));
+                                                                startActivity(adminIntent);
+                                                                break;
+                                                            case "Teacher":
+                                                                Intent teacherIntent = new Intent(MainActivity.this, TeacherActivity.class);
+                                                                teacherIntent.putExtra("FULL_NAME", document.getString("name"));
+                                                                startActivity(teacherIntent);
+                                                                break;
+                                                            case "Student":
+                                                                Intent studentIntent = new Intent(MainActivity.this, StudentActivity.class);
+                                                                studentIntent.putExtra("FULL_NAME", document.getString("name"));
+                                                                startActivity(studentIntent);
+                                                                break;
+                                                            default:
+                                                                Log.d("login", "User type could not be determined");
                                                         }
                                                     }
-                                                });
+                                                    else {
+                                                        Toast.makeText(MainActivity.this, "Record doesn't exist", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                }
                                             }
-                                            //If login was unsuccessful
-                                            else  {
-                                                Toast.makeText(MainActivity.this, "Error. " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                                                forgotPasswordText.setVisibility(View.VISIBLE);
-                                            }
-                                        }
-                                    });
+                                        });
+                                    }
+                                    else {
+                                        Log.d("login", "login unsuccessful");
+                                    }
                                 }
-                            }
-                        }
-                    });
+                            });
                 }
             }
         });
@@ -144,6 +149,18 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        fAuth.addAuthStateListener(fAuthListener);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        fAuth.removeAuthStateListener(fAuthListener);
+    }
+
     //Ensures email and password fields are filled out correctly before login
     private boolean validateFields() {
         String email = emailField.getText().toString().trim();
@@ -153,15 +170,13 @@ public class MainActivity extends AppCompatActivity {
             emailField.setError("Please enter your email address");
             emailField.requestFocus();
             return false;
-        } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            emailField.setError("Please enter a valid email address");
-            emailField.requestFocus();
-            return false;
-        } else if (password.isEmpty()) {
+        }
+        else if (password.isEmpty()) {
             passwordField.setError("Please enter your password");
             passwordField.requestFocus();
             return false;
-        } else {
+        }
+        else {
             emailField.setError(null);
             passwordField.setError(null);
             return true;

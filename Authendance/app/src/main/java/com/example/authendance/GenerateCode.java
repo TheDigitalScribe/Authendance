@@ -3,6 +3,7 @@ package com.example.authendance;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -29,7 +30,7 @@ import java.util.Map;
 import java.util.Random;
 
 public class GenerateCode extends AppCompatActivity {
-    private static final long START_TIME_IN_MILLIS = 30000;
+    private static final long START_TIME_IN_MILLIS = 600000;
 
     private TextView codeField;
     private Button genCodeBtn;
@@ -138,6 +139,11 @@ public class GenerateCode extends AppCompatActivity {
                 mTimeLeftInMilliseconds = START_TIME_IN_MILLIS;
                 codeField.setText("");
                 updateTimer();
+
+                String qrCode = codeField.getText().toString();
+                Intent studentIntent = new Intent(GenerateCode.this, CodeScanner.class);
+                studentIntent.putExtra("QR_CODE", qrCode);
+                startActivity(studentIntent);
 
                 //Removes QR code text from Firestore
                 DocumentReference codeRef = db.collection("School").document("0DKXnQhueh18DH7TSjsb").collection("User").document(fAuth.getUid());

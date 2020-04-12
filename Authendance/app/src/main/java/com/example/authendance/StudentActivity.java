@@ -24,7 +24,6 @@ public class StudentActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         String name = intent.getStringExtra("FULL_NAME");
-
         nameDisplay.setText(name);
 
         scanCard.setOnClickListener(new View.OnClickListener() {

@@ -15,7 +15,9 @@
         android:roundIcon="@mipmap/authendancelogo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".PasswordReset"></activity>
+        <activity android:name=".CodeScreen"></activity>
+        <activity android:name=".SettingsActivity" />
+        <activity android:name=".PasswordReset" />
         <activity android:name=".AdminActivity" />
         <activity android:name=".TeacherActivity" />
         <activity android:name=".StudentActivity" />

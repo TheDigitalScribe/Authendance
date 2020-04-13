@@ -104,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
                                                     DocumentSnapshot document = task.getResult();
                                                     if(document != null) {
                                                         String userType = document.getString("user_type");
+                                                        Toast.makeText(MainActivity.this, "Welcome, " + document.getString("name"), Toast.LENGTH_SHORT).show();
 
                                                         assert userType != null;
                                                         switch(userType) {
@@ -204,6 +205,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    //Saves email and password in the text fields
     public void saveData() {
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -227,7 +229,7 @@ public class MainActivity extends AppCompatActivity {
         passwordField.setText(passwordContent);
     }
 
-    @Override
+    /*@Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
@@ -241,6 +243,6 @@ public class MainActivity extends AppCompatActivity {
 
         emailField.setText(savedInstanceState.getString("emailField"));
         passwordField.setText(savedInstanceState.getString("passwordField"));
-    }
+    }*/
 
 }

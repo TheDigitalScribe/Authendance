@@ -8,4 +8,10 @@
     <string name="enter_text">Enter some text…</string>
     <string name="qr_code">QR Code placeholder</string>
     <string name="codePlaceholder">Your code</string>
+
+    <string-array name="Modules">
+        <item>Algorithms</item>
+        <item>Security</item>
+        <item>Robotics</item>
+    </string-array>
 </resources>

@@ -13,14 +13,22 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 
 import java.util.Locale;
+import java.util.Objects;
 
 public class CodeScreen extends AppCompatActivity {
     private static final long START_TIME_IN_MILLIS = 30000;
+    private static final String TAG = "CODE_SCREEN";
     private TextView codeField;
     private ImageView qrCode;
 
@@ -28,12 +36,26 @@ public class CodeScreen extends AppCompatActivity {
     private long mTimeLeftInMilliseconds = START_TIME_IN_MILLIS;
     private long mEndTime;
     private boolean mTimerRunning;
-    private boolean isClicked = false;
+
+    private FirebaseAuth fAuth;
+    private FirebaseFirestore db;
+    private FirebaseUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_code_screen);
+
+        fAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+        user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if(user != null) {
+            Log.d(TAG, "User found");
+        }
+        else {
+            Log.d(TAG, "User not found");
+        }
 
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
         int width = 200;
@@ -42,8 +64,10 @@ public class CodeScreen extends AppCompatActivity {
         qrCode = findViewById(R.id.qrCode);
         mTextViewCountDown = findViewById(R.id.countDownTimerText);
 
+        //Retrieves generated QR code text from GenerateCode activity
         Intent intent = getIntent();
-        String code = intent.getStringExtra("QR_CODE");
+        Bundle data = intent.getExtras();
+        String code = data.getString("QR_CODE");
 
         codeField.setText(code);
 
@@ -66,6 +90,31 @@ public class CodeScreen extends AppCompatActivity {
         }
     }
 
+    private void removeQR() {
+
+        Intent intent = getIntent();
+        Bundle data = intent.getExtras();
+        String docID = data.getString("DOC_ID");
+
+        DocumentReference documentReference = db.collection("School")
+                .document("0DKXnQhueh18DH7TSjsb")
+                .collection("Section")
+                .document(docID);
+
+        documentReference.update("qrcode", null).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.d(TAG, "Qr code removed");
+            }
+        })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(TAG, "qr code not removed");
+                    }
+                });
+    }
+
     private void startTimer() {
         //mEndTime ensures timer is correct
         mEndTime = System.currentTimeMillis() + mTimeLeftInMilliseconds;
@@ -86,6 +135,7 @@ public class CodeScreen extends AppCompatActivity {
                 mTimeLeftInMilliseconds = START_TIME_IN_MILLIS;
                 codeField.setText(null);
                 //updateTimer();
+                removeQR();
                 finish();
 
                 /*String qrCode = codeField.getText().toString();
@@ -97,9 +147,8 @@ public class CodeScreen extends AppCompatActivity {
                 //removeQR();
 
             }
-
         }
-                .start();
+        .start();
         mTimerRunning = true;
     }
 
@@ -118,10 +167,6 @@ public class CodeScreen extends AppCompatActivity {
         outState.putLong("millisLeft", mTimeLeftInMilliseconds);
         outState.putBoolean("timerRunning", mTimerRunning);
         outState.putLong("endTime", mEndTime);
-
-        if(isClicked) {
-            outState.putString("codeField", codeField.getText().toString());
-        }
     }
 
     @Override

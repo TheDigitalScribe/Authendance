@@ -27,6 +27,8 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
@@ -40,6 +42,8 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
     private FirebaseAuth fAuth;
     private FirebaseFirestore db;
     private FirebaseUser user;
+
+    private String uid;
 
 
     @Override
@@ -55,9 +59,14 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(this);
 
+        //populateSpinner();
+
         fAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         user = FirebaseAuth.getInstance().getCurrentUser();
+
+        uid = fAuth.getCurrentUser().getUid();
+        Log.d(TAG, uid);
 
         if(user != null) {
             Log.d(TAG, "User found");
@@ -65,6 +74,8 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
         else {
             Log.d(TAG, "User not found");
         }
+
+        populateSpinner();
 
         genCodeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,10 +85,40 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
         });
     }
 
+    private void populateSpinner() {
+
+        //Searches for the student's record based on their UID
+        CollectionReference studentRef = db.collection("School")
+                .document("0DKXnQhueh18DH7TSjsb")
+                .collection("User")
+                .document(uid)
+                .collection("Modules");
+
+        final List<String> modules = new ArrayList<>();
+        final ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, modules);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+
+        studentRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                        String module = document.getString("name");
+                        modules.add(module);
+                        Log.d(TAG, module);
+                    }
+                }
+                adapter.notifyDataSetChanged();
+            }
+        });
+    }
+
+
     private void generateCode() {
 
         String uid = Objects.requireNonNull(fAuth.getCurrentUser()).getUid();
-        Log.d(TAG, "UID: " + uid);
+        //Log.d(TAG, "UID: " + uid);
 
         //Searches for the teacher's record based on the UID
         DocumentReference teacherRef = db.collection("School")

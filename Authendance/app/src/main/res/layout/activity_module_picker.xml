@@ -11,7 +11,7 @@
         android:id="@+id/scanCodeBtn"
         android:layout_width="250dp"
         android:layout_height="60dp"
-        android:layout_marginTop="57dp"
+        android:layout_marginTop="40dp"
         android:background="@drawable/custom_button"
         android:fontFamily="@font/raleway"
         android:text="@string/scan_code"
@@ -25,11 +25,11 @@
 
     <Spinner
         android:id="@+id/stuSpinner"
-        android:layout_width="391dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="1dp"
-        android:layout_marginTop="242dp"
-        android:layout_marginEnd="1dp"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="230dp"
+        android:layout_marginEnd="32dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

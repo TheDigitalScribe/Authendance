@@ -70,8 +70,7 @@ public class CodeScreen extends AppCompatActivity {
         //Retrieves generated QR code text from GenerateCode activity
         Intent intent = getIntent();
         code = intent.getStringExtra("QR_CODE");
-
-        codeField.setText(code);
+        codeField.setText("");
 
         try {
             assert code != null;
@@ -86,7 +85,7 @@ public class CodeScreen extends AppCompatActivity {
 
             qrCode.setImageBitmap(bitmap);
             startTimer();
-            Toast.makeText(CodeScreen.this, "Code generated", Toast.LENGTH_SHORT).show();
+            Toast.makeText(CodeScreen.this, "Code Generated", Toast.LENGTH_SHORT).show();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -130,7 +129,6 @@ public class CodeScreen extends AppCompatActivity {
             @Override
             public void onTick(long millisUntilFinished) {
                 qrCode.setVisibility(View.VISIBLE);
-                //genCodeBtn.setVisibility(View.INVISIBLE);
                 mTimeLeftInMilliseconds = millisUntilFinished;
                 updateTimer();
             }

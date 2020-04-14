@@ -124,52 +124,19 @@ public class CodeScanner extends AppCompatActivity implements ZXingScannerView.R
 
         Intent intent = getIntent();
         Bundle data = intent.getExtras();
-        Boolean codeCheck = data.getBoolean("CODE_CHECK");
-        Boolean isEnrolled = data.getBoolean("ENROLLED");
         String moduleName = data.getString("MOD_NAME");
         String qrCode = data.getString("QR_CODE");
 
         Log.d(TAG, "Result: " + result.getText());
-        Log.d(TAG, "codeCheck: " + codeCheck);
-        Log.d(TAG, "isEnrolled: " + isEnrolled);
         Log.d(TAG, "module name: " + moduleName);
         Log.d(TAG, "qrCode: " + qrCode);
 
         //Shows the current date
         Calendar calendar = Calendar.getInstance();
-        final String currentDate = DateFormat.getDateInstance(DateFormat.FULL).format(calendar.getTime());
+        final String currentDate = DateFormat.getDateInstance(DateFormat.DATE_FIELD).format(calendar.getTime());
 
         if (qrCode.equals(result.getText())) {
-            if (isEnrolled.equals(false)) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(CodeScanner.this);
-                builder.setTitle("Not enrolled");
-                builder.setMessage("User is not enrolled in this module");
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent intent = new Intent(CodeScanner.this, StudentActivity.class);
-                        startActivity(intent);
-                    }
-                });
-                AlertDialog alert = builder.create();
-                alert.show();
-            }
-            else if (codeCheck.equals(false)) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(CodeScanner.this);
-                builder.setTitle("No QR Code Available");
-                builder.setMessage("The QR code for this module has either not been generated or the timer ran out");
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent intent = new Intent(CodeScanner.this, StudentActivity.class);
-                        startActivity(intent);
-                    }
-                });
-                AlertDialog alert = builder.create();
-                alert.show();
 
-            }
-            else if (isEnrolled.equals(true) && codeCheck.equals(true)) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(CodeScanner.this);
                 builder.setTitle("Attendance Authenticated!");
                 builder.setMessage("Your attendance for " + moduleName + " on " + currentDate + " has been recorded.");
@@ -182,12 +149,11 @@ public class CodeScanner extends AppCompatActivity implements ZXingScannerView.R
                 });
                 AlertDialog alert = builder.create();
                 alert.show();
-            }
         }
         else {
             AlertDialog.Builder builder = new AlertDialog.Builder(CodeScanner.this);
             builder.setTitle("Invalid QR code");
-            builder.setMessage("This code does not match any modules");
+            builder.setMessage("This code is invalid.");
             builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {

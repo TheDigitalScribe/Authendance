@@ -77,7 +77,7 @@ public class RegisterScreen extends AppCompatActivity {
                             }
                             else {
                                 Toast.makeText(RegisterScreen.this, "Signup successful", Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(RegisterScreen.this, HomeScreen.class);
+                                Intent intent = new Intent(RegisterScreen.this, StudentActivity.class);
                                 startActivity(intent);
                             }
                         }

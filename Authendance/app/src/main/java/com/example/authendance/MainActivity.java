@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if(task.isSuccessful()) {
-                                        Log.d(TAG, "login successful");
+                                        Log.d(TAG, "Login successful");
                                         saveData();
 
                                         //User's UID is retrieved to find their record in the database
@@ -109,17 +109,14 @@ public class MainActivity extends AppCompatActivity {
                                                         switch(userType) {
                                                             case "Admin":
                                                                 Intent adminIntent = new Intent(MainActivity.this, AdminActivity.class);
-                                                                adminIntent.putExtra("FULL_NAME", document.getString("name"));
                                                                 startActivity(adminIntent);
                                                                 break;
                                                             case "Teacher":
                                                                 Intent teacherIntent = new Intent(MainActivity.this, TeacherActivity.class);
-                                                                teacherIntent.putExtra("FULL_NAME", document.getString("name"));
                                                                 startActivity(teacherIntent);
                                                                 break;
                                                             case "Student":
                                                                 Intent studentIntent = new Intent(MainActivity.this, StudentActivity.class);
-                                                                studentIntent.putExtra("FULL_NAME", document.getString("name"));
                                                                 startActivity(studentIntent);
                                                                 break;
                                                             default:

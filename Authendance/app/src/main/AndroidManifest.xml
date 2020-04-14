@@ -17,7 +17,6 @@
         android:theme="@style/AppTheme">
         <activity android:name=".ModulePicker"></activity>
         <activity android:name=".CodeScreen" />
-        <activity android:name=".SettingsActivity" />
         <activity android:name=".PasswordReset" />
         <activity android:name=".AdminActivity" />
         <activity android:name=".TeacherActivity" />
@@ -25,7 +24,6 @@
         <activity android:name=".Teacher" />
         <activity android:name=".Student" />
         <activity android:name=".RegisterScreen" />
-        <activity android:name=".HomeScreen" />
         <activity android:name=".GenerateCode" />
         <activity android:name=".CodeScanner" />
         <activity android:name=".MainActivity">

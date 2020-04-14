@@ -11,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -26,6 +27,8 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.rpc.Code;
 
 import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class ModulePicker extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
@@ -33,12 +36,13 @@ public class ModulePicker extends AppCompatActivity implements AdapterView.OnIte
 
     private Button scanCodeBtn;
     private Spinner stuSpinner;
-    private Boolean isEnrolled;
     private Boolean codeCheck;
 
     private FirebaseAuth fAuth;
     private FirebaseFirestore db;
     private FirebaseUser user;
+
+    private String uid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,16 +52,12 @@ public class ModulePicker extends AppCompatActivity implements AdapterView.OnIte
         scanCodeBtn = findViewById(R.id.scanCodeBtn);
 
         stuSpinner = findViewById(R.id.stuSpinner);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.Modules, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        stuSpinner.setAdapter(adapter);
-        stuSpinner.setOnItemSelectedListener(this);
 
         fAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         user = FirebaseAuth.getInstance().getCurrentUser();
+        uid = fAuth.getCurrentUser().getUid();
 
-        isEnrolled = false;
         codeCheck = false;
 
         if(user != null) {
@@ -67,6 +67,8 @@ public class ModulePicker extends AppCompatActivity implements AdapterView.OnIte
             Log.d(TAG, "User not found");
         }
 
+        populateSpinner();
+
         scanCodeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -75,10 +77,38 @@ public class ModulePicker extends AppCompatActivity implements AdapterView.OnIte
         });
     }
 
+    private void populateSpinner() {
+
+        //Searches for the student's record based on their UID
+        CollectionReference studentRef = db.collection("School")
+                .document("0DKXnQhueh18DH7TSjsb")
+                .collection("User")
+                .document(uid)
+                .collection("Modules");
+
+        final List<String> modules = new ArrayList<>();
+        final ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, modules);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        stuSpinner.setAdapter(adapter);
+
+        studentRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                        String module = document.getString("name");
+                        modules.add(module);
+                        //Log.d(TAG, module);
+                    }
+                }
+                adapter.notifyDataSetChanged();
+            }
+        });
+    }
+
     private void moduleCheck() {
 
-        String uid = Objects.requireNonNull(fAuth.getCurrentUser()).getUid();
-        Log.d(TAG, "UID: " + uid);
+        //Log.d(TAG, "UID: " + uid);
 
         //Searches for the student's record based on their UID
         DocumentReference studentRef = db.collection("School")
@@ -86,19 +116,20 @@ public class ModulePicker extends AppCompatActivity implements AdapterView.OnIte
                 .collection("User")
                 .document(uid);
 
-        //Retrieves document data
         studentRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     final DocumentSnapshot document = task.getResult();
 
+                    //Retrieves student's ID from their record if document exists
                     if(document != null) {
                         final String studentID = document.getString("student_id");
-                        Log.d(TAG, "Student ID: " + studentID);
+                        //Log.d(TAG, "Student ID: " + studentID);
 
+                        //Spinner value determines which module they want to record their attendance for
                         final String spinnerValue = stuSpinner.getSelectedItem().toString();
-                        Log.d(TAG, "Spinner value: " + spinnerValue);
+                        //Log.d(TAG, "Spinner value: " + spinnerValue);
 
                         CollectionReference sectionRef = db.collection("School")
                                 .document("0DKXnQhueh18DH7TSjsb")
@@ -115,62 +146,36 @@ public class ModulePicker extends AppCompatActivity implements AdapterView.OnIte
                                         codeCheck = documentSnapshot.getBoolean("code_generated");
                                         final String docID = documentSnapshot.getId();
                                         final String moduleName = documentSnapshot.getString("module");
-                                        Log.d(TAG, "docID: " + docID);
-                                        Log.d(TAG, "code_generated: " + codeCheck);
+                                        //Log.d(TAG, "docID: " + docID);
+                                        //Log.d(TAG, "code_generated: " + codeCheck);
 
-                                        //Checks if the student is enrolled in the selected module
-                                        DocumentReference documentReference = db.collection("School")
-                                                .document("0DKXnQhueh18DH7TSjsb")
-                                                .collection("Section")
-                                                .document(docID)
-                                                .collection("Students")
-                                                .document(studentID);
+                                        if(codeCheck.equals(true)) {
+                                            Bundle data = new Bundle();
+                                            data.putString("MOD_NAME", moduleName);
+                                            data.putString("QR_CODE", docID);
+                                            Intent intent = new Intent(ModulePicker.this, CodeScanner.class);
+                                            intent.putExtras(data);
+                                            startActivity(intent);
+                                        }
 
-                                        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                if(task.isSuccessful()) {
-                                                    DocumentSnapshot snapshot = task.getResult();
-
-                                                    if(snapshot.exists()) {
-                                                        Log.d(TAG, "User is a part of this module");
-                                                        isEnrolled = true;
-
-                                                    }
-                                                    else {
-                                                        Log.d(TAG, task.getException().getMessage());
-                                                        isEnrolled = false;
-                                                    }
-                                                }
-                                                else {
-                                                    Log.d(TAG, Objects.requireNonNull(task.getException().getMessage()));
-                                                }
-
-                                                Bundle data = new Bundle();
-                                                data.putBoolean("CODE_CHECK", codeCheck);
-                                                data.putBoolean("ENROLLED", isEnrolled);
-                                                data.putString("MOD_NAME", moduleName);
-                                                data.putString("QR_CODE", docID);
-                                                Intent intent = new Intent(ModulePicker.this, CodeScanner.class);
-                                                intent.putExtras(data);
-                                                startActivity(intent);
-                                            }
-                                        });
+                                        else if(codeCheck.equals(false)) {
+                                            Toast.makeText(ModulePicker.this, "Code not generated for this module" ,Toast.LENGTH_SHORT).show();
+                                        }
                                     }
                                 }
                                 else {
-                                    Log.d(TAG, Objects.requireNonNull(task.getException().getMessage()));
+                                    Toast.makeText(ModulePicker.this, "Query to retrieve data failed", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
                     }
                     else {
-                        Log.d(TAG, Objects.requireNonNull(task.getException()).getMessage());
+                        Toast.makeText(ModulePicker.this, "Student record does not exist", Toast.LENGTH_SHORT).show();
                     }
 
                 }
                 else {
-                    Log.d(TAG, Objects.requireNonNull(task.getException().getMessage()));
+                    Toast.makeText(ModulePicker.this, "Student could not be found", Toast.LENGTH_SHORT).show();;
                 }
             }
         });

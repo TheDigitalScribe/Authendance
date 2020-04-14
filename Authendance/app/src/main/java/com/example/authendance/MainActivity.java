@@ -10,7 +10,6 @@ import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
 
     private final static String TAG = "login";
     public static final String SHARED_PREFS = "sharedPrefs";
-    public static final String EMAIL = "email ";
+    public static final String EMAIL = "email";
     public static final String PASSWORD = "password";
 
     private EditText emailField;

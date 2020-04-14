@@ -25,7 +25,7 @@ public class StudentActivity extends AppCompatActivity {
         scanCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(StudentActivity.this, CodeScanner.class);
+                Intent intent = new Intent(StudentActivity.this, ModulePicker.class);
                 startActivity(intent);
             }
         });

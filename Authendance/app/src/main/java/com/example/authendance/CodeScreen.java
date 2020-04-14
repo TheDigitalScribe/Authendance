@@ -9,9 +9,11 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -27,7 +29,7 @@ import java.util.Locale;
 import java.util.Objects;
 
 public class CodeScreen extends AppCompatActivity {
-    private static final long START_TIME_IN_MILLIS = 30000;
+    private static final long START_TIME_IN_MILLIS = 600000;
     private static final String TAG = "CODE_SCREEN";
     private TextView codeField;
     private ImageView qrCode;
@@ -40,6 +42,7 @@ public class CodeScreen extends AppCompatActivity {
     private FirebaseAuth fAuth;
     private FirebaseFirestore db;
     private FirebaseUser user;
+    private String code;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,8 +69,7 @@ public class CodeScreen extends AppCompatActivity {
 
         //Retrieves generated QR code text from GenerateCode activity
         Intent intent = getIntent();
-        Bundle data = intent.getExtras();
-        String code = data.getString("QR_CODE");
+        code = intent.getStringExtra("QR_CODE");
 
         codeField.setText(code);
 
@@ -84,39 +86,45 @@ public class CodeScreen extends AppCompatActivity {
 
             qrCode.setImageBitmap(bitmap);
             startTimer();
+            Toast.makeText(CodeScreen.this, "Code generated", Toast.LENGTH_SHORT).show();
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void removeQR() {
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
 
-        Intent intent = getIntent();
-        Bundle data = intent.getExtras();
-        String docID = data.getString("DOC_ID");
+        //removeQR();
+    }
+
+    private void removeQR() {
 
         DocumentReference documentReference = db.collection("School")
                 .document("0DKXnQhueh18DH7TSjsb")
                 .collection("Section")
-                .document(docID);
+                .document(code);
 
-        documentReference.update("qrcode", null).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                Log.d(TAG, "Qr code removed");
-            }
-        })
+        documentReference.update("code_generated", false)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "Code successfully removed");
+                    }
+                })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.d(TAG, "qr code not removed");
+                        Log.d(TAG, "Code not removed");
                     }
                 });
     }
 
     private void startTimer() {
-        //mEndTime ensures timer is correct
+        //mEndTime ensures timer is correct when configuration changes occur
+
         mEndTime = System.currentTimeMillis() + mTimeLeftInMilliseconds;
         CountDownTimer mCountDownTimer = new CountDownTimer(mTimeLeftInMilliseconds, 1000) {
             @Override
@@ -130,22 +138,12 @@ public class CodeScreen extends AppCompatActivity {
             @Override
             public void onFinish() {
                 mTimerRunning = false;
-                qrCode.setVisibility(View.INVISIBLE);
-                //genCodeBtn.setVisibility(View.VISIBLE);
                 mTimeLeftInMilliseconds = START_TIME_IN_MILLIS;
                 codeField.setText(null);
                 //updateTimer();
                 removeQR();
                 finish();
-
-                /*String qrCode = codeField.getText().toString();
-                Intent studentIntent = new Intent(GenerateCode.this, CodeScanner.class);
-                studentIntent.putExtra("QR_CODE", qrCode);
-                startActivity(studentIntent);*/
-
-                //Removes QR code text from Firestore
-                //removeQR();
-
+                Toast.makeText(CodeScreen.this, "Time's up! QR code now invalid", Toast.LENGTH_SHORT).show();
             }
         }
         .start();

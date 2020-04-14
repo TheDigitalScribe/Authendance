@@ -15,7 +15,7 @@
         android:layout_marginTop="60dp"
         android:backgroundTint="#493535"
         android:fontFamily="@font/orbitron"
-        android:text="00:30"
+        android:text="10:00"
         android:textColor="?android:attr/colorForeground"
         android:textSize="36sp"
         android:textStyle="bold"

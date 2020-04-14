@@ -8,19 +8,26 @@ import androidx.core.content.ContextCompat;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.zxing.Result;
 
 import java.text.DateFormat;
 import java.util.Calendar;
+import java.util.Objects;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
@@ -29,10 +36,12 @@ import static android.Manifest.permission.CAMERA;
 public class CodeScanner extends AppCompatActivity implements ZXingScannerView.ResultHandler {
 
     private static final int REQUEST_CAMERA = 1;
+    private static final String TAG = "CODE_SCAN";
     private ZXingScannerView scannerView;
 
     private FirebaseAuth fAuth;
     private FirebaseFirestore db;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +52,7 @@ public class CodeScanner extends AppCompatActivity implements ZXingScannerView.R
         } else {
             requestCameraPermission();
         }
+
     }
 
     //Checks if camera permission has already been granted
@@ -65,8 +75,7 @@ public class CodeScanner extends AppCompatActivity implements ZXingScannerView.R
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
-                            Intent intent = new Intent(CodeScanner.this, HomeScreen.class);
-                            startActivity(intent);
+                            finish();
                         }
                     })
                     .create()
@@ -113,34 +122,81 @@ public class CodeScanner extends AppCompatActivity implements ZXingScannerView.R
     @Override
     public void handleResult(Result result) {
 
-        Intent codeIntent = getIntent();
-        final String qrCode = codeIntent.getStringExtra("QR_CODE");
+        Intent intent = getIntent();
+        Bundle data = intent.getExtras();
+        Boolean codeCheck = data.getBoolean("CODE_CHECK");
+        Boolean isEnrolled = data.getBoolean("ENROLLED");
+        String moduleName = data.getString("MOD_NAME");
+        String qrCode = data.getString("QR_CODE");
+
+        Log.d(TAG, "Result: " + result.getText());
+        Log.d(TAG, "codeCheck: " + codeCheck);
+        Log.d(TAG, "isEnrolled: " + isEnrolled);
+        Log.d(TAG, "module name: " + moduleName);
+        Log.d(TAG, "qrCode: " + qrCode);
 
         //Shows the current date
         Calendar calendar = Calendar.getInstance();
         final String currentDate = DateFormat.getDateInstance(DateFormat.FULL).format(calendar.getTime());
 
-        CollectionReference codeRef = db.collection("School").document("0DKXnQhueh18DH7TSjsb").collection("User");
+        if (qrCode.equals(result.getText())) {
+            if (isEnrolled.equals(false)) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(CodeScanner.this);
+                builder.setTitle("Not enrolled");
+                builder.setMessage("User is not enrolled in this module");
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(CodeScanner.this, StudentActivity.class);
+                        startActivity(intent);
+                    }
+                });
+                AlertDialog alert = builder.create();
+                alert.show();
+            }
+            else if (codeCheck.equals(false)) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(CodeScanner.this);
+                builder.setTitle("No QR Code Available");
+                builder.setMessage("The QR code for this module has either not been generated or the timer ran out");
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(CodeScanner.this, StudentActivity.class);
+                        startActivity(intent);
+                    }
+                });
+                AlertDialog alert = builder.create();
+                alert.show();
 
-        Query query = codeRef.whereEqualTo("qrcode", qrCode);
-
-        assert qrCode != null;
-        if (qrCode.matches(query.get().toString())) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Attendance Authenticated!");
-            builder.setMessage("Your attendance is recorded for " + " <class> " + "on " + currentDate + ".");
+            }
+            else if (isEnrolled.equals(true) && codeCheck.equals(true)) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(CodeScanner.this);
+                builder.setTitle("Attendance Authenticated!");
+                builder.setMessage("Your attendance for " + moduleName + " on " + currentDate + " has been recorded.");
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(CodeScanner.this, StudentActivity.class);
+                        startActivity(intent);
+                    }
+                });
+                AlertDialog alert = builder.create();
+                alert.show();
+            }
+        }
+        else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(CodeScanner.this);
+            builder.setTitle("Invalid QR code");
+            builder.setMessage("This code does not match any modules");
             builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    Intent intent = new Intent(CodeScanner.this, HomeScreen.class);
+                    Intent intent = new Intent(CodeScanner.this, StudentActivity.class);
                     startActivity(intent);
                 }
             });
             AlertDialog alert = builder.create();
             alert.show();
-        }
-        else {
-            Toast.makeText(CodeScanner.this, "QR code not valid", Toast.LENGTH_SHORT).show();
         }
     }
 }

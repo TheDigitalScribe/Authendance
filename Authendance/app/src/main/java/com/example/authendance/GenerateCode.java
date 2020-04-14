@@ -4,18 +4,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -32,10 +27,6 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import org.w3c.dom.Document;
-
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 
@@ -43,21 +34,20 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
     private static final long START_TIME_IN_MILLIS = 600000;
     private final static String TAG = "GEN_CODE";
 
-    private TextView codeField;
+    private Button genCodeBtn;
     private Spinner spinner;
-    private ImageView qrCode;
 
     private FirebaseAuth fAuth;
     private FirebaseFirestore db;
     private FirebaseUser user;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_generate_code);
 
-        codeField = findViewById(R.id.codeField);
-        Button genCodeBtn = findViewById(R.id.scanCodeBtn);
+        genCodeBtn = findViewById(R.id.scanCodeBtn);
 
         spinner = findViewById(R.id.spinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.Modules, android.R.layout.simple_spinner_item);
@@ -79,27 +69,12 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
         genCodeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                addQRCOde();
-
+                generateCode();
             }
         });
     }
 
-    //Method for generating random string for QR code generation
-    private String genRandString() {
-        char[] chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
-        StringBuilder stringBuilder = new StringBuilder();
-        Random random = new Random();
-
-        for(int i = 0; i < 26; i++) {
-            char c = chars[random.nextInt(chars.length)];
-            stringBuilder.append(c);
-        }
-        return stringBuilder.toString();
-    }
-
-    private void addQRCOde() {
+    private void generateCode() {
 
         String uid = Objects.requireNonNull(fAuth.getCurrentUser()).getUid();
         Log.d(TAG, "UID: " + uid);
@@ -123,53 +98,44 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
                         final String spinnerValue = spinner.getSelectedItem().toString();
                         Log.d(TAG, "Spinner value: " + spinnerValue);
 
-                        final CollectionReference sectionRef = db.collection("School")
+                        CollectionReference sectionRef = db.collection("School")
                                 .document("0DKXnQhueh18DH7TSjsb")
                                 .collection("Section");
 
-                        //Finds the correct document in the Section collection according to the spinner value
+                        //Looks for a document where the module name is the same as the spinner value
                         Query query = sectionRef.whereEqualTo("module", spinnerValue);
                         query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                             @Override
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                 if(task.isSuccessful()) {
-                                    for(QueryDocumentSnapshot documentSnapshot : task.getResult()) {
-                                        Log.d(TAG, documentSnapshot.getId());
+                                    for(QueryDocumentSnapshot documentSnapshot : Objects.requireNonNull(task.getResult())) {
 
                                         final String docID = documentSnapshot.getId();
-                                        final String code = genRandString();
+                                        Log.d(TAG, "docID: " + docID);
 
-                                        Map<String, Object> data = new HashMap<>();
-                                        data.put("qrcode", code);
-
+                                        //The ID of the corresponding document is retrieved and used to update the code_generated field to true
                                         DocumentReference documentReference = db.collection("School")
                                                 .document("0DKXnQhueh18DH7TSjsb")
                                                 .collection("Section")
                                                 .document(docID);
 
-                                        documentReference.update("qrcode", code)
+                                        documentReference.update("code_generated", true)
                                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                     @Override
                                                     public void onSuccess(Void aVoid) {
-                                                        Log.d(TAG, "QR code added");
-
-                                                        //Passes document ID and qr code to CodeScreen activity
-                                                        Bundle data = new Bundle();
-                                                        data.putString("DOC_ID", docID);
-                                                        data.putString("QR_CODE", code);
+                                                        Log.d(TAG, "Code generated successfully");
 
                                                         Intent intent = new Intent(GenerateCode.this, CodeScreen.class);
-                                                        intent.putExtras(data);
+                                                        intent.putExtra("QR_CODE", docID);
                                                         startActivity(intent);
                                                     }
                                                 })
                                                 .addOnFailureListener(new OnFailureListener() {
                                                     @Override
                                                     public void onFailure(@NonNull Exception e) {
-                                                        Log.d(TAG, "QR not added");
+                                                        Log.d(TAG, "Code failed to generate");
                                                     }
                                                 });
-
                                     }
                                 }
                                 else {

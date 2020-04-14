@@ -5,34 +5,32 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/backgroundapp"
-    tools:context=".GenerateCode">
+    tools:context=".ModulePicker">
 
     <Button
         android:id="@+id/scanCodeBtn"
         android:layout_width="250dp"
         android:layout_height="60dp"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="57dp"
         android:background="@drawable/custom_button"
         android:fontFamily="@font/raleway"
-        android:text="@string/generate_code"
+        android:text="@string/scan_code"
         android:textAllCaps="false"
         android:textColor="#330000"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spinner" />
+        app:layout_constraintTop_toBottomOf="@+id/stuSpinner" />
 
     <Spinner
-        android:id="@+id/spinner"
-        android:layout_width="0dp"
-        android:layout_height="58dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="228dp"
-        android:layout_marginEnd="32dp"
-        android:backgroundTint="@color/colorPrimary"
-        android:backgroundTintMode="multiply"
+        android:id="@+id/stuSpinner"
+        android:layout_width="391dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="242dp"
+        android:layout_marginEnd="1dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

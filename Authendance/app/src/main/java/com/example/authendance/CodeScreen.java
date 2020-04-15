@@ -96,7 +96,7 @@ public class CodeScreen extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
 
-        //removeQR();
+        removeQR();
     }
 
     private void removeQR() {

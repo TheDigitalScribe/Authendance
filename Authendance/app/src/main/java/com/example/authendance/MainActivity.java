@@ -1,16 +1,21 @@
 package com.example.authendance;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
     private EditText passwordField;
     private String emailContent;
     private String passwordContent;
+    private ProgressBar progressBar;
+    private TextView forgotPasswordText;
 
     private FirebaseAuth fAuth;
     private FirebaseFirestore db;
@@ -48,8 +55,11 @@ public class MainActivity extends AppCompatActivity {
 
         emailField = findViewById(R.id.emailField);
         passwordField = findViewById(R.id.passwordField);
-        Button signInBtn = findViewById(R.id.signInBtn);
-        final TextView forgotPasswordText = findViewById(R.id.forgotPasswordText);
+        final Button signInBtn = findViewById(R.id.signInBtn);
+        forgotPasswordText = findViewById(R.id.forgotPasswordText);
+        progressBar = findViewById(R.id.circleProgressBar);
+
+        progressBar.setVisibility(View.GONE);
 
         db = FirebaseFirestore.getInstance();
         fAuth = FirebaseAuth.getInstance();
@@ -75,6 +85,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String email = emailField.getText().toString();
                 String password = passwordField.getText().toString();
+
+                progressBar.setVisibility(View.VISIBLE);
 
                 //If email and password fields are properly filled in
                 if(validateEmail() && validatePassword()) {
@@ -132,6 +144,7 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                     else {
                                         Toast.makeText(MainActivity.this, Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_LONG).show();
+                                        progressBar.setVisibility(View.GONE);
                                         forgotPasswordText.setVisibility(View.VISIBLE);
                                         //Log.d(TAG, task.getException().getMessage());
                                     }
@@ -164,6 +177,21 @@ public class MainActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         fAuth.removeAuthStateListener(fAuthListener);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        progressBar.setVisibility(View.GONE);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        progressBar.setVisibility(View.GONE);
+        forgotPasswordText.setVisibility(View.GONE);
     }
 
     //Ensures email and password fields are filled out correctly before login
@@ -224,21 +252,4 @@ public class MainActivity extends AppCompatActivity {
         emailField.setText(emailContent);
         passwordField.setText(passwordContent);
     }
-
-    /*@Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-        outState.putString("emailField", emailField.getText().toString());
-        outState.putString("passwordField", passwordField.getText().toString());
-    }
-
-    @Override
-    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-
-        emailField.setText(savedInstanceState.getString("emailField"));
-        passwordField.setText(savedInstanceState.getString("passwordField"));
-    }*/
-
 }

@@ -25,17 +25,14 @@ public class StudentActivity extends AppCompatActivity {
     private FirebaseAuth fAuth;
     private FirebaseFirestore db;
 
-    private CardView scanCard;
-    private CardView moduleCard;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student);
 
         TextView nameDisplay = findViewById(R.id.nameDisplay);
-        scanCard = findViewById(R.id.scanCard);
-        moduleCard = findViewById(R.id.moduleCard);
+        CardView scanCard = findViewById(R.id.scanCard);
+        CardView moduleCard = findViewById(R.id.moduleCard);
 
         db = FirebaseFirestore.getInstance();
         fAuth = FirebaseAuth.getInstance();
@@ -59,6 +56,7 @@ public class StudentActivity extends AppCompatActivity {
         });
     }
 
+    //Method to get current user's name to display on the dashboard
     private void getName(final TextView nameDisplay) {
 
         String uid = Objects.requireNonNull(fAuth.getCurrentUser()).getUid();

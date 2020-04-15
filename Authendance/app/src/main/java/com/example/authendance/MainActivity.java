@@ -3,14 +3,10 @@ package com.example.authendance;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
@@ -19,7 +15,6 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -44,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     private String passwordContent;
     private ProgressBar progressBar;
     private TextView forgotPasswordText;
+    Button signInBtn;
 
     private FirebaseAuth fAuth;
     private FirebaseFirestore db;
@@ -56,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
 
         emailField = findViewById(R.id.emailField);
         passwordField = findViewById(R.id.passwordField);
-        final Button signInBtn = findViewById(R.id.signInBtn);
+        signInBtn = findViewById(R.id.signInBtn);
         forgotPasswordText = findViewById(R.id.forgotPasswordText);
         progressBar = findViewById(R.id.circleProgressBar);
 
@@ -104,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
                                         //User's UID is retrieved to find their record in the database
                                         String uid = Objects.requireNonNull(fAuth.getCurrentUser()).getUid();
 
-                                        //Reference to current user's record in the database
+                                        //Searches for current user's record in the database based on UID
                                         DocumentReference userRef = db.collection("School")
                                                 .document("0DKXnQhueh18DH7TSjsb")
                                                 .collection("User")
@@ -197,7 +193,7 @@ public class MainActivity extends AppCompatActivity {
         forgotPasswordText.setVisibility(View.GONE);
     }
 
-    //Ensures email and password fields are filled out correctly before login
+    //Ensures email filled is filled out correctly before login
     private boolean validateEmail() {
         String email = emailField.getText().toString().trim();
 
@@ -207,6 +203,7 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
 
+        //Ensures email address follows a certain pattern. Select EMAIL_ADDRESS and click "CTRL B" for more info
         else if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             emailField.setError("Please enter a valid email address");
             emailField.requestFocus();
@@ -232,7 +229,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    //Saves email and password in the text fields
+    //Saves the valid email and password that were last entered in the text fields
     public void saveData() {
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -245,12 +242,14 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "Email: " + emailField.getText().toString() + " and password " + passwordField.getText().toString() + " saved");
     }
 
+    //Loads the last entered email and password
     public void loadData() {
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         emailContent = sharedPreferences.getString(EMAIL, "");
         passwordContent = sharedPreferences.getString(PASSWORD, "");
     }
 
+    //Sets the text of these text fields to whatever was saved
     public void updateFields() {
         emailField.setText(emailContent);
         passwordField.setText(passwordContent);

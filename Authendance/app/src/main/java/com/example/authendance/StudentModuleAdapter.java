@@ -11,8 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 
-import java.util.ArrayList;
-
 public class StudentModuleAdapter extends FirestoreRecyclerAdapter<StudentModuleItem, StudentModuleAdapter.ModuleHolder> {
 
     public StudentModuleAdapter(@NonNull FirestoreRecyclerOptions<StudentModuleItem> options) {

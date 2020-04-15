@@ -1,5 +1,6 @@
 package com.example.authendance;
 
+//Object class for the student modules to be displayed in a RecyclerView
 public class StudentModuleItem {
     private String name;
 
@@ -8,7 +9,7 @@ public class StudentModuleItem {
     }
 
     public StudentModuleItem() {
-
+        //Empty constructor
     }
 
     public String getName() {

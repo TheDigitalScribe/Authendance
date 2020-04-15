@@ -24,6 +24,7 @@ import java.util.Objects;
 
 public class StudentModules extends AppCompatActivity {
     private StudentModuleAdapter moduleAdapter;
+
     private FirebaseAuth fAuth;
     private FirebaseFirestore db;
 
@@ -36,7 +37,6 @@ public class StudentModules extends AppCompatActivity {
         fAuth = FirebaseAuth.getInstance();
 
         getModules();
-
     }
 
     private void getModules() {
@@ -48,7 +48,7 @@ public class StudentModules extends AppCompatActivity {
                 .document(uid)
                 .collection("Modules");
 
-        Query query = studentRef.orderBy("name", Query.Direction.DESCENDING);
+        Query query = studentRef.orderBy("name", Query.Direction.ASCENDING);
 
         FirestoreRecyclerOptions<StudentModuleItem> modules = new FirestoreRecyclerOptions.Builder<StudentModuleItem>()
                 .setQuery(query, StudentModuleItem.class)

@@ -25,13 +25,17 @@ public class StudentActivity extends AppCompatActivity {
     private FirebaseAuth fAuth;
     private FirebaseFirestore db;
 
+    private CardView scanCard;
+    private CardView moduleCard;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student);
 
         TextView nameDisplay = findViewById(R.id.nameDisplay);
-        CardView scanCard = findViewById(R.id.scanCard);
+        scanCard = findViewById(R.id.scanCard);
+        moduleCard = findViewById(R.id.moduleCard);
 
         db = FirebaseFirestore.getInstance();
         fAuth = FirebaseAuth.getInstance();
@@ -42,6 +46,14 @@ public class StudentActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(StudentActivity.this, ModulePicker.class);
+                startActivity(intent);
+            }
+        });
+
+        moduleCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(StudentActivity.this, StudentModules.class);
                 startActivity(intent);
             }
         });

@@ -56,7 +56,7 @@ public class ModulePicker extends AppCompatActivity implements AdapterView.OnIte
         fAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         user = FirebaseAuth.getInstance().getCurrentUser();
-        uid = fAuth.getCurrentUser().getUid();
+        uid = Objects.requireNonNull(fAuth.getCurrentUser()).getUid();
 
         codeCheck = false;
 

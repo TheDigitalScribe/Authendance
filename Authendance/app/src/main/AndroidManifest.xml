@@ -9,20 +9,18 @@
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
     <application
-        android:allowBackup="true"
         android:icon="@mipmap/authendancelogo"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/authendancelogo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ModulePicker"></activity>
+        <activity android:name=".StudentModules"></activity>
+        <activity android:name=".ModulePicker" />
         <activity android:name=".CodeScreen" />
         <activity android:name=".PasswordReset" />
         <activity android:name=".AdminActivity" />
         <activity android:name=".TeacherActivity" />
         <activity android:name=".StudentActivity" />
-        <activity android:name=".Teacher" />
-        <activity android:name=".Student" />
         <activity android:name=".RegisterScreen" />
         <activity android:name=".GenerateCode" />
         <activity android:name=".CodeScanner" />

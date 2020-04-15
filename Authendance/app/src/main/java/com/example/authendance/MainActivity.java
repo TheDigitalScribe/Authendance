@@ -6,10 +6,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
@@ -78,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
+
         forgotPasswordText.setVisibility(View.INVISIBLE);
 
         signInBtn.setOnClickListener(new View.OnClickListener() {
@@ -92,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
                 if(validateEmail() && validatePassword()) {
                     fAuth.signInWithEmailAndPassword(email, password)
                             .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                @RequiresApi(api = Build.VERSION_CODES.KITKAT)
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if(task.isSuccessful()) {

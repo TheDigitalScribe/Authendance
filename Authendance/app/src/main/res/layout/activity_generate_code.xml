@@ -7,11 +7,38 @@
     android:background="@drawable/backgroundapp"
     tools:context=".GenerateCode">
 
+    <TextView
+        android:id="@+id/pickModulePrompt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="115dp"
+        android:fontFamily="@font/raleway"
+        android:gravity="center"
+        android:text="Please choose which module to generate a code for"
+        android:textColor="#000000"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pickModulesText" />
+
+    <TextView
+        android:id="@+id/pickModulesText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="75dp"
+        android:fontFamily="@font/raleway"
+        android:text="Modules"
+        android:textColor="@android:color/white"
+        android:textSize="30sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <Button
         android:id="@+id/scanCodeBtn"
         android:layout_width="250dp"
         android:layout_height="60dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="30dp"
         android:background="@drawable/custom_button"
         android:fontFamily="@font/raleway"
         android:text="@string/generate_code"
@@ -27,11 +54,11 @@
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="230dp"
+        android:layout_marginTop="50dp"
         android:layout_marginEnd="32dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/pickModulePrompt" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

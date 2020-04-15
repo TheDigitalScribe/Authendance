@@ -7,7 +7,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.authendance"
-        minSdkVersion 21
+        minSdkVersion 19
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
@@ -40,6 +40,10 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:19.3.0'
     implementation 'com.google.firebase:firebase-database:19.2.1'
 
+    // FirebaseUI for Cloud Firestore
+    implementation 'com.firebaseui:firebase-ui-firestore:6.2.1'
+
+
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
@@ -49,9 +53,10 @@ dependencies {
 
     implementation "androidx.cardview:cardview:1.0.0"
 
+
     //ZXing library to scan/generate QR code
-    implementation 'com.google.zxing:core:3.2.1'
-    implementation 'me.dm7.barcodescanner:zxing:1.9'
+    implementation 'com.google.zxing:core:3.4.0'
+    implementation 'me.dm7.barcodescanner:zxing:1.9.13'
     implementation 'net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent:2.1.0'
 }
 apply plugin: 'com.google.gms.google-services'

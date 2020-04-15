@@ -84,6 +84,7 @@
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
+                android:id="@+id/moduleCard"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
@@ -111,7 +112,7 @@
                         android:fontFamily="@font/raleway"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="My Classes"/>
+                        android:text="My Modules"/>
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>

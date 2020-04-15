@@ -9,14 +9,26 @@ Authendance is a student attendance tracker app with QR code implementation, bui
 - Minimum SDK version: API level 19 **NB: This may change due to libraries, widgets etc requiring higher API levels.**
 
 # Screenshots
-Login Screen 
+Login 
 
 <img src="Screenshots/loginscreen.jpg" width="200">
 
-Scan Screen
+Student Dashboard
+
+<img src="Screenshots/studentactivity.jpg" width="200">
+
+Module List
+
+<img src="Screenshots/studentmodules.jpg" width="200">
+
+Module Selector
+
+<img src="Screenshots/modulepicker.jpg" width="200">
+
+Code Screen
+
+<img src="Screenshots/codescreen.jpg" width="200">
+
+Code Scanner
 
 <img src="Screenshots/codescanner.jpg" width="200">
-
-Generate Screen
-
-<img src="Screenshots/codegenerated.jpg" width="200">

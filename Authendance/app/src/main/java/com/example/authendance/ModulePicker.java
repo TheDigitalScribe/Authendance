@@ -119,6 +119,8 @@ public class ModulePicker extends AppCompatActivity implements AdapterView.OnIte
                     //Retrieves student's ID from their record if document exists
                     if(document != null) {
 
+                        final String studentID = document.getString("student_id");
+
                         //Spinner value determines which module they want to record their attendance for
                         final String spinnerValue = stuSpinner.getSelectedItem().toString();
                         //Log.d(TAG, "Spinner value: " + spinnerValue);
@@ -135,17 +137,20 @@ public class ModulePicker extends AppCompatActivity implements AdapterView.OnIte
                                 if (task.isSuccessful()) {
                                     for (QueryDocumentSnapshot documentSnapshot : Objects.requireNonNull(task.getResult())) {
 
-                                        codeCheck = documentSnapshot.getBoolean("code_generated");
+                                        String qrCode = documentSnapshot.getString("qr_code");
                                         final String docID = documentSnapshot.getId();
                                         final String moduleName = documentSnapshot.getString("module");
-                                        //Log.d(TAG, "docID: " + docID);
-                                        //Log.d(TAG, "code_generated: " + codeCheck);
+
+                                        if(qrCode != null) {
+                                            codeCheck = true;
+                                        }
 
                                         //If a code was generated for the module, pass in the module name and document ID to the CodeScanner class
                                         if(codeCheck.equals(true)) {
                                             Bundle data = new Bundle();
                                             data.putString("MOD_NAME", moduleName);
-                                            data.putString("QR_CODE", docID);
+                                            data.putString("QR_CODE", qrCode);
+                                            data.putString("STU_ID", studentID);
                                             Intent intent = new Intent(ModulePicker.this, CodeScanner.class);
                                             intent.putExtras(data);
                                             startActivity(intent);

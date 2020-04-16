@@ -15,6 +15,8 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
@@ -26,7 +28,12 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.zxing.Result;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
@@ -42,10 +49,12 @@ public class CodeScanner extends AppCompatActivity implements ZXingScannerView.R
     private FirebaseAuth fAuth;
     private FirebaseFirestore db;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        fAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
 
         if (checkPermission()) {
             Toast.makeText(CodeScanner.this, "Please scan the QR code now.", Toast.LENGTH_SHORT).show();
@@ -54,6 +63,8 @@ public class CodeScanner extends AppCompatActivity implements ZXingScannerView.R
         }
 
     }
+
+
 
     //Checks if camera permission has already been granted
     private boolean checkPermission() {
@@ -126,29 +137,31 @@ public class CodeScanner extends AppCompatActivity implements ZXingScannerView.R
         Bundle data = intent.getExtras();
         String moduleName = data.getString("MOD_NAME");
         String qrCode = data.getString("QR_CODE");
+        String studentID = data.getString("STU_ID");
 
         Log.d(TAG, "Result: " + result.getText());
         Log.d(TAG, "module name: " + moduleName);
         Log.d(TAG, "qrCode: " + qrCode);
+        Log.d(TAG, "Student ID: " + studentID);
 
-        //Shows the current date
-        Calendar calendar = Calendar.getInstance();
-        final String currentDate = DateFormat.getDateInstance(DateFormat.DATE_FIELD).format(calendar.getTime());
-
+        assert qrCode != null;
         if (qrCode.equals(result.getText())) {
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(CodeScanner.this);
-                builder.setTitle("Attendance Authenticated!");
-                builder.setMessage("Your attendance for " + moduleName + " on " + currentDate + " has been recorded.");
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            //Gets current date
+            Calendar calendar = Calendar.getInstance();
+            String currentDate = DateFormat.getDateInstance().format(calendar.getTime());
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(CodeScanner.this);
+            builder.setTitle("Attendance Authenticated!");
+            builder.setMessage("Your attendance for " + moduleName + " on " + currentDate + " has been recorded.");
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent intent = new Intent(CodeScanner.this, StudentActivity.class);
+                    public void onClick(DialogInterface dialog, int which) { Intent intent = new Intent(CodeScanner.this, StudentActivity.class);
                         startActivity(intent);
                     }
                 });
-                AlertDialog alert = builder.create();
-                alert.show();
+            AlertDialog alert = builder.create();
+            alert.show();
         }
         else {
             AlertDialog.Builder builder = new AlertDialog.Builder(CodeScanner.this);

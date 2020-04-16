@@ -26,14 +26,18 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.WriteBatch;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 
 public class GenerateCode extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
-    private static final long START_TIME_IN_MILLIS = 600000;
     private final static String TAG = "GEN_CODE";
 
     private Button genCodeBtn;
@@ -44,7 +48,6 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
     private FirebaseUser user;
 
     private String uid;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,14 +62,12 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(this);
 
-        //populateSpinner();
-
         fAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         user = FirebaseAuth.getInstance().getCurrentUser();
 
         uid = fAuth.getCurrentUser().getUid();
-        Log.d(TAG, uid);
+        //Log.d(TAG, uid);
 
         if(user != null) {
             Log.d(TAG, "User found");
@@ -74,6 +75,8 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
         else {
             Log.d(TAG, "User not found");
         }
+
+        //Log.d(TAG, genRandomString());
 
         populateSpinner();
 
@@ -106,7 +109,7 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
                     for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
                         String module = document.getString("name");
                         modules.add(module);
-                        Log.d(TAG, module);
+                        //Log.d(TAG, module);
                     }
                 }
                 adapter.notifyDataSetChanged();
@@ -134,41 +137,95 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
                     final DocumentSnapshot document = task.getResult();
                     if(document != null) {
                         String teacherID = document.getString("teacher_id");
-                        Log.d(TAG, "Teacher ID: " + teacherID);
+                        //Log.d(TAG, "Teacher ID: " + teacherID);
 
                         final String spinnerValue = spinner.getSelectedItem().toString();
-                        Log.d(TAG, "Spinner value: " + spinnerValue);
+                        //Log.d(TAG, "Spinner value: " + spinnerValue);
 
                         CollectionReference sectionRef = db.collection("School")
                                 .document("0DKXnQhueh18DH7TSjsb")
                                 .collection("Section");
 
                         //Looks for a document where the module name is the same as the spinner value
-                        Query query = sectionRef.whereEqualTo("module", spinnerValue);
+                        final Query query = sectionRef.whereEqualTo("module", spinnerValue);
                         query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                             @Override
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                 if(task.isSuccessful()) {
-                                    for(QueryDocumentSnapshot documentSnapshot : Objects.requireNonNull(task.getResult())) {
+                                    for(final QueryDocumentSnapshot documentSnapshot : Objects.requireNonNull(task.getResult())) {
 
                                         final String docID = documentSnapshot.getId();
-                                        Log.d(TAG, "docID: " + docID);
+                                        //Log.d(TAG, "docID: " + docID);
 
-                                        //The ID of the corresponding document is retrieved and used to update the code_generated field to true
-                                        DocumentReference documentReference = db.collection("School")
+                                        //The ID of the corresponding document is retrieved
+                                        final DocumentReference documentReference = db.collection("School")
                                                 .document("0DKXnQhueh18DH7TSjsb")
                                                 .collection("Section")
                                                 .document(docID);
 
-                                        documentReference.update("code_generated", true)
+                                        //Random QR code generated in the qr_code field of selected module
+                                        documentReference.update("qr_code", genRandomString())
                                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                     @Override
                                                     public void onSuccess(Void aVoid) {
                                                         Log.d(TAG, "Code generated successfully");
 
-                                                        Intent intent = new Intent(GenerateCode.this, CodeScreen.class);
-                                                        intent.putExtra("QR_CODE", docID);
-                                                        startActivity(intent);
+                                                        //Retrieves the value of the qr_code field to pass into the
+                                                        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                                if(task.isSuccessful()) {
+
+                                                                    DocumentSnapshot snapshot = task.getResult();
+                                                                    if(snapshot != null) {
+                                                                        String qrCode = snapshot.getString("qr_code");
+                                                                        Log.d(TAG, "QR code: " + qrCode);
+
+                                                                        Intent intent = new Intent(GenerateCode.this, CodeScreen.class);
+                                                                        intent.putExtra("QR_CODE", qrCode);
+                                                                        intent.putExtra("MOD_ID", docID);
+                                                                        startActivity(intent);
+                                                                    }
+                                                                }
+                                                            }
+                                                        });
+
+                                                        CollectionReference studentCol = db.collection("School")
+                                                                .document("0DKXnQhueh18DH7TSjsb")
+                                                                .collection("Section")
+                                                                .document(docID)
+                                                                .collection("Students");
+
+                                                        studentCol.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                                if(task.isSuccessful()) {
+                                                                    for (QueryDocumentSnapshot snapshot : Objects.requireNonNull(task.getResult())) {
+                                                                        if(snapshot != null) {
+
+                                                                            WriteBatch batch = db.batch();
+                                                                            Map<String, Object> students = new HashMap<>();
+                                                                            students.put(snapshot.getId(), false);
+                                                                            //Log.d(TAG, "Ids: " + stuID);
+
+                                                                            Calendar calendar = Calendar.getInstance();
+                                                                            String currentDate = DateFormat.getDateInstance().format(calendar.getTime());
+
+                                                                            db.collection("School")
+                                                                                .document("0DKXnQhueh18DH7TSjsb")
+                                                                                .collection("Attendance")
+                                                                                .document(docID)
+                                                                                .collection("Date")
+                                                                                .document(currentDate);
+
+
+
+                                                                        }
+                                                                    }
+                                                                }
+
+                                                            }
+                                                        });
                                                     }
                                                 })
                                                 .addOnFailureListener(new OnFailureListener() {
@@ -191,6 +248,18 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
                 }
             }
         });
+    }
+
+    private String genRandomString() {
+        char[] characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
+        StringBuilder stringBuilder = new StringBuilder();
+        Random random = new Random();
+        for(int i = 0; i < 25; i++) {
+            char c = characters[random.nextInt(characters.length)];
+            stringBuilder.append(c);
+        }
+        return stringBuilder.toString();
+
     }
 
     @Override

@@ -41,8 +41,8 @@ public class CodeScreen extends AppCompatActivity {
 
     private FirebaseAuth fAuth;
     private FirebaseFirestore db;
-    private FirebaseUser user;
     private String code;
+    private String docID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +51,7 @@ public class CodeScreen extends AppCompatActivity {
 
         fAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
-        user = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         if(user != null) {
             Log.d(TAG, "User found");
@@ -67,10 +67,11 @@ public class CodeScreen extends AppCompatActivity {
         qrCode = findViewById(R.id.qrCode);
         mTextViewCountDown = findViewById(R.id.countDownTimerText);
 
-        //Retrieves generated QR code text from GenerateCode activity
+        //Retrieves generated QR code text and document ID for module from GenerateCode activity
         Intent intent = getIntent();
         code = intent.getStringExtra("QR_CODE");
-        codeField.setText("");
+        docID = intent.getStringExtra("MOD_ID");
+        codeField.setText(code);
 
         try {
             assert code != null;
@@ -101,12 +102,13 @@ public class CodeScreen extends AppCompatActivity {
 
     private void removeQR() {
 
+        //Searches for correct module to remove QR from
         DocumentReference documentReference = db.collection("School")
                 .document("0DKXnQhueh18DH7TSjsb")
                 .collection("Section")
-                .document(code);
+                .document(docID);
 
-        documentReference.update("code_generated", false)
+        documentReference.update("qr_code", null)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
@@ -122,9 +124,10 @@ public class CodeScreen extends AppCompatActivity {
     }
 
     private void startTimer() {
-        //mEndTime ensures timer is correct when configuration changes occur
 
+        //mEndTime ensures timer is correct when configuration changes occur
         mEndTime = System.currentTimeMillis() + mTimeLeftInMilliseconds;
+
         CountDownTimer mCountDownTimer = new CountDownTimer(mTimeLeftInMilliseconds, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
@@ -181,5 +184,4 @@ public class CodeScreen extends AppCompatActivity {
             startTimer();
         }
     }
-
 }

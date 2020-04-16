@@ -62,6 +62,7 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(this);
 
+
         fAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         user = FirebaseAuth.getInstance().getCurrentUser();

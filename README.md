@@ -32,3 +32,7 @@ Code Screen
 Code Scanner
 
 <img src="Screenshots/codescanner.jpg" width="200">
+
+Reset Password 
+
+<img src="Screenshots/resetpassword.jpg" width="200">

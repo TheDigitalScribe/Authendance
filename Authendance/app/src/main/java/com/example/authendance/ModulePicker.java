@@ -149,6 +149,7 @@ public class ModulePicker extends AppCompatActivity implements AdapterView.OnIte
                                         if(codeCheck.equals(true)) {
                                             Bundle data = new Bundle();
                                             data.putString("MOD_NAME", moduleName);
+                                            data.putString("MOD_ID", docID);
                                             data.putString("QR_CODE", qrCode);
                                             data.putString("STU_ID", studentID);
                                             Intent intent = new Intent(ModulePicker.this, CodeScanner.class);

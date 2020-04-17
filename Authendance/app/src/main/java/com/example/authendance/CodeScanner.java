@@ -21,6 +21,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -29,6 +30,7 @@ import com.google.zxing.Result;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -137,6 +139,7 @@ public class CodeScanner extends AppCompatActivity implements ZXingScannerView.R
         Bundle data = intent.getExtras();
         String moduleName = data.getString("MOD_NAME");
         String qrCode = data.getString("QR_CODE");
+        String docID = data.getString("MOD_ID");
         String studentID = data.getString("STU_ID");
 
         Log.d(TAG, "Result: " + result.getText());
@@ -147,9 +150,16 @@ public class CodeScanner extends AppCompatActivity implements ZXingScannerView.R
         assert qrCode != null;
         if (qrCode.equals(result.getText())) {
 
-            //Gets current date
-            Calendar calendar = Calendar.getInstance();
-            String currentDate = DateFormat.getDateInstance().format(calendar.getTime());
+            String currentDate = java.text.DateFormat.getDateInstance().format(new Date());
+
+            DocumentReference documentReference = db.collection("School")
+                    .document("0DKXnQhueh18DH7TSjsb")
+                    .collection("Attendance")
+                    .document(docID)
+                    .collection("Date")
+                    .document(currentDate);
+
+            documentReference.update("students_attended", FieldValue.arrayUnion(studentID));
 
             AlertDialog.Builder builder = new AlertDialog.Builder(CodeScanner.this);
             builder.setTitle("Attendance Authenticated!");

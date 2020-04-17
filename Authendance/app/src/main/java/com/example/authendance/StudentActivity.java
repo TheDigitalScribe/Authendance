@@ -18,6 +18,8 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import org.w3c.dom.Text;
+
 import java.util.Objects;
 
 public class StudentActivity extends AppCompatActivity {
@@ -31,13 +33,14 @@ public class StudentActivity extends AppCompatActivity {
         setContentView(R.layout.activity_student);
 
         TextView nameDisplay = findViewById(R.id.nameDisplay);
+        TextView idDisplay = findViewById(R.id.idDisplay);
         CardView scanCard = findViewById(R.id.scanCard);
         CardView moduleCard = findViewById(R.id.moduleCard);
 
         db = FirebaseFirestore.getInstance();
         fAuth = FirebaseAuth.getInstance();
 
-        getName(nameDisplay);
+        getNameID(nameDisplay, idDisplay);
 
         scanCard.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,7 +60,7 @@ public class StudentActivity extends AppCompatActivity {
     }
 
     //Method to get current user's name to display on the dashboard
-    private void getName(final TextView nameDisplay) {
+    private void getNameID(final TextView nameDisplay, final TextView idDisplay) {
 
         String uid = Objects.requireNonNull(fAuth.getCurrentUser()).getUid();
 
@@ -74,9 +77,11 @@ public class StudentActivity extends AppCompatActivity {
                 if(task.isSuccessful()) {
                     if(documentSnapshot != null) {
                         String studentName = documentSnapshot.getString("name");
+                        String studentID = documentSnapshot.getString("student_id");
                         Log.d("studentName", "Student name: " + studentName);
 
                         nameDisplay.setText(studentName);
+                        idDisplay.setText(studentID);
                     }
                     else {
                         Toast.makeText(StudentActivity.this, "Document not found", Toast.LENGTH_SHORT).show();

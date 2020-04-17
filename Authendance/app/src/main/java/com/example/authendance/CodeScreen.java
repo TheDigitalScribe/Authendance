@@ -32,7 +32,7 @@ import java.util.Locale;
 import java.util.Objects;
 
 public class CodeScreen extends AppCompatActivity {
-    private static final long START_TIME = 180000;
+    private static final long START_TIME = 600000;
     private static final String TAG = "CODE_SCREEN";
 
     private TextView codeField;
@@ -51,6 +51,9 @@ public class CodeScreen extends AppCompatActivity {
 
     private BitMatrix bitMatrix;
     private Bitmap bitmap;
+
+    private long backPressed;
+    private Toast backPressToast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +89,24 @@ public class CodeScreen extends AppCompatActivity {
 
         Toast.makeText(CodeScreen.this, "Please do not exit screen or code will be reset!", Toast.LENGTH_SHORT).show();
     }
+
+    //This method ensures activity isn't closed after only one press of the back button
+    @Override
+    public void onBackPressed() {
+
+        //Checks if back button was clicked twice within 2 seconds
+        if(backPressed + 2000 > System.currentTimeMillis()) {
+            backPressToast.cancel();
+            super.onBackPressed();
+            return;
+        }
+        else {
+            backPressToast = Toast.makeText(CodeScreen.this, "Are you sure you want to exit? Code will be reset.", Toast.LENGTH_SHORT);
+            backPressToast.show();
+        }
+        backPressed = System.currentTimeMillis();
+    }
+
 
     private void createQR() {
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
@@ -128,7 +149,6 @@ public class CodeScreen extends AppCompatActivity {
             public void onFinish() {
                 timerRunning = false;
                 codeField.setText(null);
-                //updateTimer();
                 removeQR();
                 Toast.makeText(CodeScreen.this, "Time's up! QR code now invalid", Toast.LENGTH_SHORT).show();
                 finish();
@@ -151,14 +171,15 @@ public class CodeScreen extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
 
-        removeQR();
+        //removeQR();
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onStop() {
+        super.onStop();
 
-        removeQR();
+        //removeQR();
+        finish();
     }
 
     private void removeQR() {

@@ -5,38 +5,18 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Toast;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.zxing.Result;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
@@ -65,8 +45,6 @@ public class CodeScanner extends AppCompatActivity implements ZXingScannerView.R
         }
 
     }
-
-
 
     //Checks if camera permission has already been granted
     private boolean checkPermission() {
@@ -131,7 +109,6 @@ public class CodeScanner extends AppCompatActivity implements ZXingScannerView.R
         scannerView.stopCamera();
     }
 
-    //Shows alert dialog when QR code is scanned
     @Override
     public void handleResult(Result result) {
 
@@ -142,16 +119,13 @@ public class CodeScanner extends AppCompatActivity implements ZXingScannerView.R
         String docID = data.getString("MOD_ID");
         String studentID = data.getString("STU_ID");
 
-        Log.d(TAG, "Result: " + result.getText());
-        Log.d(TAG, "module name: " + moduleName);
-        Log.d(TAG, "qrCode: " + qrCode);
-        Log.d(TAG, "Student ID: " + studentID);
-
         assert qrCode != null;
         if (qrCode.equals(result.getText())) {
 
+            //Gets current date
             String currentDate = java.text.DateFormat.getDateInstance().format(new Date());
 
+            //Looks for the current date document to record the attendance for the module
             DocumentReference documentReference = db.collection("School")
                     .document("0DKXnQhueh18DH7TSjsb")
                     .collection("Attendance")
@@ -159,21 +133,22 @@ public class CodeScanner extends AppCompatActivity implements ZXingScannerView.R
                     .collection("Date")
                     .document(currentDate);
 
+            //Adds the current user to the "students_attended" array
             documentReference.update("students_attended", FieldValue.arrayUnion(studentID));
 
             AlertDialog.Builder builder = new AlertDialog.Builder(CodeScanner.this);
             builder.setTitle("Attendance Authenticated!");
             builder.setMessage("Your attendance for " + moduleName + " on " + currentDate + " has been recorded.");
             builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) { Intent intent = new Intent(CodeScanner.this, StudentActivity.class);
-                        startActivity(intent);
-                    }
-                });
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Intent intent = new Intent(CodeScanner.this, StudentActivity.class);
+                    startActivity(intent);
+                }
+            });
             AlertDialog alert = builder.create();
             alert.show();
-        }
-        else {
+        } else {
             AlertDialog.Builder builder = new AlertDialog.Builder(CodeScanner.this);
             builder.setTitle("Invalid QR code");
             builder.setMessage("This code is invalid.");

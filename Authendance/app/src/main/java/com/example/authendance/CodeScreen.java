@@ -171,15 +171,14 @@ public class CodeScreen extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
 
-        //removeQR();
+        removeQR();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
 
-        //removeQR();
-        finish();
+        removeQR();
     }
 
     private void removeQR() {
@@ -206,6 +205,7 @@ public class CodeScreen extends AppCompatActivity {
                 });
     }
 
+    //The two methods below save and load variables when a configuration change occurs
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);

@@ -8,7 +8,7 @@
         android:id="@+id/classRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@drawable/background"
         android:padding="5dp"
-        android:background="@android:color/darker_gray"
-        android:scrollbars="vertical"/>
+        android:scrollbars="vertical" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

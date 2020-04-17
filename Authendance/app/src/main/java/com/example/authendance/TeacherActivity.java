@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -22,57 +23,30 @@ import java.util.Objects;
 
 public class TeacherActivity extends AppCompatActivity {
 
-    private FirebaseAuth fAuth;
-    private FirebaseFirestore db;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_teacher);
 
         TextView nameDisplay = findViewById(R.id.nameDisplay);
+        TextView idDisplay = findViewById(R.id.idDisplay);
         CardView genCard = findViewById(R.id.genCard);
 
-        db = FirebaseFirestore.getInstance();
-        fAuth = FirebaseAuth.getInstance();
+        //Gets teacher name and ID from MainActivity
+        Intent intent = getIntent();
+        final String teacherName = intent.getStringExtra("TEACHER_NAME");
+        final String teacherID = intent.getStringExtra("TEACHER_ID");
 
-        getName(nameDisplay);
+        nameDisplay.setText(teacherName);
+        idDisplay.setText(teacherID);
 
         genCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(TeacherActivity.this, GenerateCode.class);
+                intent.putExtra("TEACHER_NAME", teacherName);
+                intent.putExtra("TEACHER_ID", teacherID);
                 startActivity(intent);
-            }
-        });
-    }
-
-    private void getName(final TextView nameDisplay) {
-
-        String uid = Objects.requireNonNull(fAuth.getCurrentUser()).getUid();
-
-        //Looks for teacher's record in the database by using their UID
-        DocumentReference teacherRef = db.collection("School")
-                .document("0DKXnQhueh18DH7TSjsb")
-                .collection("User")
-                .document(uid);
-
-        teacherRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                DocumentSnapshot documentSnapshot = task.getResult();
-
-                if (task.isSuccessful()) {
-                    if (documentSnapshot != null) {
-                        String teacherName = documentSnapshot.getString("name");
-
-                        nameDisplay.setText(teacherName);
-                    } else {
-                        Toast.makeText(TeacherActivity.this, "Document not found", Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    Toast.makeText(TeacherActivity.this, "Task failed", Toast.LENGTH_SHORT).show();
-                }
             }
         });
     }

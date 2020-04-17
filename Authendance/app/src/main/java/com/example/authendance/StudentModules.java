@@ -6,7 +6,9 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -14,6 +16,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -28,6 +32,9 @@ public class StudentModules extends AppCompatActivity {
     private FirebaseAuth fAuth;
     private FirebaseFirestore db;
 
+    private String studentName;
+    private String studentID;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,19 +43,34 @@ public class StudentModules extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         fAuth = FirebaseAuth.getInstance();
 
+        Intent intent = getIntent();
+        studentName = intent.getStringExtra("STUDENT_NAME");
+        studentID = intent.getStringExtra("STUDENT_ID");
+
         getModules();
     }
 
-    private void getModules() {
+    public void getModules() {
         String uid = Objects.requireNonNull(fAuth.getCurrentUser()).getUid();
 
-        final CollectionReference studentRef = db.collection("School")
+        final CollectionReference moduleRef = db.collection("School")
                 .document("0DKXnQhueh18DH7TSjsb")
-                .collection("User")
-                .document(uid)
-                .collection("Modules");
+                .collection("Section");
 
-        Query query = studentRef.orderBy("name", Query.Direction.ASCENDING);
+        Query query = moduleRef.whereArrayContains("students", studentID);
+        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot queryDocumentSnapshot : Objects.requireNonNull(task.getResult())) {
+                        queryDocumentSnapshot.getString("module");
+
+                    }
+                    moduleAdapter.notifyDataSetChanged();
+
+                }
+            }
+        });
 
         FirestoreRecyclerOptions<StudentModuleItem> modules = new FirestoreRecyclerOptions.Builder<StudentModuleItem>()
                 .setQuery(query, StudentModuleItem.class)
@@ -59,11 +81,14 @@ public class StudentModules extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(StudentModules.this));
         recyclerView.setAdapter(moduleAdapter);
+
+        //moduleAdapter.startListening();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+
         moduleAdapter.startListening();
     }
 
@@ -73,3 +98,4 @@ public class StudentModules extends AppCompatActivity {
         moduleAdapter.stopListening();
     }
 }
+

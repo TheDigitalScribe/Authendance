@@ -106,15 +106,19 @@ public class MainActivity extends AppCompatActivity {
                                                 .collection("User")
                                                 .document(uid);
 
-                                        //This code retrieves the value of the "user_type" field in the record to determine if the user is a student, teacher or admin
+                                        //This code retrieves the user type, name and ID of the user
                                         userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                             @Override
                                             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                                 if(task.isSuccessful()) {
                                                     DocumentSnapshot document = task.getResult();
                                                     if(document != null) {
-                                                        String userType = document.getString("user_type");
-                                                        Toast.makeText(MainActivity.this, "Welcome, " + document.getString("name"), Toast.LENGTH_SHORT).show();
+                                                        String userType = document.getString("user_type"); //This determines if the user is an admin, teacher or student
+                                                        String userName = document.getString("name");
+                                                        String studentID = document.getString("student_id");
+                                                        String teacherID = document.getString("teacher_id");
+
+                                                        Toast.makeText(MainActivity.this, "Welcome, " + userName, Toast.LENGTH_SHORT).show();
 
                                                         assert userType != null;
                                                         switch(userType) {
@@ -124,10 +128,14 @@ public class MainActivity extends AppCompatActivity {
                                                                 break;
                                                             case "Teacher":
                                                                 Intent teacherIntent = new Intent(MainActivity.this, TeacherActivity.class);
+                                                                teacherIntent.putExtra("TEACHER_NAME", userName);
+                                                                teacherIntent.putExtra("TEACHER_ID", teacherID);
                                                                 startActivity(teacherIntent);
                                                                 break;
                                                             case "Student":
                                                                 Intent studentIntent = new Intent(MainActivity.this, StudentActivity.class);
+                                                                studentIntent.putExtra("STUDENT_NAME", userName);
+                                                                studentIntent.putExtra("STUDENT_ID", studentID);
                                                                 startActivity(studentIntent);
                                                                 break;
                                                             default:

@@ -47,7 +47,7 @@ public class CodeScreen extends AppCompatActivity {
     private FirebaseAuth fAuth;
     private FirebaseFirestore db;
     private String code;
-    private String docID;
+    private String moduleID;
 
     private BitMatrix bitMatrix;
     private Bitmap bitmap;
@@ -81,7 +81,7 @@ public class CodeScreen extends AppCompatActivity {
         //Retrieves generated QR code text and document ID for module from GenerateCode activity
         Intent intent = getIntent();
         code = intent.getStringExtra("QR_CODE");
-        docID = intent.getStringExtra("MOD_ID");
+        moduleID = intent.getStringExtra("MOD_ID");
         codeField.setText(code);
 
         createQR();
@@ -170,15 +170,15 @@ public class CodeScreen extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
         removeQR();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-
         removeQR();
+        finish();
+        Toast.makeText(CodeScreen.this, "Code reset", Toast.LENGTH_SHORT).show();
     }
 
     private void removeQR() {
@@ -186,8 +186,8 @@ public class CodeScreen extends AppCompatActivity {
         //Searches for correct module to remove QR code from
         DocumentReference documentReference = db.collection("School")
                 .document("0DKXnQhueh18DH7TSjsb")
-                .collection("Section")
-                .document(docID);
+                .collection("Modules")
+                .document(moduleID);
 
         //Sets qr_code field to null
         documentReference.update("qr_code", null)

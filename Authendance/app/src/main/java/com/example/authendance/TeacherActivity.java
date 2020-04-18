@@ -31,6 +31,7 @@ public class TeacherActivity extends AppCompatActivity {
         TextView nameDisplay = findViewById(R.id.nameDisplay);
         TextView idDisplay = findViewById(R.id.idDisplay);
         CardView genCard = findViewById(R.id.genCard);
+        CardView moduleCard = findViewById(R.id.moduleCard);
 
         //Gets teacher name and ID from MainActivity
         Intent intent = getIntent();
@@ -46,6 +47,14 @@ public class TeacherActivity extends AppCompatActivity {
                 Intent intent = new Intent(TeacherActivity.this, GenerateCode.class);
                 intent.putExtra("TEACHER_NAME", teacherName);
                 intent.putExtra("TEACHER_ID", teacherID);
+                startActivity(intent);
+            }
+        });
+
+        moduleCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(TeacherActivity.this, TeacherModules.class);
                 startActivity(intent);
             }
         });

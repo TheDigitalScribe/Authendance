@@ -10,10 +10,10 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
         <RelativeLayout
-            android:layout_marginTop="65dp"
+            android:layout_marginTop="32dp"
             android:layout_marginRight="20dp"
             android:layout_marginLeft="20dp"
             android:layout_width="match_parent"
@@ -30,11 +30,11 @@
 
             <TextView
                 android:id="@+id/idDisplay"
-                android:layout_below="@id/nameDisplay"
-                android:layout_marginTop="35dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/raleway"
+                android:layout_below="@id/nameDisplay"
+                android:layout_marginTop="35dp"
+                android:fontFamily="sans-serif"
                 android:text="Dashboard"
                 android:textColor="#FFFFFF"
                 android:textSize="20sp" />
@@ -45,7 +45,7 @@
             android:alignmentMode="alignMargins"
             android:columnCount="2"
             android:columnOrderPreserved="false"
-            android:rowCount="1"
+            android:rowCount="2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -64,7 +64,8 @@
                     android:padding="16dp"
                     android:gravity="center"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    tools:ignore="UseCompoundDrawables">
 
                     <ImageView
                         android:layout_width="80dp"
@@ -75,7 +76,7 @@
                     <TextView
                         android:textColor="#000000"
                         android:fontFamily="@font/raleway"
-                        android:textSize="16sp"
+                        android:textSize="18sp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/generate_code"/>
@@ -84,9 +85,10 @@
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
+                android:id="@+id/moduleCard"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
+                android:layout_columnWeight="2"
                 android:layout_rowWeight="1"
                 app:cardElevation="6dp"
                 app:cardCornerRadius="12dp"
@@ -100,8 +102,8 @@
                     android:layout_height="match_parent">
 
                     <ImageView
-                        android:layout_width="70dp"
-                        android:layout_height="70dp"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
                         android:src="@drawable/classimage">
                     </ImageView>
 
@@ -111,7 +113,7 @@
                         android:fontFamily="@font/raleway"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="My Classes"/>
+                        android:text="My Modules"/>
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>

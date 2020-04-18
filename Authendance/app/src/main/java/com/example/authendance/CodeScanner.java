@@ -11,8 +11,6 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.zxing.Result;
 
@@ -31,6 +29,8 @@ public class CodeScanner extends AppCompatActivity implements ZXingScannerView.R
     private FirebaseAuth fAuth;
     private FirebaseFirestore db;
 
+    private Boolean attendedAlready;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +44,7 @@ public class CodeScanner extends AppCompatActivity implements ZXingScannerView.R
             requestCameraPermission();
         }
 
+        attendedAlready = false;
     }
 
     //Checks if camera permission has already been granted
@@ -66,7 +67,6 @@ public class CodeScanner extends AppCompatActivity implements ZXingScannerView.R
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
-                            finish();
                         }
                     })
                     .create()
@@ -76,6 +76,7 @@ public class CodeScanner extends AppCompatActivity implements ZXingScannerView.R
         }
     }
 
+    //Checks if permission was granted
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == REQUEST_CAMERA) {
@@ -103,20 +104,19 @@ public class CodeScanner extends AppCompatActivity implements ZXingScannerView.R
         }
     }
 
-    @Override
+    /*@Override
     public void onDestroy() {
         super.onDestroy();
         scannerView.stopCamera();
-    }
+    }*/
 
     @Override
     public void handleResult(Result result) {
 
         Intent intent = getIntent();
         Bundle data = intent.getExtras();
-        String moduleName = data.getString("MOD_NAME");
         String qrCode = data.getString("QR_CODE");
-        String docID = data.getString("MOD_ID");
+        String moduleID = data.getString("MOD_ID");
         String studentID = data.getString("STU_ID");
 
         assert qrCode != null;
@@ -125,20 +125,20 @@ public class CodeScanner extends AppCompatActivity implements ZXingScannerView.R
             //Gets current date
             String currentDate = java.text.DateFormat.getDateInstance().format(new Date());
 
-            //Looks for the current date document to record the attendance for the module
+            /*Looks for the current date document to record the attendance for the module
             DocumentReference documentReference = db.collection("School")
                     .document("0DKXnQhueh18DH7TSjsb")
                     .collection("Attendance")
-                    .document(docID)
+                    .document(moduleID)
                     .collection("Date")
-                    .document(currentDate);
+                    .document(currentDate);*/
 
-            //Adds the current user to the "students_attended" array
-            documentReference.update("students_attended", FieldValue.arrayUnion(studentID));
+            //Adds the current user to the students_attended array
+            //documentReference.update("students_attended", FieldValue.arrayUnion(studentID));
 
             AlertDialog.Builder builder = new AlertDialog.Builder(CodeScanner.this);
             builder.setTitle("Attendance Authenticated!");
-            builder.setMessage("Your attendance for " + moduleName + " on " + currentDate + " has been recorded.");
+            builder.setMessage("Your attendance for " + moduleID + " on " + currentDate + " has been recorded.");
             builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {

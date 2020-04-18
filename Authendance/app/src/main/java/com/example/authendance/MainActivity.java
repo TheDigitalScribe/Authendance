@@ -118,28 +118,30 @@ public class MainActivity extends AppCompatActivity {
                                                         String studentID = document.getString("student_id");
                                                         String teacherID = document.getString("teacher_id");
 
-                                                        Toast.makeText(MainActivity.this, "Welcome, " + userName, Toast.LENGTH_SHORT).show();
 
                                                         assert userType != null;
                                                         switch(userType) {
                                                             case "Admin":
                                                                 Intent adminIntent = new Intent(MainActivity.this, AdminActivity.class);
                                                                 startActivity(adminIntent);
+                                                                Toast.makeText(MainActivity.this, "Welcome, " + userName, Toast.LENGTH_SHORT).show();
                                                                 break;
                                                             case "Teacher":
                                                                 Intent teacherIntent = new Intent(MainActivity.this, TeacherActivity.class);
                                                                 teacherIntent.putExtra("TEACHER_NAME", userName);
                                                                 teacherIntent.putExtra("TEACHER_ID", teacherID);
+                                                                Toast.makeText(MainActivity.this, "Welcome, " + userName, Toast.LENGTH_SHORT).show();
                                                                 startActivity(teacherIntent);
                                                                 break;
                                                             case "Student":
                                                                 Intent studentIntent = new Intent(MainActivity.this, StudentActivity.class);
                                                                 studentIntent.putExtra("STUDENT_NAME", userName);
                                                                 studentIntent.putExtra("STUDENT_ID", studentID);
+                                                                Toast.makeText(MainActivity.this, "Welcome, " + userName, Toast.LENGTH_SHORT).show();
                                                                 startActivity(studentIntent);
                                                                 break;
                                                             default:
-                                                                Log.d(TAG, "User type could not be determined");
+                                                                Toast.makeText(MainActivity.this, "User type could not be determined. Please contact admin.", Toast.LENGTH_SHORT).show();
                                                         }
                                                     }
                                                     else {
@@ -153,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
                                         Toast.makeText(MainActivity.this, Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_LONG).show();
                                         progressBar.setVisibility(View.GONE);
                                         forgotPasswordText.setVisibility(View.VISIBLE);
-                                        //Log.d(TAG, task.getException().getMessage());
+                                        Log.d(TAG, Objects.requireNonNull(task.getException().getMessage()));
                                     }
                                 }
                             });

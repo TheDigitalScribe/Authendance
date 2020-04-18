@@ -12,32 +12,29 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 public class ModulePicker extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
-
     private final static String TAG = "MOD_PICK";
+
     private Boolean codeCheck;
     private String uid;
     private FirebaseFirestore db;
 
     private String studentName;
     private String studentID;
-
     private Spinner spinner;
 
     @Override
@@ -65,6 +62,8 @@ public class ModulePicker extends AppCompatActivity implements AdapterView.OnIte
         studentName = intent.getStringExtra("STUDENT_NAME");
         studentID = intent.getStringExtra("STUDENT_ID");
 
+        Log.d(TAG, "Student ID: " + studentID);
+
         populateSpinner();
 
         scanCodeBtn.setOnClickListener(new View.OnClickListener() {
@@ -78,9 +77,11 @@ public class ModulePicker extends AppCompatActivity implements AdapterView.OnIte
     //To fill the spinner up with the current user's modules
     private void populateSpinner() {
 
-        CollectionReference moduleRef = db.collection("School")
+        final CollectionReference moduleRef = db.collection("School")
                 .document("0DKXnQhueh18DH7TSjsb")
-                .collection("Section");
+                .collection("User")
+                .document(uid)
+                .collection("Modules");
 
         //Setting up the spinner which allows users to pick modules
         final List<String> modulesList = new ArrayList<>();
@@ -88,14 +89,14 @@ public class ModulePicker extends AppCompatActivity implements AdapterView.OnIte
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
 
-        //Searches for modules which has the corresponding student ID enrolled in it and adds these modules to the spinner
-        moduleRef.whereArrayContains("students", studentID).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        //Searches for modules the current student user is enrolled in and adds them to the spinner
+        moduleRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if(task.isSuccessful()) {
-                    for(QueryDocumentSnapshot queryDocumentSnapshot : Objects.requireNonNull(task.getResult())) {
-                        String moduleName = queryDocumentSnapshot.getString("module");
-                        modulesList.add(moduleName);
+                    for(QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()) {
+                        modulesList.add(queryDocumentSnapshot.getId());
+                        Log.d(TAG, "Modules: " + modulesList);
                     }
                     adapter.notifyDataSetChanged();
                 }
@@ -109,21 +110,21 @@ public class ModulePicker extends AppCompatActivity implements AdapterView.OnIte
         //Spinner value determines which module they want to record their attendance for
         final String spinnerValue = spinner.getSelectedItem().toString();
 
-        CollectionReference sectionRef = db.collection("School")
+        DocumentReference moduleRef = db.collection("School")
                 .document("0DKXnQhueh18DH7TSjsb")
-                .collection("Section");
+                .collection("Modules")
+                .document(spinnerValue);
 
-        //Looks for a document where the module name in the Section collection is the same as the spinner value
-        Query query = sectionRef.whereEqualTo("module", spinnerValue);
-        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        //Finds correct document to retrieve the QR code and module ID
+        moduleRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot documentSnapshot : Objects.requireNonNull(task.getResult())) {
+                    DocumentSnapshot documentSnapshot = task.getResult();
+                    if (documentSnapshot.exists()) {
 
                         String qrCode = documentSnapshot.getString("qr_code");
-                        final String docID = documentSnapshot.getId();
-                        final String moduleName = documentSnapshot.getString("module");
+                        String moduleID = documentSnapshot.getId();
 
                         if (qrCode != null) {
                             codeCheck = true;
@@ -132,8 +133,7 @@ public class ModulePicker extends AppCompatActivity implements AdapterView.OnIte
                         //If a code was generated for the module, pass in the module name and document ID to the CodeScanner class
                         if (codeCheck.equals(true)) {
                             Bundle data = new Bundle();
-                            data.putString("MOD_NAME", moduleName);
-                            data.putString("MOD_ID", docID);
+                            data.putString("MOD_ID", moduleID);
                             data.putString("QR_CODE", qrCode);
                             data.putString("STU_ID", studentID);
                             Intent intent = new Intent(ModulePicker.this, CodeScanner.class);
@@ -142,9 +142,13 @@ public class ModulePicker extends AppCompatActivity implements AdapterView.OnIte
                         } else if (codeCheck.equals(false)) {
                             Toast.makeText(ModulePicker.this, "Code not generated for this module", Toast.LENGTH_SHORT).show();
                         }
+
+                    } else {
+                        Toast.makeText(ModulePicker.this, "No document exists", Toast.LENGTH_SHORT).show();
                     }
-                } else {
-                    Log.d(TAG, "Query to retrieve data failed");
+                }
+                else {
+                    Toast.makeText(ModulePicker.this, "An error occurred", Toast.LENGTH_SHORT).show();
                 }
             }
         });

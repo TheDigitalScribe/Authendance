@@ -14,7 +14,8 @@
         android:roundIcon="@mipmap/authendancelogo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".StudentModules"></activity>
+        <activity android:name=".TeacherModules" />
+        <activity android:name=".StudentModules" />
         <activity android:name=".ModulePicker" />
         <activity android:name=".CodeScreen" />
         <activity android:name=".PasswordReset" />

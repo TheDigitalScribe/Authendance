@@ -2,38 +2,31 @@ package com.example.authendance;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.util.ArrayList;
 import java.util.Objects;
 
-public class StudentModules extends AppCompatActivity {
+public class TeacherModules extends AppCompatActivity {
+
     private StudentModuleAdapter moduleAdapter;
 
     private FirebaseAuth fAuth;
     private FirebaseFirestore db;
-
-    private String studentName;
-    private String studentID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,22 +42,21 @@ public class StudentModules extends AppCompatActivity {
     public void getModules() {
         String uid = Objects.requireNonNull(fAuth.getCurrentUser()).getUid();
 
-        Log.d("MOD_SEE", "UID: " + uid);
-
-        CollectionReference moduleRef = db.collection("School")
+        final CollectionReference moduleRef = db.collection("School")
                 .document("0DKXnQhueh18DH7TSjsb")
                 .collection("User")
                 .document(uid)
                 .collection("Modules");
 
-        final Query query = moduleRef.orderBy("module", Query.Direction.DESCENDING);
+        Query query = moduleRef.orderBy("module", Query.Direction.DESCENDING);
         query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if(task.isSuccessful()) {
-                    for(QueryDocumentSnapshot queryDocumentSnapshot : Objects.requireNonNull(task.getResult())) {
+                    for(QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()) {
                         queryDocumentSnapshot.getId();
                     }
+                    moduleAdapter.notifyDataSetChanged();
                 }
             }
         });
@@ -74,12 +66,10 @@ public class StudentModules extends AppCompatActivity {
                 .build();
 
         moduleAdapter = new StudentModuleAdapter(modules);
-
         RecyclerView recyclerView = findViewById(R.id.classRecyclerView);
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(StudentModules.this));
+        recyclerView.setLayoutManager(new LinearLayoutManager(TeacherModules.this));
         recyclerView.setAdapter(moduleAdapter);
-        moduleAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -94,4 +84,3 @@ public class StudentModules extends AppCompatActivity {
         moduleAdapter.stopListening();
     }
 }
-

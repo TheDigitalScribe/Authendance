@@ -10,9 +10,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.NumberPicker;
 import android.widget.Spinner;
-import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -29,7 +28,9 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 
@@ -41,8 +42,6 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
     private FirebaseUser user;
 
     private Spinner teacherSpinner;
-    private String teacherName;
-    private String teacherID;
 
     private String uid;
 
@@ -53,16 +52,15 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
 
         Button genCodeBtn = findViewById(R.id.scanCodeBtn);
         teacherSpinner = findViewById(R.id.spinner);
+        NumberPicker numberPicker = findViewById(R.id.numberPicker);
+
+        numberPicker.setMinValue(1);
+        numberPicker.setMaxValue(5);
 
         fAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         user = FirebaseAuth.getInstance().getCurrentUser();
         uid = fAuth.getCurrentUser().getUid();
-
-        //Gets teacher name and ID from TeacherActivity
-        Intent intent = getIntent();
-        teacherName = intent.getStringExtra("TEACHER_NAME");
-        teacherID = intent.getStringExtra("TEACHER_ID");
 
         populateSpinner();
 
@@ -79,7 +77,9 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
 
         CollectionReference moduleRef = db.collection("School")
                 .document("0DKXnQhueh18DH7TSjsb")
-                .collection("Section");
+                .collection("User")
+                .document(uid)
+                .collection("Modules");
 
         //Prepares spinner
         final List<String> modulesList = new ArrayList<>();
@@ -87,13 +87,13 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         teacherSpinner.setAdapter(adapter);
 
-        //Searches for modules which has the corresponding teacher ID
-        moduleRef.whereEqualTo("teacher_id", teacherID).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        //Searches for modules which has the corresponding teacher ID and adds them to spinner
+        moduleRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     for (QueryDocumentSnapshot queryDocumentSnapshot : Objects.requireNonNull(task.getResult())) {
-                        String moduleName = queryDocumentSnapshot.getString("module");
+                        String moduleName = queryDocumentSnapshot.getId();
                         modulesList.add(moduleName);
                     }
                     adapter.notifyDataSetChanged();
@@ -106,70 +106,49 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
 
         final String spinnerValue = teacherSpinner.getSelectedItem().toString();
 
-        CollectionReference sectionRef = db.collection("School")
+        DocumentReference moduleRef = db.collection("School")
                 .document("0DKXnQhueh18DH7TSjsb")
-                .collection("Section");
+                .collection("Modules")
+                .document(spinnerValue);
 
-        //Looks for a document where the module name is the same as the spinner value
-        sectionRef.whereEqualTo("module", spinnerValue).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        moduleRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
-                    for (final QueryDocumentSnapshot documentSnapshot : Objects.requireNonNull(task.getResult())) {
+                    DocumentSnapshot documentSnapshot = task.getResult();
+                    if (documentSnapshot.exists()) {
+                        final String moduleID = documentSnapshot.getId();
 
-                        //If found, get the document ID of the corresponding document
-                        final String docID = documentSnapshot.getId();
-
-                        //Searches for the document by it's ID to add QR code
                         final DocumentReference documentReference = db.collection("School")
                                 .document("0DKXnQhueh18DH7TSjsb")
-                                .collection("Section")
-                                .document(docID);
+                                .collection("Modules")
+                                .document(moduleID);
 
-                        //Random QR code is generated in the qr_code field
-                        documentReference.update("qr_code", genRandomString())
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        documentReference.update("qr_code", genRandomString()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d(TAG, "Code generated successfully");
+
+                                documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                     @Override
-                                    public void onSuccess(final Void aVoid) {
-                                        Log.d(TAG, "Code generated successfully");
+                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                        if (task.isSuccessful()) {
+                                            DocumentSnapshot snapshot = task.getResult();
 
-                                        //Retrieves the value of the qr_code field to pass into the CodeScreen class
-                                        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                if (task.isSuccessful()) {
+                                            if (snapshot.exists()) {
+                                                String qrCode = snapshot.getString("qr_code");
 
-                                                    DocumentSnapshot snapshot = task.getResult();
-                                                    if (snapshot != null) {
-                                                        String qrCode = snapshot.getString("qr_code");
-                                                        Log.d(TAG, "QR code: " + qrCode);
-
-                                                        //Gets current date
-                                                        String currentDate = java.text.DateFormat.getDateInstance().format(new Date());
-
-                                                        Student student = new Student(null);
-
-                                                        db.collection("School")
-                                                                .document("0DKXnQhueh18DH7TSjsb")
-                                                                .collection("Attendance")
-                                                                .document(docID)
-                                                                .collection("Date")
-                                                                .document(currentDate)
-                                                                .set(student);
-
-                                                        Intent intent = new Intent(GenerateCode.this, CodeScreen.class);
-                                                        intent.putExtra("QR_CODE", qrCode);
-                                                        intent.putExtra("MOD_ID", docID);
-                                                        startActivity(intent);
-                                                    }
-                                                }
+                                                Intent intent = new Intent(GenerateCode.this, CodeScreen.class);
+                                                intent.putExtra("QR_CODE", qrCode);
+                                                intent.putExtra("MOD_ID", moduleID);
+                                                startActivity(intent);
                                             }
-                                        });
+                                        }
                                     }
                                 });
+                            }
+                        });
                     }
-                } else {
-                    Log.d(TAG, "Query failed");
                 }
             }
         });

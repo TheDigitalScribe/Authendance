@@ -26,15 +26,15 @@
                 android:fontFamily="@font/raleway"
                 android:text="Name"
                 android:textColor="#FFFFFF"
-                android:textSize="20sp" />
+                android:textSize="20sp"/>
 
             <TextView
                 android:id="@+id/idDisplay"
-                android:layout_below="@id/nameDisplay"
-                android:layout_marginTop="35dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/raleway"
+                android:layout_below="@id/nameDisplay"
+                android:layout_marginTop="35dp"
+                android:fontFamily="sans-serif"
                 android:text="Dashboard"
                 android:textColor="#FFFFFF"
                 android:textSize="20sp" />
@@ -45,7 +45,7 @@
             android:alignmentMode="alignMargins"
             android:columnCount="2"
             android:columnOrderPreserved="false"
-            android:rowCount="1"
+            android:rowCount="2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -88,7 +88,7 @@
                 android:id="@+id/moduleCard"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
+                android:layout_columnWeight="2"
                 android:layout_rowWeight="1"
                 app:cardElevation="6dp"
                 app:cardCornerRadius="12dp"
@@ -154,7 +154,7 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
+                android:layout_columnWeight="2"
                 android:layout_rowWeight="1"
                 app:cardElevation="6dp"
                 app:cardCornerRadius="12dp"

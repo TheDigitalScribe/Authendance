@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/backgroundapp"
-    tools:context=".TeacherActivity" >
+    android:background="@drawable/backgroundapp">
 
     <LinearLayout
         android:orientation="vertical"
@@ -14,38 +14,38 @@
 
         <RelativeLayout
             android:layout_marginTop="32dp"
-            android:layout_marginRight="20dp"
             android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <TextView
-                android:id="@+id/nameDisplay"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:fontFamily="@font/raleway"
+                android:id="@+id/nameDisplay"
                 android:text="Name"
-                android:textColor="#FFFFFF"
-                android:textSize="20sp" />
+                android:textSize="24sp"
+                android:textColor="#FFF"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
 
             <TextView
                 android:id="@+id/idDisplay"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/nameDisplay"
-                android:layout_marginTop="35dp"
+                android:layout_marginTop="30dp"
                 android:fontFamily="sans-serif"
-                android:text="Dashboard"
-                android:textColor="#FFFFFF"
-                android:textSize="20sp" />
+                android:text="ID"
+                android:textColor="#FFF"
+                android:textSize="24sp" />
 
         </RelativeLayout>
 
         <GridLayout
-            android:alignmentMode="alignMargins"
             android:columnCount="2"
-            android:columnOrderPreserved="false"
             android:rowCount="2"
+            android:alignmentMode="alignMargins"
+            android:columnOrderPreserved="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -64,31 +64,63 @@
                     android:padding="16dp"
                     android:gravity="center"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    tools:ignore="UseCompoundDrawables">
+                    android:layout_height="match_parent">
 
                     <ImageView
+                        android:src="@drawable/scancode"
                         android:layout_width="80dp"
-                        android:layout_height="80dp"
-                        android:src="@drawable/scancode">
-                    </ImageView>
+                        android:layout_height="80dp"/>
 
                     <TextView
-                        android:textColor="#000000"
                         android:fontFamily="@font/raleway"
+                        android:text="Create Code"
                         android:textSize="18sp"
+                        android:textColor="#000"
+                        android:layout_marginTop="12dp"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/generate_code"/>
-
+                        android:layout_height="wrap_content"/>
                 </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:layout_rowWeight="1"
+                app:cardElevation="6dp"
+                app:cardCornerRadius="12dp"
+                android:layout_margin="12dp">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:padding="16dp"
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:src="@drawable/attendanceimg"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"/>
+
+                    <TextView
+                        android:fontFamily="@font/raleway"
+                        android:text="Attendance"
+                        android:textSize="18sp"
+                        android:textColor="#000"
+                        android:layout_marginTop="12dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
+
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/moduleCard"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_columnWeight="2"
+                android:layout_columnWeight="1"
                 android:layout_rowWeight="1"
                 app:cardElevation="6dp"
                 app:cardCornerRadius="12dp"
@@ -102,20 +134,20 @@
                     android:layout_height="match_parent">
 
                     <ImageView
+                        android:src="@drawable/classimage"
                         android:layout_width="80dp"
-                        android:layout_height="80dp"
-                        android:src="@drawable/classimage">
-                    </ImageView>
+                        android:layout_height="80dp"/>
 
                     <TextView
-                        android:textColor="#000000"
-                        android:textSize="16sp"
                         android:fontFamily="@font/raleway"
+                        android:text="Modules"
+                        android:textSize="18sp"
+                        android:textColor="#000"
+                        android:layout_marginTop="12dp"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="My Modules"/>
-
+                        android:layout_height="wrap_content"/>
                 </LinearLayout>
+
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
@@ -132,58 +164,28 @@
                     android:padding="16dp"
                     android:gravity="center"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    tools:ignore="UseCompoundDrawables">
 
                     <ImageView
+                        android:src="@drawable/settingsimg"
                         android:layout_width="80dp"
-                        android:layout_height="80dp"
-                        android:src="@drawable/attendanceimg">
-                    </ImageView>
+                        android:layout_height="80dp"/>
 
                     <TextView
-                        android:textColor="#000000"
-                        android:textSize="16sp"
                         android:fontFamily="@font/raleway"
+                        android:text="Settings"
+                        android:textSize="18sp"
+                        android:textColor="#000"
+                        android:layout_marginTop="12dp"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Student Attendance"/>
-
+                        android:layout_height="wrap_content"/>
                 </LinearLayout>
-            </androidx.cardview.widget.CardView>
 
-            <androidx.cardview.widget.CardView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:layout_rowWeight="1"
-                app:cardElevation="6dp"
-                app:cardCornerRadius="12dp"
-                android:layout_margin="12dp">
-
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:padding="16dp"
-                    android:gravity="center"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <ImageView
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
-                        android:src="@drawable/settingsimg">
-                    </ImageView>
-
-                    <TextView
-                        android:textColor="#000000"
-                        android:textSize="16sp"
-                        android:fontFamily="@font/raleway"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Settings"/>
-
-                </LinearLayout>
             </androidx.cardview.widget.CardView>
 
         </GridLayout>
+
     </LinearLayout>
+
 </ScrollView>

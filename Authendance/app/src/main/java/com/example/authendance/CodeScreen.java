@@ -90,7 +90,7 @@ public class CodeScreen extends AppCompatActivity {
         Toast.makeText(CodeScreen.this, "Please do not exit screen or code will be reset!", Toast.LENGTH_SHORT).show();
     }
 
-    //This method ensures activity isn't closed after only one press of the back button
+    //This method ensures activity isn't closed after only one press of the back button within 2 seconds
     @Override
     public void onBackPressed() {
 
@@ -170,13 +170,13 @@ public class CodeScreen extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        removeQR();
+        //removeQR();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        removeQR();
+        //removeQR();
         finish();
         Toast.makeText(CodeScreen.this, "Code reset", Toast.LENGTH_SHORT).show();
     }

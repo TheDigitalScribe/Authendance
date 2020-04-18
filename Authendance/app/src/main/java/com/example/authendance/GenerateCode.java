@@ -26,6 +26,8 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import org.w3c.dom.Document;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -52,10 +54,10 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
 
         Button genCodeBtn = findViewById(R.id.scanCodeBtn);
         teacherSpinner = findViewById(R.id.spinner);
-        NumberPicker numberPicker = findViewById(R.id.numberPicker);
+        //NumberPicker numberPicker = findViewById(R.id.numberPicker);
 
-        numberPicker.setMinValue(1);
-        numberPicker.setMaxValue(5);
+        //numberPicker.setMinValue(1);
+        //numberPicker.setMaxValue(5);
 
         fAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
@@ -106,7 +108,7 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
 
         final String spinnerValue = teacherSpinner.getSelectedItem().toString();
 
-        DocumentReference moduleRef = db.collection("School")
+        final DocumentReference moduleRef = db.collection("School")
                 .document("0DKXnQhueh18DH7TSjsb")
                 .collection("Modules")
                 .document(spinnerValue);
@@ -137,6 +139,29 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
 
                                             if (snapshot.exists()) {
                                                 String qrCode = snapshot.getString("qr_code");
+
+                                                String currentDate = java.text.DateFormat.getDateInstance().format(new Date());
+
+                                                Map<String, Object> module = new HashMap<>();
+                                                module.put("module", moduleID);
+
+                                                Student student = new Student(null);
+
+                                                //Adds module to Attendance collection
+                                                db.collection("School")
+                                                        .document("0DKXnQhueh18DH7TSjsb")
+                                                        .collection("Attendance")
+                                                        .document(moduleID)
+                                                        .set(module);
+
+                                                //Adds empty array for students who have attended on the current date
+                                                db.collection("School")
+                                                        .document("0DKXnQhueh18DH7TSjsb")
+                                                        .collection("Attendance")
+                                                        .document(moduleID)
+                                                        .collection("Date")
+                                                        .document(currentDate)
+                                                        .set(student);
 
                                                 Intent intent = new Intent(GenerateCode.this, CodeScreen.class);
                                                 intent.putExtra("QR_CODE", qrCode);

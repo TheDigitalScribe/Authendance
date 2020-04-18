@@ -9,12 +9,17 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.zxing.Result;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
@@ -25,6 +30,10 @@ public class CodeScanner extends AppCompatActivity implements ZXingScannerView.R
     private static final int REQUEST_CAMERA = 1;
     private static final String TAG = "CODE_SCAN";
     private ZXingScannerView scannerView;
+
+    private String moduleID;
+    private String qrCode;
+    private String studentID;
 
     private FirebaseAuth fAuth;
     private FirebaseFirestore db;
@@ -43,6 +52,17 @@ public class CodeScanner extends AppCompatActivity implements ZXingScannerView.R
         } else {
             requestCameraPermission();
         }
+
+        Intent intent = getIntent();
+        Bundle data = intent.getExtras();
+        assert data != null;
+        qrCode = data.getString("QR_CODE");
+        moduleID = data.getString("MOD_ID");
+        studentID = data.getString("STU_ID");
+
+        Log.d(TAG, "Module ID: " + moduleID);
+        Log.d(TAG, "Student ID: " + studentID);
+        Log.d(TAG, "QR Code: " + qrCode);
 
         attendedAlready = false;
     }
@@ -104,20 +124,14 @@ public class CodeScanner extends AppCompatActivity implements ZXingScannerView.R
         }
     }
 
-    /*@Override
+    @Override
     public void onDestroy() {
         super.onDestroy();
         scannerView.stopCamera();
-    }*/
+    }
 
     @Override
     public void handleResult(Result result) {
-
-        Intent intent = getIntent();
-        Bundle data = intent.getExtras();
-        String qrCode = data.getString("QR_CODE");
-        String moduleID = data.getString("MOD_ID");
-        String studentID = data.getString("STU_ID");
 
         assert qrCode != null;
         if (qrCode.equals(result.getText())) {
@@ -125,16 +139,18 @@ public class CodeScanner extends AppCompatActivity implements ZXingScannerView.R
             //Gets current date
             String currentDate = java.text.DateFormat.getDateInstance().format(new Date());
 
-            /*Looks for the current date document to record the attendance for the module
+            Map<String, Object> attendance = new HashMap<>();
+            attendance.put("attended", true);
+
+            //Adds attendance record
             DocumentReference documentReference = db.collection("School")
                     .document("0DKXnQhueh18DH7TSjsb")
                     .collection("Attendance")
                     .document(moduleID)
                     .collection("Date")
-                    .document(currentDate);*/
+                    .document(currentDate);
 
-            //Adds the current user to the students_attended array
-            //documentReference.update("students_attended", FieldValue.arrayUnion(studentID));
+            documentReference.update("students_attended", FieldValue.arrayUnion(studentID));
 
             AlertDialog.Builder builder = new AlertDialog.Builder(CodeScanner.this);
             builder.setTitle("Attendance Authenticated!");

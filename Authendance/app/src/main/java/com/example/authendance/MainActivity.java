@@ -23,7 +23,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
@@ -65,16 +64,16 @@ public class MainActivity extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser fUser = firebaseAuth.getCurrentUser();
                 //User is logged in
-                if(fUser != null) {
+                if (fUser != null) {
                     Log.d(TAG, "user found");
                 }
                 //User is logged out
                 else {
                     Log.d(TAG, "user not found");
                 }
+
             }
         };
-
 
         forgotPasswordText.setVisibility(View.INVISIBLE);
 

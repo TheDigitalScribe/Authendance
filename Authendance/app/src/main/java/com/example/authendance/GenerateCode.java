@@ -28,10 +28,12 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import org.w3c.dom.Document;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
@@ -140,7 +142,7 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
                                             if (snapshot.exists()) {
                                                 String qrCode = snapshot.getString("qr_code");
 
-                                                String currentDate = java.text.DateFormat.getDateInstance().format(new Date());
+                                                String currentDate = new SimpleDateFormat("dd MM YYYY", Locale.getDefault()).format(new Date());
 
                                                 Map<String, Object> module = new HashMap<>();
                                                 module.put("module", moduleID);

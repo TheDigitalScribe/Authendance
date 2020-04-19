@@ -17,8 +17,10 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.zxing.Result;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
@@ -137,7 +139,7 @@ public class CodeScanner extends AppCompatActivity implements ZXingScannerView.R
         if (qrCode.equals(result.getText())) {
 
             //Gets current date
-            String currentDate = java.text.DateFormat.getDateInstance().format(new Date());
+            String currentDate = new SimpleDateFormat("dd MM YYYY", Locale.getDefault()).format(new Date());
 
             Map<String, Object> attendance = new HashMap<>();
             attendance.put("attended", true);

@@ -3,45 +3,46 @@ package com.example.authendance;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.Objects;
-
 public class TeacherActivity extends AppCompatActivity {
+
+    TextView nameDisplay;
+    TextView idDisplay;
+
+    private FirebaseAuth fAuth;
+    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_teacher);
 
-        TextView nameDisplay = findViewById(R.id.nameDisplay);
-        TextView idDisplay = findViewById(R.id.idDisplay);
+        nameDisplay = findViewById(R.id.nameDisplay);
+        idDisplay = findViewById(R.id.idDisplay);
         CardView genCard = findViewById(R.id.genCard);
         CardView moduleCard = findViewById(R.id.moduleCard);
         CardView attendanceCard = findViewById(R.id.attendanceCard);
         CardView settingsCard = findViewById(R.id.settingsCard);
+
+        fAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
 
         //Gets teacher name and ID from MainActivity
         Intent intent = getIntent();
         final String teacherName = intent.getStringExtra("TEACHER_NAME");
         final String teacherID = intent.getStringExtra("TEACHER_ID");
 
-        nameDisplay.setText(teacherName);
-        idDisplay.setText(teacherID);
+        getNameID();
 
         genCard.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,6 +75,32 @@ public class TeacherActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(TeacherActivity.this, SettingsActivity.class);
                 startActivity(intent);
+            }
+        });
+    }
+
+    private void getNameID() {
+        String uid = fAuth.getCurrentUser().getUid();
+
+        DocumentReference documentReference = db.collection("School")
+                .document("0DKXnQhueh18DH7TSjsb")
+                .collection("User")
+                .document(uid);
+
+        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()) {
+                    DocumentSnapshot documentSnapshot = task.getResult();
+
+                    if(documentSnapshot.exists()) {
+                        String teacherName = documentSnapshot.getString("name");
+                        String teacherID = documentSnapshot.getString("teacher_id");
+
+                        nameDisplay.setText(teacherName);
+                        idDisplay.setText(teacherID);
+                    }
+                }
             }
         });
     }

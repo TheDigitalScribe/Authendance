@@ -196,6 +196,8 @@ public class MainActivity extends AppCompatActivity {
         forgotPasswordText.setVisibility(View.GONE);
     }
 
+    /*This ensures when the user logs out and is brought back to the login screen,
+     they can't bypass the login screen by pressing the back button*/
     public void onBackPressed() {
         Intent homeIntent = new Intent(Intent.ACTION_MAIN);
         homeIntent.addCategory( Intent.CATEGORY_HOME );

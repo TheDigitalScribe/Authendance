@@ -10,7 +10,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.NumberPicker;
 import android.widget.Spinner;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -20,14 +19,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-
-import org.w3c.dom.Document;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -64,7 +58,7 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
         fAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         user = FirebaseAuth.getInstance().getCurrentUser();
-        uid = fAuth.getCurrentUser().getUid();
+        uid = Objects.requireNonNull(fAuth.getCurrentUser()).getUid();
 
         populateSpinner();
 
@@ -87,8 +81,8 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
 
         //Prepares spinner
         final List<String> modulesList = new ArrayList<>();
-        final ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, modulesList);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        final ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), R.layout.custom_spinner, modulesList);
+        adapter.setDropDownViewResource(R.layout.custom_spinner_dropdown);
         teacherSpinner.setAdapter(adapter);
 
         //Searches for modules which has the corresponding teacher ID and adds them to spinner
@@ -120,6 +114,7 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     DocumentSnapshot documentSnapshot = task.getResult();
+                    assert documentSnapshot != null;
                     if (documentSnapshot.exists()) {
                         final String moduleID = documentSnapshot.getId();
 
@@ -139,6 +134,7 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
                                         if (task.isSuccessful()) {
                                             DocumentSnapshot snapshot = task.getResult();
 
+                                            assert snapshot != null;
                                             if (snapshot.exists()) {
                                                 String qrCode = snapshot.getString("qr_code");
 
@@ -147,7 +143,8 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
                                                 Map<String, Object> module = new HashMap<>();
                                                 module.put("module", moduleID);
 
-                                                Student student = new Student(null);
+                                                Map<String, Object> date = new HashMap<>();
+                                                date.put("date", currentDate);
 
                                                 //Adds module to Attendance collection
                                                 db.collection("School")
@@ -156,14 +153,14 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
                                                         .document(moduleID)
                                                         .set(module);
 
-                                                //Adds empty array for students who have attended on the current date
+                                                //Adds current date record to database
                                                 db.collection("School")
                                                         .document("0DKXnQhueh18DH7TSjsb")
                                                         .collection("Attendance")
                                                         .document(moduleID)
                                                         .collection("Date")
                                                         .document(currentDate)
-                                                        .set(student);
+                                                        .set(date);
 
                                                 Intent intent = new Intent(GenerateCode.this, CodeScreen.class);
                                                 intent.putExtra("QR_CODE", qrCode);

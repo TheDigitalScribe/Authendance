@@ -33,6 +33,7 @@ public class TeacherActivity extends AppCompatActivity {
         CardView genCard = findViewById(R.id.genCard);
         CardView moduleCard = findViewById(R.id.moduleCard);
         CardView attendanceCard = findViewById(R.id.attendanceCard);
+        CardView settingsCard = findViewById(R.id.settingsCard);
 
         //Gets teacher name and ID from MainActivity
         Intent intent = getIntent();
@@ -64,6 +65,14 @@ public class TeacherActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(TeacherActivity.this, AttendanceSelect.class);
+                startActivity(intent);
+            }
+        });
+
+        settingsCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(TeacherActivity.this, SettingsActivity.class);
                 startActivity(intent);
             }
         });

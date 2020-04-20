@@ -112,19 +112,13 @@ public class MainActivity extends AppCompatActivity {
                                                 if(task.isSuccessful()) {
                                                     DocumentSnapshot document = task.getResult();
                                                     if(document != null) {
-                                                        String userType = document.getString("user_type"); //This determines if the user is an admin, teacher or student
+                                                        String userType = document.getString("user_type"); //This determines if the user is a teacher or student
                                                         String userName = document.getString("name");
                                                         String studentID = document.getString("student_id");
                                                         String teacherID = document.getString("teacher_id");
 
-
                                                         assert userType != null;
                                                         switch(userType) {
-                                                            case "Admin":
-                                                                Intent adminIntent = new Intent(MainActivity.this, AdminActivity.class);
-                                                                startActivity(adminIntent);
-                                                                Toast.makeText(MainActivity.this, "Welcome, " + userName, Toast.LENGTH_SHORT).show();
-                                                                break;
                                                             case "Teacher":
                                                                 Intent teacherIntent = new Intent(MainActivity.this, TeacherActivity.class);
                                                                 teacherIntent.putExtra("TEACHER_NAME", userName);
@@ -140,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
                                                                 startActivity(studentIntent);
                                                                 break;
                                                             default:
-                                                                Toast.makeText(MainActivity.this, "User type could not be determined. Please contact admin.", Toast.LENGTH_SHORT).show();
+                                                                Toast.makeText(MainActivity.this, "User type could not be determined.", Toast.LENGTH_SHORT).show();
                                                         }
                                                     }
                                                     else {
@@ -200,6 +194,13 @@ public class MainActivity extends AppCompatActivity {
 
         progressBar.setVisibility(View.GONE);
         forgotPasswordText.setVisibility(View.GONE);
+    }
+
+    public void onBackPressed() {
+        Intent homeIntent = new Intent(Intent.ACTION_MAIN);
+        homeIntent.addCategory( Intent.CATEGORY_HOME );
+        homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(homeIntent);
     }
 
     //Ensures email filled is filled out correctly before login

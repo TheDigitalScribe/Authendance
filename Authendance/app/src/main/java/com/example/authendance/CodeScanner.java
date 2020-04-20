@@ -12,8 +12,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.zxing.Result;
 
@@ -145,14 +143,15 @@ public class CodeScanner extends AppCompatActivity implements ZXingScannerView.R
             attendance.put("attended", true);
 
             //Adds attendance record
-            DocumentReference documentReference = db.collection("School")
+            db.collection("School")
                     .document("0DKXnQhueh18DH7TSjsb")
                     .collection("Attendance")
                     .document(moduleID)
                     .collection("Date")
-                    .document(currentDate);
-
-            documentReference.update("students_attended", FieldValue.arrayUnion(studentID));
+                    .document(currentDate)
+                    .collection("Students")
+                    .document(studentID)
+                    .set(attendance);
 
             AlertDialog.Builder builder = new AlertDialog.Builder(CodeScanner.this);
             builder.setTitle("Attendance Authenticated!");

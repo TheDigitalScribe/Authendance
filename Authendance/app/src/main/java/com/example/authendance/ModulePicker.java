@@ -33,7 +33,6 @@ public class ModulePicker extends AppCompatActivity implements AdapterView.OnIte
     private String uid;
     private FirebaseFirestore db;
 
-    private String studentName;
     private String studentID;
     private Spinner spinner;
 
@@ -59,7 +58,7 @@ public class ModulePicker extends AppCompatActivity implements AdapterView.OnIte
         }
 
         Intent intent = getIntent();
-        studentName = intent.getStringExtra("STUDENT_NAME");
+        //studentName = intent.getStringExtra("STUDENT_NAME");
         studentID = intent.getStringExtra("STUDENT_ID");
 
         Log.d(TAG, "Student ID: " + studentID);
@@ -85,8 +84,8 @@ public class ModulePicker extends AppCompatActivity implements AdapterView.OnIte
 
         //Setting up the spinner which allows users to pick modules
         final List<String> modulesList = new ArrayList<>();
-        final ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, modulesList);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        final ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), R.layout.custom_spinner, modulesList);
+        adapter.setDropDownViewResource(R.layout.custom_spinner_dropdown);
         spinner.setAdapter(adapter);
 
         //Searches for modules the current student user is enrolled in and adds them to the spinner

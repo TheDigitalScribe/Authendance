@@ -169,6 +169,8 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
                                                         .document(moduleID)
                                                         .collection("Students");
 
+                                                Log.d(TAG, moduleID);
+
                                                 Query query = studentRef.orderBy("student_id", Query.Direction.DESCENDING);
                                                 query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                                     @Override
@@ -178,7 +180,7 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
                                                             for(QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()) {
 
                                                                 String studentID = queryDocumentSnapshot.getId();
-                                                                Log.d("WOW", studentID);
+                                                                Log.d("STU_ID", studentID);
 
                                                                 Map<String, Object> attended = new HashMap<>();
                                                                 attended.put("attended", false);

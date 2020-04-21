@@ -45,6 +45,7 @@ public class SettingsActivity extends AppCompatActivity {
                         FirebaseAuth.getInstance().signOut();
                         Intent intent = new Intent(SettingsActivity.this, MainActivity.class);
                         startActivity(intent);
+                        finish();
                     }
                 });
                 builder.setNegativeButton("No", new DialogInterface.OnClickListener() {

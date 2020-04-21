@@ -8,22 +8,21 @@
     android:visibility="visible"
     tools:context=".CodeScreen">
 
-    <TextView
-        android:id="@+id/countDownTimerText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="60dp"
+    <Button
+        android:id="@+id/finishBtn"
+        android:layout_width="250dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="30dp"
         android:background="@drawable/custom_button"
-        android:fontFamily="@font/orbitron"
-        android:gravity="clip_horizontal|center|center_horizontal"
-        android:text="10:00"
-        android:textColor="?android:attr/colorForeground"
-        android:textSize="30sp"
-        android:textStyle="bold"
+        android:fontFamily="@font/raleway"
+        android:text="Done"
+        android:textAllCaps="false"
+        android:textColor="#330000"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/codeField" />
+        app:layout_constraintTop_toBottomOf="@+id/qrCode" />
 
     <TextView
         android:id="@+id/codeField"
@@ -42,12 +41,14 @@
 
     <ImageView
         android:id="@+id/qrCode"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_marginTop="40dp"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_marginTop="50dp"
         android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/countDownTimerText"
+        app:layout_constraintTop_toBottomOf="@+id/codeField"
         tools:srcCompat="@tools:sample/avatars" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

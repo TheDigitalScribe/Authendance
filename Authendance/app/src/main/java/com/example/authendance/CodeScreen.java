@@ -1,8 +1,10 @@
 package com.example.authendance;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -13,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,22 +35,25 @@ import java.util.Locale;
 import java.util.Objects;
 
 public class CodeScreen extends AppCompatActivity {
-    private static final long START_TIME = 180000;
+
+    //private static final long START_TIME = 180000;
     private static final String TAG = "CODE_SCREEN";
 
     private TextView codeField;
     private ImageView qrCode;
 
-    private TextView textViewCountDown;
+    /*private TextView textViewCountDown;
     private CountDownTimer countDownTimer;
     private long timeLeft = START_TIME;
     private long endTime;
-    private boolean timerRunning;
+    private boolean timerRunning;*/
 
     private FirebaseAuth fAuth;
     private FirebaseFirestore db;
+
     private String code;
     private String moduleID;
+    private Button finishBtn;
 
     private BitMatrix bitMatrix;
     private Bitmap bitmap;
@@ -65,18 +71,11 @@ public class CodeScreen extends AppCompatActivity {
 
         fAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-        if(user != null) {
-            Log.d(TAG, "User found");
-        }
-        else {
-            Log.d(TAG, "User not found");
-        }
 
         codeField = findViewById(R.id.codeField);
         qrCode = findViewById(R.id.qrCode);
-        textViewCountDown = findViewById(R.id.countDownTimerText);
+        finishBtn = findViewById(R.id.finishBtn);
+        //textViewCountDown = findViewById(R.id.countDownTimerText);
 
         //Retrieves generated QR code text and document ID for module from GenerateCode activity
         Intent intent = getIntent();
@@ -85,9 +84,33 @@ public class CodeScreen extends AppCompatActivity {
         codeField.setText(code);
 
         createQR();
-        startTimer();
+        //startTimer();
 
-        Toast.makeText(CodeScreen.this, "Please do not exit screen or code will be reset!", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(CodeScreen.this, "Please do not exit screen or code will be reset!", Toast.LENGTH_SHORT).show();
+
+        finishBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(CodeScreen.this);
+                builder.setTitle("Confirm Exit");
+                builder.setMessage("Are you sure you want to exit? The code will be removed");
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        removeQR();
+                        finish();
+                    }
+                });
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                AlertDialog alert = builder.create();
+                alert.show();
+            }
+        });
     }
 
     //This method ensures activity isn't closed after only one press of the back button within 2 seconds
@@ -107,7 +130,6 @@ public class CodeScreen extends AppCompatActivity {
         backPressed = System.currentTimeMillis();
     }
 
-
     private void createQR() {
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
         int width = 300;
@@ -124,15 +146,22 @@ public class CodeScreen extends AppCompatActivity {
                 }
             }
             qrCode.setImageBitmap(bitmap);
+            qrCode.setVisibility(View.VISIBLE);
 
         }
         catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        removeQR();
 
     }
 
-    private void startTimer() {
+    /*private void startTimer() {
 
         //mEndTime ensures timer is correct when configuration changes occur
         endTime = System.currentTimeMillis() + timeLeft;
@@ -166,19 +195,13 @@ public class CodeScreen extends AppCompatActivity {
         textViewCountDown.setText(timeRemaining);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        removeQR();
-        finish();
-    }
 
     @Override
     protected void onStop() {
         super.onStop();
         removeQR();
         finish();
-    }
+    }*/
 
     private void removeQR() {
 
@@ -204,7 +227,7 @@ public class CodeScreen extends AppCompatActivity {
                 });
     }
 
-    //The two methods below save and load variables when a configuration change occurs
+    /*The two methods below save and load variables when a configuration change occurs
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -228,5 +251,5 @@ public class CodeScreen extends AppCompatActivity {
             timeLeft = endTime - System.currentTimeMillis();
             startTimer();
         }
-    }
+    }*/
 }

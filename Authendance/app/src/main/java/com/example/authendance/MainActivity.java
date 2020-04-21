@@ -214,6 +214,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onRestart() {
+        super.onRestart();
+        fAuth.signOut();
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
 

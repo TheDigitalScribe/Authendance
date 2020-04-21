@@ -55,22 +55,6 @@ public class StudentActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         fAuth = FirebaseAuth.getInstance();
 
-        fAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-
-                FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-
-                if(fUser != null) {
-
-                }
-
-                else if(fUser.equals(null)) {
-                    finish();
-                }
-            }
-        };
-
         getNameID();
 
         scanCard.setOnClickListener(new View.OnClickListener() {
@@ -101,8 +85,6 @@ public class StudentActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-
     }
 
     @Override
@@ -121,8 +103,11 @@ public class StudentActivity extends AppCompatActivity {
             builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
+                    //finish();
+
+                    Intent intent = new Intent(StudentActivity.this, MainActivity.class);
+                    startActivity(intent);
                     fAuth.signOut();
-                    finish();
                 }
             });
             builder.setNegativeButton("No", new DialogInterface.OnClickListener() {

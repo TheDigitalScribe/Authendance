@@ -36,7 +36,7 @@ public class PasswordReset extends AppCompatActivity {
             public void onClick(View v) {
                 if(validateEmail()) {
 
-                    FirebaseAuth auth = FirebaseAuth.getInstance();
+                    final FirebaseAuth auth = FirebaseAuth.getInstance();
                     String emailAddress = resetEmailField.getText().toString();
 
                     auth.sendPasswordResetEmail(emailAddress)
@@ -45,6 +45,9 @@ public class PasswordReset extends AppCompatActivity {
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
                                         Toast.makeText(PasswordReset.this, "Email sent. Please check your email to reset password", Toast.LENGTH_SHORT).show();
+
+                                        //Localises email using the user's device language
+                                        auth.useAppLanguage();
                                     }
                                     else {
                                         Toast.makeText(PasswordReset.this, "Error. " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();

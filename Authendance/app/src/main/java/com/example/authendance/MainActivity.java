@@ -3,6 +3,7 @@ package com.example.authendance;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -15,6 +16,7 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -23,6 +25,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
@@ -62,16 +65,51 @@ public class MainActivity extends AppCompatActivity {
         fAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+
                 FirebaseUser fUser = firebaseAuth.getCurrentUser();
+
                 //User is logged in
                 if (fUser != null) {
-                    Log.d(TAG, "user found");
+
+                    //User's UID is retrieved to find their record in the database
+                    String uid = Objects.requireNonNull(fAuth.getCurrentUser()).getUid();
+
+                    //Searches for current user's record in the database based on UID
+                    final DocumentReference userRef = db.collection("School")
+                            .document("0DKXnQhueh18DH7TSjsb")
+                            .collection("User")
+                            .document(uid);
+
+                    userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot document = task.getResult();
+                                if (document != null) {
+
+                                    String userType = document.getString("user_type");
+                                    String userName = document.getString("name");
+
+                                    assert userType != null;
+                                    if(userType.equals("Teacher")) {
+                                        Intent teacherIntent = new Intent(MainActivity.this, TeacherActivity.class);
+                                        Toast.makeText(MainActivity.this, "Welcome, " + userName, Toast.LENGTH_SHORT).show();
+                                        startActivity(teacherIntent);
+                                    }
+                                    else if(userType.equals("Student")) {
+                                        Intent studentIntent = new Intent(MainActivity.this, StudentActivity.class);
+                                        Toast.makeText(MainActivity.this, "Welcome, " + userName, Toast.LENGTH_SHORT).show();
+                                        startActivity(studentIntent);
+                                    }
+                                }
+                            }
+                        }
+                    });
                 }
-                //User is logged out
+                //User is not logged in
                 else {
                     Log.d(TAG, "user not found");
                 }
-
             }
         };
 
@@ -86,13 +124,13 @@ public class MainActivity extends AppCompatActivity {
                 progressBar.setVisibility(View.VISIBLE);
 
                 //If email and password fields are properly filled in
-                if(validateEmail() && validatePassword()) {
+                if (validateEmail() && validatePassword()) {
                     fAuth.signInWithEmailAndPassword(email, password)
                             .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                                 @RequiresApi(api = Build.VERSION_CODES.KITKAT)
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
-                                    if(task.isSuccessful()) {
+                                    if (task.isSuccessful()) {
                                         Log.d(TAG, "Login successful");
                                         saveData();
 
@@ -109,42 +147,36 @@ public class MainActivity extends AppCompatActivity {
                                         userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                             @Override
                                             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                if(task.isSuccessful()) {
+                                                if (task.isSuccessful()) {
                                                     DocumentSnapshot document = task.getResult();
-                                                    if(document != null) {
+                                                    if (document != null) {
                                                         String userType = document.getString("user_type"); //This determines if the user is a teacher or student
                                                         String userName = document.getString("name");
                                                         String studentID = document.getString("student_id");
                                                         String teacherID = document.getString("teacher_id");
 
                                                         assert userType != null;
-                                                        switch(userType) {
+                                                        switch (userType) {
                                                             case "Teacher":
                                                                 Intent teacherIntent = new Intent(MainActivity.this, TeacherActivity.class);
-                                                                teacherIntent.putExtra("TEACHER_NAME", userName);
-                                                                teacherIntent.putExtra("TEACHER_ID", teacherID);
                                                                 Toast.makeText(MainActivity.this, "Welcome, " + userName, Toast.LENGTH_SHORT).show();
                                                                 startActivity(teacherIntent);
                                                                 break;
                                                             case "Student":
                                                                 Intent studentIntent = new Intent(MainActivity.this, StudentActivity.class);
-                                                                studentIntent.putExtra("STUDENT_NAME", userName);
-                                                                studentIntent.putExtra("STUDENT_ID", studentID);
                                                                 Toast.makeText(MainActivity.this, "Welcome, " + userName, Toast.LENGTH_SHORT).show();
                                                                 startActivity(studentIntent);
                                                                 break;
                                                             default:
                                                                 Toast.makeText(MainActivity.this, "User type could not be determined.", Toast.LENGTH_SHORT).show();
                                                         }
-                                                    }
-                                                    else {
+                                                    } else {
                                                         Log.d(TAG, "Document not found");
                                                     }
                                                 }
                                             }
                                         });
-                                    }
-                                    else {
+                                    } else {
                                         Toast.makeText(MainActivity.this, Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_LONG).show();
                                         progressBar.setVisibility(View.GONE);
                                         forgotPasswordText.setVisibility(View.VISIBLE);
@@ -200,7 +232,7 @@ public class MainActivity extends AppCompatActivity {
      they can't bypass the login screen by pressing the back button*/
     public void onBackPressed() {
         Intent homeIntent = new Intent(Intent.ACTION_MAIN);
-        homeIntent.addCategory( Intent.CATEGORY_HOME );
+        homeIntent.addCategory(Intent.CATEGORY_HOME);
         homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(homeIntent);
     }
@@ -216,12 +248,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
         //Ensures email address follows a certain pattern. Select EMAIL_ADDRESS and click "CTRL B" for more info
-        else if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+        else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             emailField.setError("Please enter a valid email address");
             emailField.requestFocus();
             return false;
-        }
-        else {
+        } else {
             emailField.setError(null);
             return true;
         }
@@ -230,12 +261,11 @@ public class MainActivity extends AppCompatActivity {
     private boolean validatePassword() {
         String password = passwordField.getText().toString().trim();
 
-        if(password.isEmpty()) {
+        if (password.isEmpty()) {
             passwordField.setError("Please enter password");
             passwordField.requestFocus();
             return false;
-        }
-        else {
+        } else {
             passwordField.setError(null);
             return true;
         }

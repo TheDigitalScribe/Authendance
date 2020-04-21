@@ -1,14 +1,18 @@
 package com.example.authendance;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -27,8 +31,12 @@ public class StudentActivity extends AppCompatActivity {
     private String nameContent;
     private String idContent;
 
+    private long backPressed;
+    private Toast backPressToast;
+
     private FirebaseFirestore db;
     private FirebaseAuth fAuth;
+    private FirebaseAuth.AuthStateListener fAuthListener;
 
     TextView nameDisplay;
     TextView idDisplay;
@@ -46,7 +54,22 @@ public class StudentActivity extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
         fAuth = FirebaseAuth.getInstance();
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        fAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+
+                FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+
+                if(fUser != null) {
+
+                }
+
+                else if(fUser.equals(null)) {
+                    finish();
+                }
+            }
+        };
 
         getNameID();
 
@@ -78,6 +101,40 @@ public class StudentActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        //Checks if back button was clicked twice within 2 seconds
+        if(backPressed + 2000 > System.currentTimeMillis()) {
+            backPressToast.cancel();
+            super.onBackPressed();
+            return;
+        }
+        else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(StudentActivity.this);
+            builder.setTitle("Log Out");
+            builder.setMessage("Do you want to log out?");
+            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    fAuth.signOut();
+                    finish();
+                }
+            });
+            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            AlertDialog alert = builder.create();
+            alert.show();
+        }
+        backPressed = System.currentTimeMillis();
     }
 
     private void getNameID() {

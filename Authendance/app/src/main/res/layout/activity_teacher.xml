@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/scooter">
+    android:background="@drawable/backgroundapp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -48,11 +48,11 @@
         <GridLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="75dp"
             android:alignmentMode="alignMargins"
             android:columnCount="2"
             android:columnOrderPreserved="false"
-            android:rowCount="2"
-            android:layout_marginTop="75dp">
+            android:rowCount="2">
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/genCard"

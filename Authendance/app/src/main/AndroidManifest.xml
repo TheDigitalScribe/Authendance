@@ -14,6 +14,7 @@
         android:roundIcon="@mipmap/ic_logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".AttendanceScreen"></activity>
         <activity android:name=".StudentAttendance" />
         <activity android:name=".SettingsActivity" />
         <activity android:name=".AttendanceSelect" />

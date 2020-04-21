@@ -30,7 +30,7 @@
         android:layout_width="match_parent"
         android:layout_height="75dp"
         android:layout_marginTop="125dp"
-        android:background="@drawable/expresso"
+        android:background="@drawable/veryblue"
         android:fontFamily="sans-serif"
         android:gravity="center"
         android:textColor="#FFFFFF"

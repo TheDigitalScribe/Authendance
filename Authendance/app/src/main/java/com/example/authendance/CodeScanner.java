@@ -11,7 +11,11 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.zxing.Result;
 
@@ -133,25 +137,34 @@ public class CodeScanner extends AppCompatActivity implements ZXingScannerView.R
     @Override
     public void handleResult(Result result) {
 
-        assert qrCode != null;
         if (qrCode.equals(result.getText())) {
 
             //Gets current date
             String currentDate = new SimpleDateFormat("dd MM YYYY", Locale.getDefault()).format(new Date());
 
-            Map<String, Object> attendance = new HashMap<>();
-            attendance.put("attended", true);
-
             //Adds attendance record
-            db.collection("School")
+            DocumentReference documentReference = db.collection("School")
                     .document("0DKXnQhueh18DH7TSjsb")
                     .collection("Attendance")
                     .document(moduleID)
                     .collection("Date")
                     .document(currentDate)
                     .collection("Students")
-                    .document(studentID)
-                    .set(attendance);
+                    .document(studentID);
+
+            documentReference.update("attended", true).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Log.d(TAG, "Success");
+
+                }
+            })
+            .addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.d(TAG, "Failure");
+                }
+            });
 
             AlertDialog.Builder builder = new AlertDialog.Builder(CodeScanner.this);
             builder.setTitle("Attendance Authenticated!");
@@ -165,7 +178,8 @@ public class CodeScanner extends AppCompatActivity implements ZXingScannerView.R
             });
             AlertDialog alert = builder.create();
             alert.show();
-        } else {
+        }
+        else {
             AlertDialog.Builder builder = new AlertDialog.Builder(CodeScanner.this);
             builder.setTitle("Invalid QR code");
             builder.setMessage("This code is invalid.");

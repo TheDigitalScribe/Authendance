@@ -52,11 +52,14 @@ public class AttendanceSelect extends AppCompatActivity {
         CalendarView calendarView = findViewById(R.id.calendarView);
         submitBtn = findViewById(R.id.submitBtn);
 
+        populateSpinner();
+
         calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
             public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
                 month = month + 1;
                 final String datePicked = dayOfMonth + " " + "0" + month + " " + year;
+                Log.d("ATT_SLCT", datePicked);
 
                 submitBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -66,7 +69,41 @@ public class AttendanceSelect extends AppCompatActivity {
 
                         } else {
 
-                            submitDate(datePicked);
+                            final String spinnerValue = attendanceSpinner.getSelectedItem().toString();
+                            Log.d("ATT_SLCT", spinnerValue + datePicked);
+
+                            DocumentReference dateRef = db.collection("School")
+                                    .document("0DKXnQhueh18DH7TSjsb")
+                                    .collection("Attendance")
+                                    .document(spinnerValue)
+                                    .collection("Date")
+                                    .document(datePicked);
+
+                            dateRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                    if(task.isSuccessful()) {
+                                        DocumentSnapshot documentSnapshot = task.getResult();
+
+                                        if(documentSnapshot.exists()) {
+                                            Toast.makeText(AttendanceSelect.this, "Doc exists", Toast.LENGTH_SHORT).show();
+
+                                            Intent intent = new Intent(AttendanceSelect.this, AttendanceScreen.class);
+
+                                            /*Bundle bundle = new Bundle();
+                                            bundle.putString("MOD_ID", spinnerValue);
+                                            bundle.putString("DATE_PICKED", datePicked);
+                                            intent.putExtras(bundle);*/
+                                            startActivity(intent);
+
+                                            Log.d("ATT_SLCT", spinnerValue + datePicked);
+                                        }
+                                        else {
+                                            Toast.makeText(AttendanceSelect.this, "No attendance record for this module on " + datePicked , Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                }
+                            });
 
                         }
                     }
@@ -74,7 +111,6 @@ public class AttendanceSelect extends AppCompatActivity {
             }
         });
 
-        populateSpinner();
     }
 
     private void populateSpinner() {
@@ -107,29 +143,6 @@ public class AttendanceSelect extends AppCompatActivity {
     }
 
     private void submitDate(final String datePicked) {
-        final String spinnerValue = attendanceSpinner.getSelectedItem().toString();
 
-        DocumentReference dateRef = db.collection("School")
-                .document("0DKXnQhueh18DH7TSjsb")
-                .collection("Attendance")
-                .document(spinnerValue)
-                .collection("Date")
-                .document(datePicked);
-
-        dateRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful()) {
-                    DocumentSnapshot documentSnapshot = task.getResult();
-
-                    if(documentSnapshot.exists()) {
-                        Toast.makeText(AttendanceSelect.this, "Doc exists", Toast.LENGTH_SHORT).show();
-                    }
-                    else {
-                        Toast.makeText(AttendanceSelect.this, "No attendance record for this module on " + datePicked , Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-        });
     }
 }

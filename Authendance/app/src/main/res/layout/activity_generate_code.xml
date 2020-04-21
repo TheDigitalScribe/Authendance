@@ -11,7 +11,7 @@
         android:id="@+id/pickModulePrompt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="76dp"
+        android:layout_marginTop="164dp"
         android:fontFamily="@font/raleway"
         android:gravity="center_horizontal|center_vertical"
         android:text="Please choose which module to generate a code for"

@@ -32,7 +32,7 @@ import java.util.Locale;
 import java.util.Objects;
 
 public class CodeScreen extends AppCompatActivity {
-    private static final long START_TIME = 600000;
+    private static final long START_TIME = 180000;
     private static final String TAG = "CODE_SCREEN";
 
     private TextView codeField;
@@ -150,7 +150,6 @@ public class CodeScreen extends AppCompatActivity {
                 timerRunning = false;
                 codeField.setText(null);
                 removeQR();
-                Toast.makeText(CodeScreen.this, "Time's up! QR code now invalid", Toast.LENGTH_SHORT).show();
                 finish();
             }
         }.start();
@@ -170,15 +169,15 @@ public class CodeScreen extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        //removeQR();
+        removeQR();
+        finish();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        //removeQR();
+        removeQR();
         finish();
-        Toast.makeText(CodeScreen.this, "Code reset", Toast.LENGTH_SHORT).show();
     }
 
     private void removeQR() {

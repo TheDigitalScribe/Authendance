@@ -20,6 +20,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import java.text.SimpleDateFormat;
@@ -138,7 +139,7 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
                                             if (snapshot.exists()) {
                                                 String qrCode = snapshot.getString("qr_code");
 
-                                                String currentDate = new SimpleDateFormat("dd MM YYYY", Locale.getDefault()).format(new Date());
+                                                final String currentDate = new SimpleDateFormat("dd MM YYYY", Locale.getDefault()).format(new Date());
 
                                                 Map<String, Object> module = new HashMap<>();
                                                 module.put("module", moduleID);
@@ -161,6 +162,40 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
                                                         .collection("Date")
                                                         .document(currentDate)
                                                         .set(date);
+
+                                                CollectionReference studentRef = db.collection("School")
+                                                        .document("0DKXnQhueh18DH7TSjsb")
+                                                        .collection("Modules")
+                                                        .document(moduleID)
+                                                        .collection("Students");
+
+                                                Query query = studentRef.orderBy("student_id", Query.Direction.DESCENDING);
+                                                query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+                                                        if(task.isSuccessful()) {
+                                                            for(QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()) {
+
+                                                                String studentID = queryDocumentSnapshot.getId();
+                                                                Log.d("WOW", studentID);
+
+                                                                Map<String, Object> attended = new HashMap<>();
+                                                                attended.put("attended", false);
+
+                                                                db.collection("School")
+                                                                        .document("0DKXnQhueh18DH7TSjsb")
+                                                                        .collection("Attendance")
+                                                                        .document(moduleID)
+                                                                        .collection("Date")
+                                                                        .document(currentDate)
+                                                                        .collection("Students")
+                                                                        .document(studentID)
+                                                                        .set(attended);
+                                                            }
+                                                        }
+                                                    }
+                                                });
 
                                                 Intent intent = new Intent(GenerateCode.this, CodeScreen.class);
                                                 intent.putExtra("QR_CODE", qrCode);

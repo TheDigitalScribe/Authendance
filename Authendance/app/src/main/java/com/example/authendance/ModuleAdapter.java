@@ -11,9 +11,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 
-public class StudentModuleAdapter extends FirestoreRecyclerAdapter<StudentModuleItem, StudentModuleAdapter.ModuleHolder> {
+public class ModuleAdapter extends FirestoreRecyclerAdapter<StudentModuleItem, ModuleAdapter.ModuleHolder> {
 
-    public StudentModuleAdapter(@NonNull FirestoreRecyclerOptions<StudentModuleItem> options) {
+    public ModuleAdapter(@NonNull FirestoreRecyclerOptions<StudentModuleItem> options) {
         super(options);
     }
 
@@ -26,7 +26,7 @@ public class StudentModuleAdapter extends FirestoreRecyclerAdapter<StudentModule
     @NonNull
     @Override
     public ModuleHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.student_module, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.modules_rv_layout, parent, false);
         return new ModuleHolder(v);
     }
 

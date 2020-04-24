@@ -150,10 +150,9 @@ public class MainActivity extends AppCompatActivity {
                                                 if (task.isSuccessful()) {
                                                     DocumentSnapshot document = task.getResult();
                                                     if (document != null) {
+
                                                         String userType = document.getString("user_type"); //This determines if the user is a teacher or student
                                                         String userName = document.getString("name");
-                                                        String studentID = document.getString("student_id");
-                                                        String teacherID = document.getString("teacher_id");
 
                                                         assert userType != null;
                                                         switch (userType) {

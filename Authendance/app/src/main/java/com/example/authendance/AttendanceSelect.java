@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.Spinner;
 import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -20,12 +19,8 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-
-import org.w3c.dom.Document;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -47,7 +42,7 @@ public class AttendanceSelect extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
         FirebaseAuth fAuth = FirebaseAuth.getInstance();
-        uid = fAuth.getCurrentUser().getUid();
+        uid = Objects.requireNonNull(fAuth.getCurrentUser()).getUid();
 
         CalendarView calendarView = findViewById(R.id.calendarView);
         submitBtn = findViewById(R.id.submitBtn);
@@ -85,18 +80,18 @@ public class AttendanceSelect extends AppCompatActivity {
                                     if(task.isSuccessful()) {
                                         DocumentSnapshot documentSnapshot = task.getResult();
 
+                                        assert documentSnapshot != null;
                                         if(documentSnapshot.exists()) {
-                                            Toast.makeText(AttendanceSelect.this, "Doc exists", Toast.LENGTH_SHORT).show();
 
                                             Intent intent = new Intent(AttendanceSelect.this, AttendanceScreen.class);
 
-                                            /*Bundle bundle = new Bundle();
+                                            Bundle bundle = new Bundle();
                                             bundle.putString("MOD_ID", spinnerValue);
                                             bundle.putString("DATE_PICKED", datePicked);
-                                            intent.putExtras(bundle);*/
+                                            intent.putExtras(bundle);
                                             startActivity(intent);
 
-                                            Log.d("ATT_SLCT", spinnerValue + datePicked);
+                                            Log.d("ATT_SLCT", spinnerValue + " " + datePicked);
                                         }
                                         else {
                                             Toast.makeText(AttendanceSelect.this, "No attendance record for this module on " + datePicked , Toast.LENGTH_SHORT).show();
@@ -123,7 +118,7 @@ public class AttendanceSelect extends AppCompatActivity {
 
         //Prepares spinner
         final List<String> modulesList = new ArrayList<>();
-        final ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), R.layout.custom_spinner, modulesList);
+        final ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, modulesList);
         adapter.setDropDownViewResource(R.layout.custom_spinner_dropdown);
         attendanceSpinner.setAdapter(adapter);
 
@@ -140,9 +135,5 @@ public class AttendanceSelect extends AppCompatActivity {
                 }
             }
         });
-    }
-
-    private void submitDate(final String datePicked) {
-
     }
 }

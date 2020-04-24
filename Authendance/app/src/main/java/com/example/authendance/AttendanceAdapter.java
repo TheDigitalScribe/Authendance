@@ -1,3 +1,5 @@
+//This class is for retrieving the student ID's from Firestore and storing it in a RecyclerView
+
 package com.example.authendance;
 
 import android.view.LayoutInflater;
@@ -12,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 
-public class AttendanceAdapter extends FirestoreRecyclerAdapter<Student, AttendanceAdapter.AttendanceHolder> {
+public class AttendanceAdapter extends FirestoreRecyclerAdapter<Student, AttendanceAdapter.StudentHolder> {
 
 
     public AttendanceAdapter(@NonNull FirestoreRecyclerOptions<Student> options) {
@@ -20,27 +22,28 @@ public class AttendanceAdapter extends FirestoreRecyclerAdapter<Student, Attenda
     }
 
     @Override
-    protected void onBindViewHolder(@NonNull AttendanceHolder holder, int position, @NonNull Student model) {
-        holder.studentID.setText(model.getStudentID());
-        holder.checkerImg.setImageResource(model.getImageResource());
+    protected void onBindViewHolder(@NonNull StudentHolder holder, int position, @NonNull Student model) {
+
+        holder.studentTV.setText(model.getStudent_id());
     }
 
     @NonNull
     @Override
-    public AttendanceHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.student_layout, parent, false);
-        return new AttendanceHolder(v);
+    public StudentHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.attendance_rv_layout,
+                parent, false);
+
+        return new StudentHolder(v);
     }
 
-    class AttendanceHolder extends RecyclerView.ViewHolder {
+    class StudentHolder extends RecyclerView.ViewHolder {
 
-        TextView studentID;
-        ImageView checkerImg;
+        TextView studentTV;
 
-        public AttendanceHolder(@NonNull View itemView) {
+        public StudentHolder(@NonNull View itemView) {
             super(itemView);
-            studentID = itemView.findViewById(R.id.studentID);
-            checkerImg = itemView.findViewById(R.id.checker);
+            studentTV = itemView.findViewById(R.id.studentTV);
         }
     }
 }

@@ -20,7 +20,7 @@
         <activity android:name=".AttendanceSelect" />
         <activity android:name=".TeacherModules" />
         <activity android:name=".StudentModules" />
-        <activity android:name=".ModulePicker" />
+        <activity android:name=".ModuleSelect" />
         <activity android:name=".CodeScreen" />
         <activity android:name=".PasswordReset" />
         <activity android:name=".TeacherActivity" />

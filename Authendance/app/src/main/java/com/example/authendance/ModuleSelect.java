@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class ModulePicker extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+public class ModuleSelect extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     private final static String TAG = "MOD_PICK";
 
     private Boolean codeCheck;
@@ -84,7 +84,7 @@ public class ModulePicker extends AppCompatActivity implements AdapterView.OnIte
 
         //Setting up the spinner which allows users to pick modules
         final List<String> modulesList = new ArrayList<>();
-        final ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), R.layout.custom_spinner, modulesList);
+        final ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, modulesList);
         adapter.setDropDownViewResource(R.layout.custom_spinner_dropdown);
         spinner.setAdapter(adapter);
 
@@ -119,7 +119,9 @@ public class ModulePicker extends AppCompatActivity implements AdapterView.OnIte
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
+
                     DocumentSnapshot documentSnapshot = task.getResult();
+                    assert documentSnapshot != null;
                     if (documentSnapshot.exists()) {
 
                         String qrCode = documentSnapshot.getString("qr_code");
@@ -135,19 +137,19 @@ public class ModulePicker extends AppCompatActivity implements AdapterView.OnIte
                             data.putString("MOD_ID", moduleID);
                             data.putString("QR_CODE", qrCode);
                             data.putString("STU_ID", studentID);
-                            Intent intent = new Intent(ModulePicker.this, CodeScanner.class);
+                            Intent intent = new Intent(ModuleSelect.this, CodeScanner.class);
                             intent.putExtras(data);
                             startActivity(intent);
                         } else if (codeCheck.equals(false)) {
-                            Toast.makeText(ModulePicker.this, "Code not generated for this module", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ModuleSelect.this, "Code not generated for this module", Toast.LENGTH_SHORT).show();
                         }
 
                     } else {
-                        Toast.makeText(ModulePicker.this, "No document exists", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ModuleSelect.this, "No document exists", Toast.LENGTH_SHORT).show();
                     }
                 }
                 else {
-                    Toast.makeText(ModulePicker.this, "An error occurred", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ModuleSelect.this, "Error. " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         });

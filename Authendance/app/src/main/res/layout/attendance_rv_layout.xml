@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:cardCornerRadius="4dp"
+    app:cardCornerRadius="12dp"
     android:layout_marginBottom="5dp"
     android:layout_marginTop="5dp">
 
@@ -14,21 +14,13 @@
         android:layout_margin="10dp">
 
         <TextView
-            android:id="@+id/studentID"
+            android:id="@+id/studentTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Line 1"
-            android:fontFamily="@font/raleway"
             android:textSize="20sp"
             android:textColor="@android:color/black"
             android:layout_alignParentTop="true" />
-
-        <ImageView
-            android:id="@+id/checker"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_alignParentEnd="true"/>
-
 
     </RelativeLayout>
 </androidx.cardview.widget.CardView>

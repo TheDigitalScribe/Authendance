@@ -82,7 +82,7 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
 
         //Prepares spinner
         final List<String> modulesList = new ArrayList<>();
-        final ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), R.layout.custom_spinner, modulesList);
+        final ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, modulesList);
         adapter.setDropDownViewResource(R.layout.custom_spinner_dropdown);
         teacherSpinner.setAdapter(adapter);
 
@@ -184,6 +184,7 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
 
                                                                 Map<String, Object> attended = new HashMap<>();
                                                                 attended.put("attended", false);
+                                                                attended.put("student_id", studentID);
 
                                                                 db.collection("School")
                                                                         .document("0DKXnQhueh18DH7TSjsb")

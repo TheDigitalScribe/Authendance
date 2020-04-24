@@ -113,7 +113,7 @@ public class CodeScreen extends AppCompatActivity {
         });
     }
 
-    //This method ensures activity isn't closed after only one press of the back button within 2 seconds
+    //This method ensures activity isn't closed after only one press of the back button
     @Override
     public void onBackPressed() {
 

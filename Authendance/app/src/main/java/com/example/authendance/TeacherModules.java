@@ -5,9 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -23,7 +21,7 @@ import java.util.Objects;
 
 public class TeacherModules extends AppCompatActivity {
 
-    private StudentModuleAdapter moduleAdapter;
+    private ModuleAdapter moduleAdapter;
 
     private FirebaseAuth fAuth;
     private FirebaseFirestore db;
@@ -31,7 +29,7 @@ public class TeacherModules extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_student_modules);
+        setContentView(R.layout.modules_recyclerview);
 
         db = FirebaseFirestore.getInstance();
         fAuth = FirebaseAuth.getInstance();
@@ -65,7 +63,7 @@ public class TeacherModules extends AppCompatActivity {
                 .setQuery(query, StudentModuleItem.class)
                 .build();
 
-        moduleAdapter = new StudentModuleAdapter(modules);
+        moduleAdapter = new ModuleAdapter(modules);
         RecyclerView recyclerView = findViewById(R.id.classRecyclerView);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(TeacherModules.this));

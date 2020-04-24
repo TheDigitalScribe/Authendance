@@ -4,39 +4,26 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.Objects;
+
 public class StudentActivity extends AppCompatActivity {
 
-    public static final String STUDENT_PREFS = "studentPrefs";
-    public static final String NAME = "studentName";
-    public static final String ID = "studentID";
-
-    private String nameContent;
-    private String idContent;
-
     private long backPressed;
-    private Toast backPressToast;
 
     private FirebaseFirestore db;
     private FirebaseAuth fAuth;
-    private FirebaseAuth.AuthStateListener fAuthListener;
 
     TextView nameDisplay;
     TextView idDisplay;
@@ -60,7 +47,7 @@ public class StudentActivity extends AppCompatActivity {
         scanCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(StudentActivity.this, ModulePicker.class);
+                Intent intent = new Intent(StudentActivity.this, ModuleSelect.class);
                 String studentName = nameDisplay.getText().toString();
                 String studentID = idDisplay.getText().toString();
 
@@ -92,7 +79,6 @@ public class StudentActivity extends AppCompatActivity {
 
         //Checks if back button was clicked twice within 2 seconds
         if(backPressed + 2000 > System.currentTimeMillis()) {
-            backPressToast.cancel();
             super.onBackPressed();
             return;
         }
@@ -103,7 +89,6 @@ public class StudentActivity extends AppCompatActivity {
             builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    //finish();
 
                     Intent intent = new Intent(StudentActivity.this, MainActivity.class);
                     startActivity(intent);
@@ -123,7 +108,7 @@ public class StudentActivity extends AppCompatActivity {
     }
 
     private void getNameID() {
-        String uid = fAuth.getCurrentUser().getUid();
+        String uid = Objects.requireNonNull(fAuth.getCurrentUser()).getUid();
 
         DocumentReference documentReference = db.collection("School")
                 .document("0DKXnQhueh18DH7TSjsb")
@@ -136,6 +121,7 @@ public class StudentActivity extends AppCompatActivity {
                 if(task.isSuccessful()) {
                     DocumentSnapshot documentSnapshot = task.getResult();
 
+                    assert documentSnapshot != null;
                     if(documentSnapshot.exists()) {
                         String studentName = documentSnapshot.getString("name");
                         String studentID = documentSnapshot.getString("student_id");

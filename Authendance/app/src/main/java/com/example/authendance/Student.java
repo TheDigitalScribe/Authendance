@@ -1,25 +1,21 @@
+//This is a model class to show a list of the students that have attended a module
+
 package com.example.authendance;
 
-import android.widget.ImageView;
+
 
 public class Student {
 
-    private String studentID;
-    private int imageResource;
+    private String student_id;
 
-    public Student(String studentID, int imageResource) {
-        this.studentID = studentID;
-        this.imageResource = imageResource;
+    public Student(String student_id) {
+        this.student_id = student_id;
     }
 
     public Student() {
     }
 
-    public String getStudentID() {
-        return studentID;
-    }
-
-    public int getImageResource() {
-        return imageResource;
+    public String getStudent_id() {
+        return student_id;
     }
 }

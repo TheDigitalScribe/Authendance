@@ -18,6 +18,8 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.Objects;
+
 public class TeacherActivity extends AppCompatActivity {
 
     TextView nameDisplay;
@@ -25,7 +27,6 @@ public class TeacherActivity extends AppCompatActivity {
 
     private FirebaseAuth fAuth;
     private FirebaseFirestore db;
-    private FirebaseAuth.AuthStateListener fAuthListener;
 
     private long backPressed;
 
@@ -43,22 +44,6 @@ public class TeacherActivity extends AppCompatActivity {
 
         fAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
-
-        fAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-
-                FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-
-                if(fUser != null) {
-
-                }
-
-                else if(fUser.equals(null)) {
-                    finish();
-                }
-            }
-        };
 
         //Gets teacher name and ID from MainActivity
         Intent intent = getIntent();
@@ -135,7 +120,7 @@ public class TeacherActivity extends AppCompatActivity {
     }
 
     private void getNameID() {
-        String uid = fAuth.getCurrentUser().getUid();
+        String uid = Objects.requireNonNull(fAuth.getCurrentUser()).getUid();
 
         DocumentReference documentReference = db.collection("School")
                 .document("0DKXnQhueh18DH7TSjsb")
@@ -148,6 +133,7 @@ public class TeacherActivity extends AppCompatActivity {
                 if(task.isSuccessful()) {
                     DocumentSnapshot documentSnapshot = task.getResult();
 
+                    assert documentSnapshot != null;
                     if(documentSnapshot.exists()) {
                         String teacherName = documentSnapshot.getString("name");
                         String teacherID = documentSnapshot.getString("teacher_id");

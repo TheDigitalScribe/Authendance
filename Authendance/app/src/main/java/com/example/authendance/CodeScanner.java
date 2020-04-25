@@ -38,8 +38,6 @@ public class CodeScanner extends AppCompatActivity implements ZXingScannerView.R
     private FirebaseAuth fAuth;
     private FirebaseFirestore db;
 
-    private Boolean attendedAlready;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,7 +62,6 @@ public class CodeScanner extends AppCompatActivity implements ZXingScannerView.R
         Log.d(TAG, "Student ID: " + studentID);
         Log.d(TAG, "QR Code: " + qrCode);
 
-        attendedAlready = false;
     }
 
     //Checks if camera permission has already been granted

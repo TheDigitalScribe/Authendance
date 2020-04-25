@@ -2,20 +2,29 @@
 
 package com.example.authendance;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -49,14 +58,15 @@ public class AttendedFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         db = FirebaseFirestore.getInstance();
+
     }
 
     private void getStudents() {
 
         AttendanceScreen attendanceScreen = (AttendanceScreen) getActivity();
         assert attendanceScreen != null;
-        String module = attendanceScreen.getModuleName();
-        String date = attendanceScreen.getDate();
+        final String module = attendanceScreen.getModuleName();
+        final String date = attendanceScreen.getDate();
 
         CollectionReference moduleRef = db.collection("School")
                 .document("0DKXnQhueh18DH7TSjsb")
@@ -90,6 +100,56 @@ public class AttendedFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(attendAdapter);
         attendAdapter.notifyDataSetChanged();
+
+        attendAdapter.setOnItemLongClickListener(new AttendanceAdapter.OnItemLongClickListener() {
+            @Override
+            public void onItemClick(DocumentSnapshot documentSnapshot, int position) {
+
+                final String studentID = documentSnapshot.getId();
+
+                androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(getContext());
+                builder.setTitle("Set Attendance");
+                builder.setMessage("Do you want to set the student as absent?");
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        DocumentReference documentReference = db.collection("School")
+                                .document("0DKXnQhueh18DH7TSjsb")
+                                .collection("Attendance")
+                                .document(module)
+                                .collection("Date")
+                                .document(date)
+                                .collection("Students")
+                                .document(studentID);
+
+                        documentReference.update("attended", false).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+
+                                Log.d("ATT", "Success");
+
+                            }
+                        })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.d("ATT", "Error updating field");
+
+                                    }
+                                });
+                    }
+                });
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                AlertDialog alert = builder.create();
+                alert.show();
+            }
+        });
 
     }
 

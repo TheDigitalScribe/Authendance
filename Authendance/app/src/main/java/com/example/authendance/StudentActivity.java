@@ -35,8 +35,10 @@ public class StudentActivity extends AppCompatActivity {
 
         nameDisplay = findViewById(R.id.nameDisplay);
         idDisplay = findViewById(R.id.idDisplay);
+
         CardView scanCard = findViewById(R.id.scanCard);
         CardView moduleCard = findViewById(R.id.moduleCard);
+        CardView attendanceCard = findViewById(R.id.attendanceCard);
         CardView settingsCard = findViewById(R.id.settingsCard);
 
         db = FirebaseFirestore.getInstance();
@@ -61,6 +63,14 @@ public class StudentActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(StudentActivity.this, StudentModules.class);
+                startActivity(intent);
+            }
+        });
+
+        attendanceCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(StudentActivity.this, StudentAttendanceScreen.class);
                 startActivity(intent);
             }
         });

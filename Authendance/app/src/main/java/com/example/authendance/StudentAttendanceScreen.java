@@ -1,0 +1,194 @@
+package com.example.authendance;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Build;
+import android.os.Bundle;
+import android.util.Log;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.Locale;
+import java.util.Objects;
+
+public class StudentAttendanceScreen extends AppCompatActivity {
+
+    private FirebaseFirestore db;
+    private FirebaseAuth fAuth;
+
+    private TextView totalAttTV;
+    private TextView lecAttTV;
+    private TextView lecMissedTV;
+    private TextView percentageTV;
+    private ProgressBar attendProgress;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_student_attendance_screen);
+
+        db = FirebaseFirestore.getInstance();
+        fAuth = FirebaseAuth.getInstance();
+
+        totalAttTV = findViewById(R.id.totalAttTV);
+        lecAttTV = findViewById(R.id.lecAttTV);
+        lecMissedTV = findViewById(R.id.lecMissedTV);
+        percentageTV = findViewById(R.id.percentageTV);
+        attendProgress = findViewById(R.id.attendProgress);
+
+        getRecord();
+
+    }
+
+    private void getRecord() {
+
+        //Gets current user's UID
+        String uid = Objects.requireNonNull(fAuth.getCurrentUser()).getUid();
+
+        DocumentReference documentReference = db.collection("School")
+                .document("0DKXnQhueh18DH7TSjsb")
+                .collection("User")
+                .document(uid);
+
+        //Gets student ID from the user's document by using their UID
+        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull final Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()) {
+                    DocumentSnapshot documentSnapshot = task.getResult();
+
+                    assert documentSnapshot != null;
+                    if(documentSnapshot.exists()) {
+                        String studentID = documentSnapshot.getString("student_id");
+
+                        Log.d("STU_ATT", "stuId: " + studentID);
+
+                        assert studentID != null;
+                        final CollectionReference recordRef = db.collection("School")
+                                .document("0DKXnQhueh18DH7TSjsb")
+                                .collection("AttendanceRecord")
+                                .document(studentID)
+                                .collection("Records");
+
+                        //Finds total number of lectures
+                        Query totalQuery = recordRef.orderBy("date", Query.Direction.DESCENDING);
+                        totalQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if(task.isSuccessful()) {
+
+                                    int totalCounter = 0;
+
+                                    for(QueryDocumentSnapshot queryDocumentSnapshot : Objects.requireNonNull(task.getResult())) {
+
+                                        totalCounter++;
+                                    }
+
+                                    Log.d("STU_ATT", "Total: " + totalCounter);
+
+                                    //Gets amount of lectures the student attended
+                                    Query attendedQuery = recordRef.whereEqualTo("attended", true);
+                                    final int finalTotalCounter = totalCounter;
+                                    attendedQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                        @RequiresApi(api = Build.VERSION_CODES.N)
+                                        @Override
+                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                            if(task.isSuccessful()) {
+
+                                                int realTotalCounter = finalTotalCounter;
+                                                int attendedCounter = 0;
+
+                                                for(QueryDocumentSnapshot queryDocumentSnapshot : Objects.requireNonNull(task.getResult())) {
+
+                                                    attendedCounter++;
+
+                                                }
+
+                                                String totalAttendance = "Total Attendance: " + attendedCounter + "/" + realTotalCounter;
+                                                totalAttTV.setText(totalAttendance);
+
+                                                String lecAttended = "Total Lectures Attended: " + attendedCounter;
+                                                lecAttTV.setText(lecAttended);
+
+                                                Log.d("STU_ATT", "Attended: " + attendedCounter + " " + "Total: " + realTotalCounter);
+
+                                                //Gets total percentage of attendance formatted to two decimal places
+                                                float totalPercentage = (float) attendedCounter / realTotalCounter * 100;
+                                                String formattedNum = String.format(Locale.getDefault(), "%.2f", totalPercentage);
+                                                Log.d("STU_ATT", "Percentage: " + formattedNum);
+
+                                                /*Set progress of circular ProgressBar and shows attendance percentage in a TextView
+                                                Math.round is used to convert percentage to an int because the progress bar can
+                                                only use ints to set progress
+                                                 */
+                                                int percentage = Math.round(totalPercentage);
+                                                String showPercent = formattedNum + "%";
+
+                                                //Converts percentage to a float for the isNaN check
+                                                float floatPercent = Float.parseFloat(formattedNum);
+
+                                                //Checks if there is any value shown in for the percentage TextView
+                                                if(Double.isNaN(floatPercent))
+                                                {
+                                                    String attStr = "No Attendance";
+                                                    percentageTV.setText(attStr);
+                                                }
+                                                else {
+                                                    percentageTV.setText(showPercent);
+                                                }
+                                                attendProgress.setProgress(percentage, true);
+
+
+                                                //Finds number of missed lectures
+                                                Query missedQuery = recordRef.whereEqualTo("attended", false);
+                                                missedQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                        if(task.isSuccessful()) {
+
+                                                            int missedCounter = 0;
+
+                                                            for(QueryDocumentSnapshot queryDocumentSnapshot : Objects.requireNonNull(task.getResult())) {
+
+                                                                missedCounter++;
+                                                            }
+
+                                                            String missedLec = "Total Lectures Missed: " + missedCounter;
+                                                            lecMissedTV.setText(missedLec);
+                                                        }
+                                                        else {
+                                                            Log.d("STU_ATT", "Error: " + task.getException());
+                                                        }
+                                                    }
+                                                });
+                                            }
+                                            else {
+                                                Log.d("STU_ATT", "Error: " + task.getException());
+                                            }
+                                        }
+                                    });
+                                }
+                                else {
+                                    Log.d("STU_ATT", "Error: " + task.getException());
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+        });
+    }
+}

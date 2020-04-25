@@ -17,6 +17,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -29,6 +30,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+
 import java.util.Objects;
 
 public class AttendedFragment extends Fragment {
@@ -107,7 +109,7 @@ public class AttendedFragment extends Fragment {
 
                 final String studentID = documentSnapshot.getId();
 
-                androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(getContext());
+                androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(Objects.requireNonNull(getContext()));
                 builder.setTitle("Set Attendance");
                 builder.setMessage("Do you want to set the student as absent?");
                 builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
@@ -127,7 +129,7 @@ public class AttendedFragment extends Fragment {
                             @Override
                             public void onSuccess(Void aVoid) {
 
-                                Log.d("ATT", "Success");
+                                Log.d("ATT", "Attendance updated");
 
                             }
                         })
@@ -136,6 +138,28 @@ public class AttendedFragment extends Fragment {
                                     public void onFailure(@NonNull Exception e) {
                                         Log.d("ATT", "Error updating field");
 
+                                    }
+                                });
+
+                        String docName = module.replaceAll("\\s+","") + date.replaceAll("\\s+","");
+
+                        DocumentReference docRef = db.collection("School")
+                                .document("0DKXnQhueh18DH7TSjsb")
+                                .collection("AttendanceRecord")
+                                .document(studentID)
+                                .collection("Records")
+                                .document(docName);
+
+                        docRef.update("attended", false).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d("ATT", "Personal attendance updated");
+                            }
+                        })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.d("ATT", "Failed to update");
                                     }
                                 });
                     }

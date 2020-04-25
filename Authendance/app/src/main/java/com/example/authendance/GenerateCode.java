@@ -141,7 +141,7 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
 
                                                 final String currentDate = new SimpleDateFormat("dd MM YYYY", Locale.getDefault()).format(new Date());
 
-                                                Map<String, Object> module = new HashMap<>();
+                                                final Map<String, Object> module = new HashMap<>();
                                                 module.put("module", moduleID);
 
                                                 Map<String, Object> date = new HashMap<>();
@@ -171,17 +171,19 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
 
                                                 Log.d(TAG, moduleID);
 
+                                                //Gets all students enrolled in the module and adds them to the Attendance collection
                                                 Query query = studentRef.orderBy("student_id", Query.Direction.DESCENDING);
                                                 query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                                     @Override
                                                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
                                                         if(task.isSuccessful()) {
-                                                            for(QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()) {
+                                                            for(QueryDocumentSnapshot queryDocumentSnapshot : Objects.requireNonNull(task.getResult())) {
 
                                                                 String studentID = queryDocumentSnapshot.getId();
                                                                 Log.d("STU_ID", studentID);
 
+                                                                //Attendance sent to false by default. Updated to true when they scan the code
                                                                 Map<String, Object> attended = new HashMap<>();
                                                                 attended.put("attended", false);
                                                                 attended.put("student_id", studentID);
@@ -195,6 +197,32 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
                                                                         .collection("Students")
                                                                         .document(studentID)
                                                                         .set(attended);
+
+                                                                //Adds student ID document to AttendanceRecord collection
+                                                                Map<String, Object> stuID = new HashMap<>();
+                                                                stuID.put("student_id", studentID);
+
+                                                                db.collection("School")
+                                                                        .document("0DKXnQhueh18DH7TSjsb")
+                                                                        .collection("AttendanceRecord")
+                                                                        .document(studentID)
+                                                                        .set(stuID);
+
+                                                                //Adds date, module and attended checker to student's personal attendance record
+                                                                Map<String, Object> attend = new HashMap<>();
+                                                                attend.put("date", currentDate);
+                                                                attend.put("module", moduleID);
+                                                                attend.put("attended", false);
+
+                                                                String docName = moduleID.replaceAll("\\s+","") + currentDate.replaceAll("\\s+","");
+
+                                                                db.collection("School")
+                                                                        .document("0DKXnQhueh18DH7TSjsb")
+                                                                        .collection("AttendanceRecord")
+                                                                        .document(studentID)
+                                                                        .collection("Records")
+                                                                        .document(docName)
+                                                                        .set(attend);
                                                             }
                                                         }
                                                     }

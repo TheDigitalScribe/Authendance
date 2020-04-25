@@ -5,21 +5,33 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.zxing.Result;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
@@ -34,6 +46,8 @@ public class CodeScanner extends AppCompatActivity implements ZXingScannerView.R
     private String moduleID;
     private String qrCode;
     private String studentID;
+
+    private String currentDate;
 
     private FirebaseAuth fAuth;
     private FirebaseFirestore db;
@@ -50,6 +64,8 @@ public class CodeScanner extends AppCompatActivity implements ZXingScannerView.R
         } else {
             requestCameraPermission();
         }
+
+        currentDate = new SimpleDateFormat("dd MM YYYY", Locale.getDefault()).format(new Date());
 
         Intent intent = getIntent();
         Bundle data = intent.getExtras();
@@ -132,32 +148,8 @@ public class CodeScanner extends AppCompatActivity implements ZXingScannerView.R
 
         if (qrCode.equals(result.getText())) {
 
-            //Gets current date
-            String currentDate = new SimpleDateFormat("dd MM YYYY", Locale.getDefault()).format(new Date());
-
-            //Adds attendance record
-            DocumentReference documentReference = db.collection("School")
-                    .document("0DKXnQhueh18DH7TSjsb")
-                    .collection("Attendance")
-                    .document(moduleID)
-                    .collection("Date")
-                    .document(currentDate)
-                    .collection("Students")
-                    .document(studentID);
-
-            documentReference.update("attended", true).addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void aVoid) {
-                    Log.d(TAG, "Success");
-
-                }
-            })
-            .addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.d(TAG, "Failure");
-                }
-            });
+            addAttendance();
+            addAttendanceRecord();
 
             AlertDialog.Builder builder = new AlertDialog.Builder(CodeScanner.this);
             builder.setTitle("Attendance Authenticated!");
@@ -171,8 +163,7 @@ public class CodeScanner extends AppCompatActivity implements ZXingScannerView.R
             });
             AlertDialog alert = builder.create();
             alert.show();
-        }
-        else {
+        } else {
             AlertDialog.Builder builder = new AlertDialog.Builder(CodeScanner.this);
             builder.setTitle("Invalid QR code");
             builder.setMessage("This code is invalid.");
@@ -186,5 +177,81 @@ public class CodeScanner extends AppCompatActivity implements ZXingScannerView.R
             AlertDialog alert = builder.create();
             alert.show();
         }
+    }
+
+    private void addAttendance() {
+
+        //Adds attendance record
+        DocumentReference documentReference = db.collection("School")
+                .document("0DKXnQhueh18DH7TSjsb")
+                .collection("Attendance")
+                .document(moduleID)
+                .collection("Date")
+                .document(currentDate)
+                .collection("Students")
+                .document(studentID);
+
+        documentReference.update("attended", true)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "Success");
+
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(TAG, "Failure");
+                    }
+                });
+
+    }
+
+    private void addAttendanceRecord() {
+
+        CollectionReference attendRef = db.collection("School")
+                .document("0DKXnQhueh18DH7TSjsb")
+                .collection("AttendanceRecord")
+                .document(studentID)
+                .collection("Records");
+
+        Query query = attendRef.whereEqualTo("module", moduleID).whereEqualTo("date", currentDate);
+        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot queryDocumentSnapshot : Objects.requireNonNull(task.getResult())) {
+
+                        String attRecord = queryDocumentSnapshot.getId();
+                        Log.d(TAG, "attRecord: " + attRecord);
+
+                        DocumentReference reference = db.collection("School")
+                                .document("0DKXnQhueh18DH7TSjsb")
+                                .collection("AttendanceRecord")
+                                .document(studentID)
+                                .collection("Records")
+                                .document(attRecord);
+
+                        reference.update("attended", true)
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Log.d(TAG, "Attendance updated");
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.d(TAG, "Attendance failed to update");
+                                    }
+                                });
+                    }
+                } else {
+                    Log.d(TAG, "Error: " + task.getException());
+                }
+            }
+        });
+
     }
 }

@@ -49,12 +49,8 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_generate_code);
 
-        Button genCodeBtn = findViewById(R.id.scanCodeBtn);
+        Button genCodeBtn = findViewById(R.id.genCodeBtn);
         teacherSpinner = findViewById(R.id.spinner);
-        //NumberPicker numberPicker = findViewById(R.id.numberPicker);
-
-        //numberPicker.setMinValue(1);
-        //numberPicker.setMaxValue(5);
 
         fAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();

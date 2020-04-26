@@ -39,6 +39,9 @@ public class AttendedFragment extends Fragment {
     private AttendanceAdapter attendAdapter;
     private RecyclerView recyclerView;
 
+    private String module;
+    private String date;
+
     public AttendedFragment() {
 
     }
@@ -50,25 +53,19 @@ public class AttendedFragment extends Fragment {
         View v = inflater.inflate(R.layout.attended_fragment, container, false);
         recyclerView = v.findViewById(R.id.attendedRV);
 
+        db = FirebaseFirestore.getInstance();
+
+        AttFragInterface activity = (AttFragInterface) getActivity();
+        assert activity != null;
+        module = activity.getModule();
+        date = activity.getDate();
+
         getStudents();
 
         return v;
     }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        db = FirebaseFirestore.getInstance();
-
-    }
-
     private void getStudents() {
-
-        AttendanceScreen attendanceScreen = (AttendanceScreen) getActivity();
-        assert attendanceScreen != null;
-        final String module = attendanceScreen.getModuleName();
-        final String date = attendanceScreen.getDate();
 
         CollectionReference moduleRef = db.collection("School")
                 .document("0DKXnQhueh18DH7TSjsb")
@@ -92,7 +89,6 @@ public class AttendedFragment extends Fragment {
                 }
             }
         });
-
 
         FirestoreRecyclerOptions<Student> students = new FirestoreRecyclerOptions.Builder<Student>()
                 .setQuery(query, Student.class)

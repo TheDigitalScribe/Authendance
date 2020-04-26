@@ -37,6 +37,9 @@ public class AbsentFragment extends Fragment {
     private AttendanceAdapter attendAdapter;
     private RecyclerView recyclerView;
 
+    private String module;
+    private String date;
+
     public AbsentFragment() {
 
     }
@@ -47,6 +50,11 @@ public class AbsentFragment extends Fragment {
 
         View v = inflater.inflate(R.layout.absent_fragment, container, false);
         recyclerView = v.findViewById(R.id.absentRV);
+
+        AttFragInterface activity = (AttFragInterface) getActivity();
+        assert activity != null;
+        module = activity.getModule();
+        date = activity.getDate();
 
         getStudents();
 
@@ -62,10 +70,6 @@ public class AbsentFragment extends Fragment {
 
     private void getStudents() {
 
-        AttendanceScreen attendanceScreen = (AttendanceScreen) getActivity();
-        assert attendanceScreen != null;
-        final String module = attendanceScreen.getModuleName();
-        final String date = attendanceScreen.getDate();
 
         CollectionReference moduleRef = db.collection("School")
                 .document("0DKXnQhueh18DH7TSjsb")

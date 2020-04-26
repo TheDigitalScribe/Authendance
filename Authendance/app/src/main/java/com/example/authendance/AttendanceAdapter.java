@@ -1,4 +1,4 @@
-//This class is for retrieving the student ID's from Firestore and storing it in a RecyclerView
+//This class is for retrieving the student ID's from Firestore database and storing it in a RecyclerView
 
 package com.example.authendance;
 

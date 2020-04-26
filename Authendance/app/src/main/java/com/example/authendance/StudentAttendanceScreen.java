@@ -4,10 +4,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -21,6 +26,8 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -28,12 +35,15 @@ public class StudentAttendanceScreen extends AppCompatActivity {
 
     private FirebaseFirestore db;
     private FirebaseAuth fAuth;
+    private String uid;
 
     private TextView totalAttTV;
     private TextView lecAttTV;
     private TextView lecMissedTV;
     private TextView percentageTV;
     private ProgressBar attendProgress;
+    private Spinner spinner;
+    private Button submitBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,21 +52,90 @@ public class StudentAttendanceScreen extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
         fAuth = FirebaseAuth.getInstance();
+        uid = Objects.requireNonNull(fAuth.getCurrentUser()).getUid();
 
         totalAttTV = findViewById(R.id.totalAttTV);
         lecAttTV = findViewById(R.id.lecAttTV);
         lecMissedTV = findViewById(R.id.lecMissedTV);
         percentageTV = findViewById(R.id.percentageTV);
         attendProgress = findViewById(R.id.attendProgress);
+        spinner = findViewById(R.id.spinner);
+        submitBtn = findViewById(R.id.submitBtn);
 
         getRecord();
+        populateSpinner();
 
+        submitBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                uid = fAuth.getCurrentUser().getUid();
+                final String spinnerValue = spinner.getSelectedItem().toString();
+
+                //Retrieves student ID
+                DocumentReference documentReference = db.collection("School")
+                        .document("0DKXnQhueh18DH7TSjsb")
+                        .collection("User")
+                        .document(uid);
+
+                documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if(task.isSuccessful()) {
+                            DocumentSnapshot documentSnapshot = task.getResult();
+
+                            assert documentSnapshot != null;
+                            if (documentSnapshot.exists()) {
+
+                                String studentID = documentSnapshot.getString("student_id");
+                                assert studentID != null;
+                                Log.d("STU_ATT", studentID + " " + spinnerValue);
+
+                                //Passes spinner value and student ID to PersonalAttendance class
+                                Bundle bundle = new Bundle();
+                                bundle.putString("MOD_ID", spinnerValue);
+                                bundle.putString("STU_ID", studentID);
+                                Intent intent = new Intent(StudentAttendanceScreen.this, PersonalAttendance.class);
+                                intent.putExtras(bundle);
+                                startActivity(intent);
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    private void populateSpinner() {
+
+        CollectionReference moduleRef = db.collection("School")
+                .document("0DKXnQhueh18DH7TSjsb")
+                .collection("User")
+                .document(uid)
+                .collection("Modules");
+
+        //Prepares spinner
+        final List<String> modulesList = new ArrayList<>();
+        final ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, modulesList);
+        adapter.setDropDownViewResource(R.layout.custom_spinner_dropdown);
+        spinner.setAdapter(adapter);
+
+        //Searches for modules which has the corresponding student ID and adds them to spinner
+        moduleRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot queryDocumentSnapshot : Objects.requireNonNull(task.getResult())) {
+                        String moduleName = queryDocumentSnapshot.getId();
+                        modulesList.add(moduleName);
+                    }
+                    adapter.notifyDataSetChanged();
+                }
+            }
+        });
     }
 
     private void getRecord() {
-
-        //Gets current user's UID
-        String uid = Objects.requireNonNull(fAuth.getCurrentUser()).getUid();
 
         DocumentReference documentReference = db.collection("School")
                 .document("0DKXnQhueh18DH7TSjsb")
@@ -116,6 +195,7 @@ public class StudentAttendanceScreen extends AppCompatActivity {
                                                     attendedCounter++;
 
                                                 }
+
 
                                                 String totalAttendance = "Total Attendance: " + attendedCounter + "/" + realTotalCounter;
                                                 totalAttTV.setText(totalAttendance);

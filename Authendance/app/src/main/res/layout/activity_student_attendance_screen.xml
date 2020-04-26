@@ -4,28 +4,32 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/backgroundapp"
+    android:background="#FFFFFF"
+    android:foregroundGravity="center_vertical|center"
     tools:context=".StudentAttendanceScreen">
 
-    <TextView
-        android:id="@+id/textView5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="75dp"
+    <Button
+        android:id="@+id/submitBtn"
+        android:layout_width="250dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/custom_button"
         android:fontFamily="@font/raleway"
-        android:text="Attendance"
-        android:textColor="@android:color/white"
-        android:textSize="30sp"
+        android:text="Submit"
+        android:textAllCaps="false"
+        android:textColor="#330000"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/spinner" />
 
     <TextView
         android:id="@+id/totalAttTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="20dp"
         android:fontFamily="@font/raleway"
+        android:foregroundGravity="center_vertical|center"
         android:text="Total Attendance:"
         android:textColor="@android:color/black"
         android:textSize="18sp"
@@ -37,14 +41,16 @@
         android:id="@+id/percentageTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="99dp"
+        android:layout_marginTop="100dp"
         android:fontFamily="sans-serif"
+        android:foregroundGravity="center_vertical|center"
+        android:gravity="center_horizontal|center_vertical"
         android:text="Percentage"
         android:textColor="@android:color/black"
         android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView5" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/lecAttTV"
@@ -52,6 +58,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:fontFamily="@font/raleway"
+        android:foregroundGravity="center_vertical|center"
         android:text="Lectures Attended:"
         android:textColor="@android:color/black"
         android:textSize="18sp"
@@ -65,6 +72,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:fontFamily="@font/raleway"
+        android:foregroundGravity="center_vertical|center"
         android:text="Lectures Missed:"
         android:textColor="@android:color/black"
         android:textSize="18sp"
@@ -75,14 +83,26 @@
     <ProgressBar
         android:id="@+id/attendProgress"
         style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:layout_marginTop="13dp"
+        android:foregroundGravity="center_vertical|center"
         android:progress="80"
         android:progressDrawable="@drawable/attendancepercentage"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/percentageTV" />
+
+    <Spinner
+        android:id="@+id/spinner"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="60dp"
+        android:layout_marginEnd="1dp"
+        android:background="@drawable/custom_spinner"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lecMissedTV" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

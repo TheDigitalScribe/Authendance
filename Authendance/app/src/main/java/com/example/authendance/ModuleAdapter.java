@@ -17,7 +17,7 @@ public class ModuleAdapter extends FirestoreRecyclerAdapter<StudentModuleItem, M
         super(options);
     }
 
-    //Tells the adapter what to put in each view in the Card layout
+    //Tells the adapter what to put in each view in the CardView layout
     @Override
     protected void onBindViewHolder(@NonNull ModuleHolder holder, int position, @NonNull StudentModuleItem model) {
         holder.name.setText(model.getModule());

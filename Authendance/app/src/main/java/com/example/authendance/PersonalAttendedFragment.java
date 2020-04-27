@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SearchView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,6 +28,7 @@ public class PersonalAttendedFragment extends Fragment {
 
     private String module;
     private String studentID;
+    private SearchView searchView;
 
     private FirebaseFirestore db;
     private PersonalAttendanceAdapter adapter;

@@ -43,7 +43,6 @@ public class StudentAttendanceScreen extends AppCompatActivity {
     private TextView percentageTV;
     private ProgressBar attendProgress;
     private Spinner spinner;
-    private Button submitBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +59,7 @@ public class StudentAttendanceScreen extends AppCompatActivity {
         percentageTV = findViewById(R.id.percentageTV);
         attendProgress = findViewById(R.id.attendProgress);
         spinner = findViewById(R.id.spinner);
-        submitBtn = findViewById(R.id.submitBtn);
+        Button submitBtn = findViewById(R.id.submitBtn);
 
         getRecord();
         populateSpinner();
@@ -72,7 +71,7 @@ public class StudentAttendanceScreen extends AppCompatActivity {
                 uid = fAuth.getCurrentUser().getUid();
                 final String spinnerValue = spinner.getSelectedItem().toString();
 
-                //Retrieves student ID
+                //Determines database path for the user's document
                 DocumentReference documentReference = db.collection("School")
                         .document("0DKXnQhueh18DH7TSjsb")
                         .collection("User")
@@ -87,11 +86,12 @@ public class StudentAttendanceScreen extends AppCompatActivity {
                             assert documentSnapshot != null;
                             if (documentSnapshot.exists()) {
 
+                                //Retrieves student ID
                                 String studentID = documentSnapshot.getString("student_id");
                                 assert studentID != null;
                                 Log.d("STU_ATT", studentID + " " + spinnerValue);
 
-                                //Passes spinner value and student ID to PersonalAttendance class
+                                //Passes spinner value and student ID to the PersonalAttendance class
                                 Bundle bundle = new Bundle();
                                 bundle.putString("MOD_ID", spinnerValue);
                                 bundle.putString("STU_ID", studentID);
@@ -137,6 +137,7 @@ public class StudentAttendanceScreen extends AppCompatActivity {
 
     private void getRecord() {
 
+        //Determines database path for user's document
         DocumentReference documentReference = db.collection("School")
                 .document("0DKXnQhueh18DH7TSjsb")
                 .collection("User")
@@ -151,6 +152,7 @@ public class StudentAttendanceScreen extends AppCompatActivity {
 
                     assert documentSnapshot != null;
                     if(documentSnapshot.exists()) {
+
                         String studentID = documentSnapshot.getString("student_id");
 
                         Log.d("STU_ATT", "stuId: " + studentID);
@@ -187,7 +189,6 @@ public class StudentAttendanceScreen extends AppCompatActivity {
                                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                             if(task.isSuccessful()) {
 
-                                                int realTotalCounter = finalTotalCounter;
                                                 int attendedCounter = 0;
 
                                                 for(QueryDocumentSnapshot queryDocumentSnapshot : Objects.requireNonNull(task.getResult())) {
@@ -197,18 +198,17 @@ public class StudentAttendanceScreen extends AppCompatActivity {
                                                 }
 
 
-                                                String totalAttendance = "Total Attendance: " + attendedCounter + "/" + realTotalCounter;
+                                                String totalAttendance = "Total Attendance: " + attendedCounter + "/" + finalTotalCounter;
                                                 totalAttTV.setText(totalAttendance);
 
                                                 String lecAttended = "Total Lectures Attended: " + attendedCounter;
                                                 lecAttTV.setText(lecAttended);
 
-                                                Log.d("STU_ATT", "Attended: " + attendedCounter + " " + "Total: " + realTotalCounter);
+                                                Log.d("STU_ATT", "Attended: " + attendedCounter + " " + "Total: " + finalTotalCounter);
 
                                                 //Gets total percentage of attendance formatted to two decimal places
-                                                float totalPercentage = (float) attendedCounter / realTotalCounter * 100;
+                                                float totalPercentage = (float) attendedCounter / finalTotalCounter * 100;
                                                 String formattedNum = String.format(Locale.getDefault(), "%.2f", totalPercentage);
-                                                Log.d("STU_ATT", "Percentage: " + formattedNum);
 
                                                 /*Set progress of circular ProgressBar and shows attendance percentage in a TextView
                                                 Math.round is used to convert percentage to an int because the progress bar can
@@ -220,7 +220,7 @@ public class StudentAttendanceScreen extends AppCompatActivity {
                                                 //Converts percentage to a float for the isNaN check
                                                 float floatPercent = Float.parseFloat(formattedNum);
 
-                                                //Checks if there is any value shown in for the percentage TextView
+                                                //Checks if there is any value shown for the percentage TextView
                                                 if(Double.isNaN(floatPercent))
                                                 {
                                                     String attStr = "No Attendance";
@@ -230,7 +230,6 @@ public class StudentAttendanceScreen extends AppCompatActivity {
                                                     percentageTV.setText(showPercent);
                                                 }
                                                 attendProgress.setProgress(percentage, true);
-
 
                                                 //Finds number of missed lectures
                                                 Query missedQuery = recordRef.whereEqualTo("attended", false);

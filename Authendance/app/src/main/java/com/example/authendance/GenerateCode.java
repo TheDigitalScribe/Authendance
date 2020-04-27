@@ -2,7 +2,6 @@ package com.example.authendance;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,7 +14,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -36,15 +34,14 @@ import java.util.Random;
 public class GenerateCode extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     private final static String TAG = "GEN_CODE";
 
-    private FirebaseAuth fAuth;
     private FirebaseFirestore db;
-    private FirebaseUser user;
+    private String uid;
 
     private Spinner teacherSpinner;
 
-    private String uid;
 
     @Override
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_generate_code);
@@ -52,9 +49,8 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
         Button genCodeBtn = findViewById(R.id.genCodeBtn);
         teacherSpinner = findViewById(R.id.spinner);
 
-        fAuth = FirebaseAuth.getInstance();
+        FirebaseAuth fAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
-        user = FirebaseAuth.getInstance().getCurrentUser();
         uid = Objects.requireNonNull(fAuth.getCurrentUser()).getUid();
 
         populateSpinner();
@@ -70,24 +66,27 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
 
     private void populateSpinner() {
 
+        //Searches for the teacher's modules in their database record
         CollectionReference moduleRef = db.collection("School")
                 .document("0DKXnQhueh18DH7TSjsb")
                 .collection("User")
                 .document(uid)
                 .collection("Modules");
 
-        //Prepares spinner
+        //Prepares spinner and dropdown list
         final List<String> modulesList = new ArrayList<>();
         final ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, modulesList);
         adapter.setDropDownViewResource(R.layout.custom_spinner_dropdown);
         teacherSpinner.setAdapter(adapter);
 
-        //Searches for modules which has the corresponding teacher ID and adds them to spinner
+        //Retrieves the IDs of the modules and adds them to the list for the spinner
         moduleRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
+
                     for (QueryDocumentSnapshot queryDocumentSnapshot : Objects.requireNonNull(task.getResult())) {
+
                         String moduleName = queryDocumentSnapshot.getId();
                         modulesList.add(moduleName);
                     }
@@ -101,6 +100,7 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
 
         final String spinnerValue = teacherSpinner.getSelectedItem().toString();
 
+        //Searches for the module the user selected in the spinner
         final DocumentReference moduleRef = db.collection("School")
                 .document("0DKXnQhueh18DH7TSjsb")
                 .collection("Modules")
@@ -110,9 +110,12 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
+
                     DocumentSnapshot documentSnapshot = task.getResult();
                     assert documentSnapshot != null;
                     if (documentSnapshot.exists()) {
+
+                        //Retrieves the ID of the corresponding module document
                         final String moduleID = documentSnapshot.getId();
 
                         final DocumentReference documentReference = db.collection("School")
@@ -120,6 +123,7 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
                                 .collection("Modules")
                                 .document(moduleID);
 
+                        //Updates the qr_code field in the right module document with a randomised char string
                         documentReference.update("qr_code", genRandomString()).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
@@ -135,11 +139,14 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
                                             if (snapshot.exists()) {
                                                 String qrCode = snapshot.getString("qr_code");
 
+                                                //Gets current date
                                                 final String currentDate = new SimpleDateFormat("dd MM YYYY", Locale.getDefault()).format(new Date());
 
+                                                //Adds module field to the generated module document in the Attendance collection
                                                 final Map<String, Object> module = new HashMap<>();
                                                 module.put("module", moduleID);
 
+                                                //Adds date field to the generated date document in the Date sub-collection
                                                 Map<String, Object> date = new HashMap<>();
                                                 date.put("date", currentDate);
 
@@ -159,13 +166,13 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
                                                         .document(currentDate)
                                                         .set(date);
 
+                                                //Determines database path for all the students enrolled in the selected module
                                                 CollectionReference studentRef = db.collection("School")
                                                         .document("0DKXnQhueh18DH7TSjsb")
                                                         .collection("Modules")
                                                         .document(moduleID)
                                                         .collection("Students");
 
-                                                Log.d(TAG, moduleID);
 
                                                 //Gets all students enrolled in the module and adds them to the Attendance collection
                                                 Query query = studentRef.orderBy("student_id", Query.Direction.DESCENDING);
@@ -210,6 +217,7 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
                                                                 attend.put("module", moduleID);
                                                                 attend.put("attended", false);
 
+                                                                //Removes spaces for the name of the generated attendance document
                                                                 String docName = moduleID.replaceAll("\\s+","") + currentDate.replaceAll("\\s+","");
 
                                                                 db.collection("School")
@@ -224,6 +232,7 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
                                                     }
                                                 });
 
+                                                //Passes QR Code and module to CodeScreen.class
                                                 Intent intent = new Intent(GenerateCode.this, CodeScreen.class);
                                                 intent.putExtra("QR_CODE", qrCode);
                                                 intent.putExtra("MOD_ID", moduleID);
@@ -253,6 +262,7 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
 
     }
 
+    //Methods for the spinner. Unused but required
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 

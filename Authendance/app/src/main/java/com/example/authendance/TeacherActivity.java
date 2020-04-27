@@ -45,7 +45,7 @@ public class TeacherActivity extends AppCompatActivity {
         fAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        //Gets teacher name and ID from MainActivity
+        //Gets teacher's name and their ID from the MainActivity class
         Intent intent = getIntent();
         final String teacherName = intent.getStringExtra("TEACHER_NAME");
         final String teacherID = intent.getStringExtra("TEACHER_ID");
@@ -86,12 +86,12 @@ public class TeacherActivity extends AppCompatActivity {
             }
         });
     }
+
+    //Asls the user if they want to log out when they press the back button
     @Override
     public void onBackPressed() {
 
-        //Checks if back button was clicked twice within 2 seconds
         if(backPressed + 2000 > System.currentTimeMillis()) {
-            //backPressToast.cancel();
             super.onBackPressed();
             return;
         }

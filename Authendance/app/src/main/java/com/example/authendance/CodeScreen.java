@@ -39,7 +39,6 @@ public class CodeScreen extends AppCompatActivity {
     //private static final long START_TIME = 180000;
     private static final String TAG = "CODE_SCREEN";
 
-    private TextView codeField;
     private ImageView qrCode;
 
     /*private TextView textViewCountDown;
@@ -48,15 +47,10 @@ public class CodeScreen extends AppCompatActivity {
     private long endTime;
     private boolean timerRunning;*/
 
-    private FirebaseAuth fAuth;
     private FirebaseFirestore db;
 
     private String code;
     private String moduleID;
-    private Button finishBtn;
-
-    private BitMatrix bitMatrix;
-    private Bitmap bitmap;
 
     private long backPressed;
     private Toast backPressToast;
@@ -69,15 +63,14 @@ public class CodeScreen extends AppCompatActivity {
         //Keeps screen awake
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        fAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        codeField = findViewById(R.id.codeField);
+        TextView codeField = findViewById(R.id.codeField);
         qrCode = findViewById(R.id.qrCode);
-        finishBtn = findViewById(R.id.finishBtn);
+        Button finishBtn = findViewById(R.id.finishBtn);
         //textViewCountDown = findViewById(R.id.countDownTimerText);
 
-        //Retrieves generated QR code text and document ID for module from GenerateCode activity
+        //Retrieves generated QR code text and document ID for module from the GenerateCode class
         Intent intent = getIntent();
         code = intent.getStringExtra("QR_CODE");
         moduleID = intent.getStringExtra("MOD_ID");
@@ -85,6 +78,7 @@ public class CodeScreen extends AppCompatActivity {
 
         createQR();
         //startTimer();
+
 
         //Toast.makeText(CodeScreen.this, "Please do not exit screen or code will be reset!", Toast.LENGTH_SHORT).show();
 
@@ -113,7 +107,7 @@ public class CodeScreen extends AppCompatActivity {
         });
     }
 
-    //This method ensures activity isn't closed after only one press of the back button
+    //Alerts the user the code will be reset when they press the back button
     @Override
     public void onBackPressed() {
 
@@ -137,8 +131,8 @@ public class CodeScreen extends AppCompatActivity {
 
         try {
             assert code != null;
-            bitMatrix = qrCodeWriter.encode(code, BarcodeFormat.QR_CODE, width, height);
-            bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+            BitMatrix bitMatrix = qrCodeWriter.encode(code, BarcodeFormat.QR_CODE, width, height);
+            Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
 
             for (int x = 0; x < width; x++) {
                 for (int y = 0; y < height; y++) {
@@ -154,6 +148,7 @@ public class CodeScreen extends AppCompatActivity {
         }
     }
 
+    //Removes QR code from database when activity is destroyed
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -205,7 +200,7 @@ public class CodeScreen extends AppCompatActivity {
 
     private void removeQR() {
 
-        //Searches for correct module to remove QR code from
+        //Determines document path for the corresponding module
         DocumentReference documentReference = db.collection("School")
                 .document("0DKXnQhueh18DH7TSjsb")
                 .collection("Modules")

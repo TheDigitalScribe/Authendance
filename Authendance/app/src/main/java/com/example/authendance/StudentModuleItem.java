@@ -1,7 +1,6 @@
 package com.example.authendance;
 
 
-//Object class for the student modules to be displayed in a RecyclerView
 public class StudentModuleItem {
     private String module;
 

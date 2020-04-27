@@ -76,6 +76,7 @@ public class AttendedFragment extends Fragment {
                 .collection("Students");
 
 
+        //Looks for the students who HAVE attended the module
         Query query = moduleRef.whereEqualTo("attended", true);
         query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -85,11 +86,12 @@ public class AttendedFragment extends Fragment {
                         queryDocumentSnapshot.getId();
                     }
                 } else {
-                    Log.d("ATT_SCREEN", "Something went wrong");
+                    Toast.makeText(getContext(), "Query failed", Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
+        //Builds the RecyclerView
         FirestoreRecyclerOptions<Student> students = new FirestoreRecyclerOptions.Builder<Student>()
                 .setQuery(query, Student.class)
                 .build();
@@ -99,6 +101,7 @@ public class AttendedFragment extends Fragment {
         recyclerView.setAdapter(attendAdapter);
         attendAdapter.notifyDataSetChanged();
 
+        //When a
         attendAdapter.setOnItemLongClickListener(new AttendanceAdapter.OnItemLongClickListener() {
             @Override
             public void onItemClick(DocumentSnapshot documentSnapshot, int position) {
@@ -173,12 +176,14 @@ public class AttendedFragment extends Fragment {
 
     }
 
+    //Starts listening for changes to the RecyclerView when Activity starts
     @Override
     public void onStart() {
         super.onStart();
         attendAdapter.startListening();
     }
 
+    //Stops listening for changes to the RecyclerView when Activity stops
     @Override
     public void onStop() {
         super.onStop();

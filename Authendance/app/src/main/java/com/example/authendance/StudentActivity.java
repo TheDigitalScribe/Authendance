@@ -84,10 +84,10 @@ public class StudentActivity extends AppCompatActivity {
         });
     }
 
+    //Asks if user wants to log out when back button is pressed
     @Override
     public void onBackPressed() {
 
-        //Checks if back button was clicked twice within 2 seconds
         if(backPressed + 2000 > System.currentTimeMillis()) {
             super.onBackPressed();
             return;
@@ -120,6 +120,7 @@ public class StudentActivity extends AppCompatActivity {
     private void getNameID() {
         String uid = Objects.requireNonNull(fAuth.getCurrentUser()).getUid();
 
+        //Determines database path for user's document
         DocumentReference documentReference = db.collection("School")
                 .document("0DKXnQhueh18DH7TSjsb")
                 .collection("User")
@@ -129,13 +130,17 @@ public class StudentActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if(task.isSuccessful()) {
+
                     DocumentSnapshot documentSnapshot = task.getResult();
 
                     assert documentSnapshot != null;
                     if(documentSnapshot.exists()) {
+
+                        //Retrieves name and student ID
                         String studentName = documentSnapshot.getString("name");
                         String studentID = documentSnapshot.getString("student_id");
 
+                        //Sets display TextViews to the student's name and ID
                         nameDisplay.setText(studentName);
                         idDisplay.setText(studentID);
                     }

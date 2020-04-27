@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         app:tabMode="fixed"
         app:tabGravity="fill"
-        app:tabIndicatorColor="@color/colorAccent">
+        app:tabIndicatorColor="#000000">
 
     </com.google.android.material.tabs.TabLayout>
 

@@ -5,13 +5,30 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:elevation="4dp"
+        android:background="@drawable/facebook">
+
+        <TextView
+            android:id="@+id/personalToolbarTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Module"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp" />
+
+    </androidx.appcompat.widget.Toolbar>
+
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/personalAttTabs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:tabMode="fixed"
         app:tabGravity="fill"
-        app:tabIndicatorColor="#000000">
+        app:tabIndicatorColor="#000000"
+        app:tabMode="fixed">
 
     </com.google.android.material.tabs.TabLayout>
 

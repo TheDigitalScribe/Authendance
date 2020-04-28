@@ -207,7 +207,6 @@ public class CodeScanner extends AppCompatActivity implements ZXingScannerView.R
 
     }
 
-
     //Adds attendance record to students' personal attendance
     private void addAttendanceRecord() {
 

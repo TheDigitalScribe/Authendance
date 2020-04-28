@@ -39,11 +39,17 @@ public class AttendedFragment extends Fragment {
     private AttendanceAdapter attendAdapter;
     private RecyclerView recyclerView;
 
+    private OnItemClickListener clickListener;
+
     private String module;
     private String date;
 
     public AttendedFragment() {
 
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(int position);
     }
 
     @Nullable
@@ -52,6 +58,7 @@ public class AttendedFragment extends Fragment {
 
         View v = inflater.inflate(R.layout.attended_fragment, container, false);
         recyclerView = v.findViewById(R.id.attendedRV);
+
 
         db = FirebaseFirestore.getInstance();
 
@@ -101,10 +108,22 @@ public class AttendedFragment extends Fragment {
         recyclerView.setAdapter(attendAdapter);
         attendAdapter.notifyDataSetChanged();
 
-        //When a
-        attendAdapter.setOnItemLongClickListener(new AttendanceAdapter.OnItemLongClickListener() {
+        attendAdapter.setOnItemClickListener(new AttendanceAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(DocumentSnapshot documentSnapshot, int position) {
+
+                String studentID = documentSnapshot.getId();
+
+                Intent intent = new Intent(getActivity(), PersonalAttendance.class);
+                intent.putExtra("STU_ID", studentID);
+                intent.putExtra("MOD_ID", module);
+                startActivity(intent);
+            }
+        });
+
+        attendAdapter.setOnItemLongClickListener(new AttendanceAdapter.OnItemLongClickListener() {
+            @Override
+            public void onItemLongClick(DocumentSnapshot documentSnapshot, int position) {
 
                 final String studentID = documentSnapshot.getId();
 
@@ -140,7 +159,7 @@ public class AttendedFragment extends Fragment {
                                     }
                                 });
 
-                        String docName = module.replaceAll("\\s+","") + date.replaceAll("\\s+","");
+                        String docName = module.replaceAll("\\s+", "") + date.replaceAll("\\s+", "");
 
                         DocumentReference docRef = db.collection("School")
                                 .document("0DKXnQhueh18DH7TSjsb")
@@ -173,7 +192,6 @@ public class AttendedFragment extends Fragment {
                 alert.show();
             }
         });
-
     }
 
     //Starts listening for changes to the RecyclerView when Activity starts

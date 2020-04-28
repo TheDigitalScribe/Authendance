@@ -2,6 +2,7 @@ package com.example.authendance;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -21,6 +23,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -180,8 +184,8 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
                                                     @Override
                                                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
-                                                        if(task.isSuccessful()) {
-                                                            for(QueryDocumentSnapshot queryDocumentSnapshot : Objects.requireNonNull(task.getResult())) {
+                                                        if (task.isSuccessful()) {
+                                                            for (QueryDocumentSnapshot queryDocumentSnapshot : Objects.requireNonNull(task.getResult())) {
 
                                                                 String studentID = queryDocumentSnapshot.getId();
                                                                 Log.d("STU_ID", studentID);
@@ -211,14 +215,17 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
                                                                         .document(studentID)
                                                                         .set(stuID);
 
+                                                                String currentTime = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date());
+
                                                                 //Adds date, module and attended checker to student's personal attendance record
                                                                 Map<String, Object> attend = new HashMap<>();
                                                                 attend.put("date", currentDate);
                                                                 attend.put("module", moduleID);
                                                                 attend.put("attended", false);
+                                                                attend.put("time", currentTime);
 
-                                                                //Removes spaces for the name of the generated attendance document
-                                                                String docName = moduleID.replaceAll("\\s+","") + currentDate.replaceAll("\\s+","");
+                                                                //Removes spaces for the ID of the generated attendance document
+                                                                String docName = moduleID.replaceAll("\\s+", "") + currentDate.replaceAll("\\s+", "");
 
                                                                 db.collection("School")
                                                                         .document("0DKXnQhueh18DH7TSjsb")
@@ -226,7 +233,7 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
                                                                         .document(studentID)
                                                                         .collection("Records")
                                                                         .document(docName)
-                                                                        .set(attend);
+                                                                        .set(attend, SetOptions.merge());
                                                             }
                                                         }
                                                     }

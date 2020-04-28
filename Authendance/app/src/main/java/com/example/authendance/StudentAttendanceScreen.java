@@ -197,7 +197,6 @@ public class StudentAttendanceScreen extends AppCompatActivity {
 
                                                 }
 
-
                                                 String totalAttendance = "Total Attendance: " + attendedCounter + "/" + finalTotalCounter;
                                                 totalAttTV.setText(totalAttendance);
 

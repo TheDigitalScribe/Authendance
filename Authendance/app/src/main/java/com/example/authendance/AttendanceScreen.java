@@ -1,21 +1,33 @@
 package com.example.authendance;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.TextView;
+
 import com.google.android.material.tabs.TabLayout;
+
+import java.util.Objects;
 
 public class AttendanceScreen extends AppCompatActivity implements AttFragInterface {
 
     String module;
     String date;
 
+    Toolbar toolbar;
+    TextView toolbarText;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.attendance_recyclerview);
+
+        toolbar = findViewById(R.id.toolbar);
+        toolbarText = toolbar.findViewById(R.id.attendanceToolbarTV);
+        setSupportActionBar(toolbar);
 
         TabLayout tabLayout = findViewById(R.id.tabLayout);
         ViewPager viewPager = findViewById(R.id.viewPager);
@@ -32,6 +44,9 @@ public class AttendanceScreen extends AppCompatActivity implements AttFragInterf
         assert bundle != null;
         module = bundle.getString("MOD_ID");
         date = bundle.getString("DATE_PICKED");
+
+        toolbarText.setText(module);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
     }
 
     @Override

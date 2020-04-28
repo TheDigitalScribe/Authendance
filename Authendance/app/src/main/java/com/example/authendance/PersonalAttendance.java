@@ -1,20 +1,27 @@
 package com.example.authendance;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.google.android.material.tabs.TabLayout;
+
+import java.util.Objects;
 
 //Implements interface to pass data from this activity to both Attended and Absent fragments
 public class PersonalAttendance extends AppCompatActivity implements PersonalAttFragInterface {
 
     private String module;
     private String studentID;
+
+    TextView toolbarText;
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +30,11 @@ public class PersonalAttendance extends AppCompatActivity implements PersonalAtt
 
         //TabLayout allows the user to switch between the Attended and Absent lists using tabs
         TabLayout tabLayout = findViewById(R.id.personalAttTabs);
+
+        //Sets up toolbar
+        toolbar = findViewById(R.id.toolbar);
+        toolbarText = toolbar.findViewById(R.id.personalToolbarTV);
+        setSupportActionBar(toolbar);
 
         //ViewPager allows the user to swipe to move from one tab to the other
         ViewPager viewPager = findViewById(R.id.personalVP);
@@ -43,6 +55,9 @@ public class PersonalAttendance extends AppCompatActivity implements PersonalAtt
         assert bundle != null;
         module = bundle.getString("MOD_ID");
         studentID = bundle.getString("STU_ID");
+
+        toolbarText.setText(module);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
     }
 
     /*These methods pass the module and student ID to the Attended and Absent fragments so the

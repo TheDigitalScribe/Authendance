@@ -1,6 +1,7 @@
 package com.example.authendance;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -100,9 +101,22 @@ public class AbsentFragment extends Fragment {
         recyclerView.setAdapter(attendAdapter);
         attendAdapter.notifyDataSetChanged();
 
-        attendAdapter.setOnItemLongClickListener(new AttendanceAdapter.OnItemLongClickListener() {
+        attendAdapter.setOnItemClickListener(new AttendanceAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(DocumentSnapshot documentSnapshot, int position) {
+
+                String studentID = documentSnapshot.getId();
+
+                Intent intent = new Intent(getActivity(), PersonalAttendance.class);
+                intent.putExtra("STU_ID", studentID);
+                intent.putExtra("MOD_ID", module);
+                startActivity(intent);
+            }
+        });
+
+        attendAdapter.setOnItemLongClickListener(new AttendanceAdapter.OnItemLongClickListener() {
+            @Override
+            public void onItemLongClick(DocumentSnapshot documentSnapshot, int position) {
 
                 final String studentID = documentSnapshot.getId();
 

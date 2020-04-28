@@ -1,7 +1,7 @@
 # Authendance Summary
 For the Global Classroom module in TU Dublin. 2019/2020 academic year. DT282/3.
 
-Authendance is a student attendance tracker app with QR code implementation, built using Java in Android Studio. Database implementation is accompished via Cloud Firestore. The app allows lecturers to generate QR codes, which students scan with their own Android phones to record their attendance for that specific module on that date. Each QR code generated has a 3 minute timer. After the timer has ended, the QR code is invalid and the attendance will not be recorded. Lecturers can only generate QR codes for their own modules and students can only scan codes for modules they are enrolled in.
+Authendance is a student attendance tracker app with QR code implementation, built using Java in Android Studio. Database implementation is accompished via Cloud Firestore. The app allows lecturers to generate QR codes, which students scan with their own Android phones to record their attendance for that specific module on the current date. Each QR code generated is unique. Lecturers can only generate QR codes for their own modules and students can only scan codes for modules they are enrolled in.
 
 # Under The Hood
 - Programming Language: Java

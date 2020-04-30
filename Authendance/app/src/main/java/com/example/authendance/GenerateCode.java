@@ -3,7 +3,6 @@ package com.example.authendance;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,6 +12,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.Toast;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -20,6 +21,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -96,6 +98,9 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
                     }
                     adapter.notifyDataSetChanged();
                 }
+                else {
+                    Toast.makeText(GenerateCode.this, "Error: " + task.getException(), Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -160,12 +165,6 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
                                                         .collection("Attendance")
                                                         .document(moduleID)
                                                         .set(module);
-
-                                                CollectionReference alreadyExists = db.collection("School")
-                                                        .document("0DKXnQhueh18DH7TSjsb")
-                                                        .collection("Attendance")
-                                                        .document(moduleID)
-                                                        .collection("Date");
 
                                                 DocumentReference dateCheck = db.collection("School")
                                                         .document("0DKXnQhueh18DH7TSjsb")
@@ -244,14 +243,12 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
                                                                                                 .document(studentID)
                                                                                                 .set(stuID);
 
-                                                                                        String currentTime = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date());
-
                                                                                         //Adds date, module and attended checker to student's personal attendance record
                                                                                         Map<String, Object> attend = new HashMap<>();
                                                                                         attend.put("date", currentDate);
                                                                                         attend.put("module", moduleID);
                                                                                         attend.put("attended", false);
-                                                                                        attend.put("time", currentTime);
+                                                                                        attend.put("time", FieldValue.serverTimestamp());
 
                                                                                         //Removes spaces for the ID of the generated attendance document
                                                                                         String docName = moduleID.replaceAll("\\s+", "") + currentDate.replaceAll("\\s+", "");
@@ -339,14 +336,12 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
                                                                                         .document(studentID)
                                                                                         .set(stuID);
 
-                                                                                String currentTime = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date());
-
                                                                                 //Adds date, module and attended checker to student's personal attendance record
                                                                                 Map<String, Object> attend = new HashMap<>();
                                                                                 attend.put("date", currentDate);
                                                                                 attend.put("module", moduleID);
                                                                                 attend.put("attended", false);
-                                                                                attend.put("time", currentTime);
+                                                                                attend.put("time", FieldValue.serverTimestamp());
 
                                                                                 //Removes spaces for the ID of the generated attendance document
                                                                                 String docName = moduleID.replaceAll("\\s+", "") + currentDate.replaceAll("\\s+", "");

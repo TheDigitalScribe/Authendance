@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -117,10 +119,10 @@ public class StudentActivity extends AppCompatActivity {
         backPressed = System.currentTimeMillis();
     }
 
+    //Retrieves current user's name and ID from database and displays it
     private void getNameID() {
         String uid = Objects.requireNonNull(fAuth.getCurrentUser()).getUid();
 
-        //Determines database path for user's document
         DocumentReference documentReference = db.collection("School")
                 .document("0DKXnQhueh18DH7TSjsb")
                 .collection("User")
@@ -144,6 +146,12 @@ public class StudentActivity extends AppCompatActivity {
                         nameDisplay.setText(studentName);
                         idDisplay.setText(studentID);
                     }
+                    else {
+                        Toast.makeText(StudentActivity.this, "Document doesn't exist", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else {
+                    Toast.makeText(StudentActivity.this, "Error: " + task.getException(), Toast.LENGTH_SHORT).show();
                 }
             }
         });

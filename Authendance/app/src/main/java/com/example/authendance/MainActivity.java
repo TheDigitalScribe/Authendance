@@ -3,7 +3,6 @@ package com.example.authendance;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -16,7 +15,6 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -95,20 +93,27 @@ public class MainActivity extends AppCompatActivity {
                                     assert userType != null;
 
                                     //If the user is a teacher, bring them to the Teacher dashboard screen and show welcome message
-                                    if(userType.equals("Teacher")) {
-                                        Intent teacherIntent = new Intent(MainActivity.this, TeacherActivity.class);
-                                        Toast.makeText(MainActivity.this, "Welcome, " + userName, Toast.LENGTH_SHORT).show();
-                                        startActivity(teacherIntent);
-                                    }
+                                    switch (userType) {
+                                        case "Teacher":
+                                            Intent teacherIntent = new Intent(MainActivity.this, TeacherActivity.class);
+                                            Toast.makeText(MainActivity.this, "Welcome, " + userName, Toast.LENGTH_SHORT).show();
+                                            startActivity(teacherIntent);
+                                            break;
 
-                                    //If the user is a student, bring them to the Student dashboard screen and show welcome message
-                                    else if(userType.equals("Student")) {
-                                        Intent studentIntent = new Intent(MainActivity.this, StudentActivity.class);
-                                        Toast.makeText(MainActivity.this, "Welcome, " + userName, Toast.LENGTH_SHORT).show();
-                                        startActivity(studentIntent);
-                                    }
-                                    else {
-                                        Toast.makeText(MainActivity.this, "User type could not be determined", Toast.LENGTH_SHORT).show();
+                                        //If the user is a student, bring them to the Student dashboard screen and show welcome message
+                                        case "Student":
+                                            Intent studentIntent = new Intent(MainActivity.this, StudentActivity.class);
+                                            Toast.makeText(MainActivity.this, "Welcome, " + userName, Toast.LENGTH_SHORT).show();
+                                            startActivity(studentIntent);
+                                            break;
+                                        case "Admin":
+                                            Intent adminIntent = new Intent(MainActivity.this, AdminActivity.class);
+                                            Toast.makeText(MainActivity.this, "Welcome, " + userName, Toast.LENGTH_SHORT).show();
+                                            startActivity(adminIntent);
+                                            break;
+                                        default:
+                                            Toast.makeText(MainActivity.this, "User type could not be determined", Toast.LENGTH_SHORT).show();
+                                            break;
                                     }
                                 }
                             }
@@ -153,7 +158,6 @@ public class MainActivity extends AppCompatActivity {
                                                 .collection("User")
                                                 .document(uid);
 
-
                                         userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                             @Override
                                             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -176,11 +180,16 @@ public class MainActivity extends AppCompatActivity {
                                                                 Toast.makeText(MainActivity.this, "Welcome, " + userName, Toast.LENGTH_SHORT).show();
                                                                 startActivity(studentIntent);
                                                                 break;
+                                                            case "Admin":
+                                                                Intent adminIntent = new Intent(MainActivity.this, AdminActivity.class);
+                                                                Toast.makeText(MainActivity.this, "Welcome, " + userName, Toast.LENGTH_SHORT).show();
+                                                                startActivity(adminIntent);
+                                                                break;
                                                             default:
                                                                 Toast.makeText(MainActivity.this, "User type could not be determined.", Toast.LENGTH_SHORT).show();
                                                         }
                                                     } else {
-                                                        Log.d(TAG, "Document not found");
+                                                        Toast.makeText(MainActivity.this, "Error: " + task.getException(), Toast.LENGTH_SHORT).show();
                                                     }
                                                 }
                                             }

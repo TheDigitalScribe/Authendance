@@ -37,7 +37,7 @@ public class StudentModules extends AppCompatActivity {
         getModules();
     }
 
-    public void getModules() {
+    private void getModules() {
         String uid = Objects.requireNonNull(fAuth.getCurrentUser()).getUid();
 
         Log.d("MOD_SEE", "UID: " + uid);
@@ -65,9 +65,7 @@ public class StudentModules extends AppCompatActivity {
                 .build();
 
         moduleAdapter = new ModuleAdapter(modules);
-
         RecyclerView recyclerView = findViewById(R.id.classRecyclerView);
-        //recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(StudentModules.this));
         recyclerView.setAdapter(moduleAdapter);
         moduleAdapter.notifyDataSetChanged();

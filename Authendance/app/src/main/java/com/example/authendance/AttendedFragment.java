@@ -57,7 +57,6 @@ public class AttendedFragment extends Fragment {
         View v = inflater.inflate(R.layout.attended_fragment, container, false);
         recyclerView = v.findViewById(R.id.attendedRV);
 
-
         db = FirebaseFirestore.getInstance();
 
         //Module and date retrieved from AttendanceScreen class using an interface
@@ -107,6 +106,7 @@ public class AttendedFragment extends Fragment {
         recyclerView.setAdapter(attendAdapter);
         attendAdapter.notifyDataSetChanged();
 
+        //Goes to student's attendance record for that module
         attendAdapter.setOnItemClickListener(new AttendanceAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(DocumentSnapshot documentSnapshot, int position) {

@@ -10,6 +10,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -45,16 +47,15 @@ public class TeacherActivity extends AppCompatActivity {
         fAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        //Gets teacher's name and their ID from the MainActivity class
-        Intent intent = getIntent();
-        final String teacherName = intent.getStringExtra("TEACHER_NAME");
-        final String teacherID = intent.getStringExtra("TEACHER_ID");
-
         getNameID();
 
         genCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                String teacherName = nameDisplay.getText().toString();
+                String teacherID = idDisplay.getText().toString();
+
                 Intent intent = new Intent(TeacherActivity.this, GenerateCode.class);
                 intent.putExtra("TEACHER_NAME", teacherName);
                 intent.putExtra("TEACHER_ID", teacherID);
@@ -87,7 +88,7 @@ public class TeacherActivity extends AppCompatActivity {
         });
     }
 
-    //Asls the user if they want to log out when they press the back button
+    //Asks the user if they want to log out when they press the back button
     @Override
     public void onBackPressed() {
 
@@ -119,6 +120,7 @@ public class TeacherActivity extends AppCompatActivity {
         backPressed = System.currentTimeMillis();
     }
 
+    //Retrieves current user's name and ID from database and displays it
     private void getNameID() {
         String uid = Objects.requireNonNull(fAuth.getCurrentUser()).getUid();
 
@@ -135,12 +137,19 @@ public class TeacherActivity extends AppCompatActivity {
 
                     assert documentSnapshot != null;
                     if(documentSnapshot.exists()) {
+
                         String teacherName = documentSnapshot.getString("name");
                         String teacherID = documentSnapshot.getString("teacher_id");
 
                         nameDisplay.setText(teacherName);
                         idDisplay.setText(teacherID);
                     }
+                    else {
+                        Toast.makeText(TeacherActivity.this, "Document doesn't exist", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else {
+                    Toast.makeText(TeacherActivity.this, "Error: " + task.getException(), Toast.LENGTH_SHORT).show();
                 }
             }
         });

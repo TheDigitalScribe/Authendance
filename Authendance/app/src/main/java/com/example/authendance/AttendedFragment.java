@@ -10,14 +10,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -62,6 +60,7 @@ public class AttendedFragment extends Fragment {
 
         db = FirebaseFirestore.getInstance();
 
+        //Module and date retrieved from AttendanceScreen class using an interface
         AttFragInterface activity = (AttFragInterface) getActivity();
         assert activity != null;
         module = activity.getModule();

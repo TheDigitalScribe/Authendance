@@ -101,6 +101,7 @@ public class AbsentFragment extends Fragment {
         recyclerView.setAdapter(attendAdapter);
         attendAdapter.notifyDataSetChanged();
 
+        //Shows overall student attendance for that module
         attendAdapter.setOnItemClickListener(new AttendanceAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(DocumentSnapshot documentSnapshot, int position) {
@@ -114,6 +115,7 @@ public class AbsentFragment extends Fragment {
             }
         });
 
+        //Allows the teacher to set the user as present or absent
         attendAdapter.setOnItemLongClickListener(new AttendanceAdapter.OnItemLongClickListener() {
             @Override
             public void onItemLongClick(DocumentSnapshot documentSnapshot, int position) {

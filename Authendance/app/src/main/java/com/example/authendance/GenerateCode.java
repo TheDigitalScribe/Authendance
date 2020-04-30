@@ -1,8 +1,10 @@
 package com.example.authendance;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,7 +13,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -24,7 +25,6 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -141,7 +141,7 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
 
                                             assert snapshot != null;
                                             if (snapshot.exists()) {
-                                                String qrCode = snapshot.getString("qr_code");
+                                                final String qrCode = snapshot.getString("qr_code");
 
                                                 //Gets current date
                                                 final String currentDate = new SimpleDateFormat("dd MM YYYY", Locale.getDefault()).format(new Date());
@@ -151,7 +151,7 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
                                                 module.put("module", moduleID);
 
                                                 //Adds date field to the generated date document in the Date sub-collection
-                                                Map<String, Object> date = new HashMap<>();
+                                                final Map<String, Object> date = new HashMap<>();
                                                 date.put("date", currentDate);
 
                                                 //Adds module to Attendance collection
@@ -161,89 +161,217 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
                                                         .document(moduleID)
                                                         .set(module);
 
-                                                //Adds current date record to database
-                                                db.collection("School")
+                                                CollectionReference alreadyExists = db.collection("School")
+                                                        .document("0DKXnQhueh18DH7TSjsb")
+                                                        .collection("Attendance")
+                                                        .document(moduleID)
+                                                        .collection("Date");
+
+                                                DocumentReference dateCheck = db.collection("School")
                                                         .document("0DKXnQhueh18DH7TSjsb")
                                                         .collection("Attendance")
                                                         .document(moduleID)
                                                         .collection("Date")
-                                                        .document(currentDate)
-                                                        .set(date);
+                                                        .document(currentDate);
 
-                                                //Determines database path for all the students enrolled in the selected module
-                                                CollectionReference studentRef = db.collection("School")
-                                                        .document("0DKXnQhueh18DH7TSjsb")
-                                                        .collection("Modules")
-                                                        .document(moduleID)
-                                                        .collection("Students");
-
-
-                                                //Gets all students enrolled in the module and adds them to the Attendance collection
-                                                Query query = studentRef.orderBy("student_id", Query.Direction.DESCENDING);
-                                                query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                //Checks if code was already generated for the selected module on the current date
+                                                dateCheck.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                                     @Override
-                                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-
+                                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                                         if (task.isSuccessful()) {
-                                                            for (QueryDocumentSnapshot queryDocumentSnapshot : Objects.requireNonNull(task.getResult())) {
 
-                                                                String studentID = queryDocumentSnapshot.getId();
-                                                                Log.d("STU_ID", studentID);
+                                                            DocumentSnapshot docSnap = task.getResult();
+                                                            assert docSnap != null;
+                                                            if (docSnap.exists()) {
 
-                                                                //Attendance sent to false by default. Updated to true when they scan the code
-                                                                Map<String, Object> attended = new HashMap<>();
-                                                                attended.put("attended", false);
-                                                                attended.put("student_id", studentID);
+                                                                AlertDialog.Builder builder = new AlertDialog.Builder(GenerateCode.this);
+                                                                builder.setTitle("Overwrite Attendance?");
+                                                                builder.setMessage("Generating a QR code will overwrite previous attendance. Continue?");
+                                                                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                                                    @Override
+                                                                    public void onClick(DialogInterface dialog, int which) {
 
+                                                                        //Adds current date record to database
+                                                                        db.collection("School")
+                                                                                .document("0DKXnQhueh18DH7TSjsb")
+                                                                                .collection("Attendance")
+                                                                                .document(moduleID)
+                                                                                .collection("Date")
+                                                                                .document(currentDate)
+                                                                                .set(date);
+
+                                                                        //Determines database path for all the students enrolled in the selected module
+                                                                        CollectionReference studentRef = db.collection("School")
+                                                                                .document("0DKXnQhueh18DH7TSjsb")
+                                                                                .collection("Modules")
+                                                                                .document(moduleID)
+                                                                                .collection("Students");
+
+                                                                        //Gets all students enrolled in the module and adds them to the Attendance collection
+                                                                        Query query = studentRef.orderBy("student_id", Query.Direction.DESCENDING);
+                                                                        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                                            @Override
+                                                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+                                                                                if (task.isSuccessful()) {
+                                                                                    for (QueryDocumentSnapshot queryDocumentSnapshot : Objects.requireNonNull(task.getResult())) {
+
+                                                                                        String studentID = queryDocumentSnapshot.getId();
+                                                                                        Log.d("STU_ID", studentID);
+
+                                                                                        //Attendance sent to false by default. Updated to true when they scan the code
+                                                                                        Map<String, Object> attended = new HashMap<>();
+                                                                                        attended.put("attended", false);
+                                                                                        attended.put("student_id", studentID);
+
+                                                                                        db.collection("School")
+                                                                                                .document("0DKXnQhueh18DH7TSjsb")
+                                                                                                .collection("Attendance")
+                                                                                                .document(moduleID)
+                                                                                                .collection("Date")
+                                                                                                .document(currentDate)
+                                                                                                .collection("Students")
+                                                                                                .document(studentID)
+                                                                                                .set(attended);
+
+                                                                                        //Adds student ID document to AttendanceRecord collection
+                                                                                        Map<String, Object> stuID = new HashMap<>();
+                                                                                        stuID.put("student_id", studentID);
+
+                                                                                        db.collection("School")
+                                                                                                .document("0DKXnQhueh18DH7TSjsb")
+                                                                                                .collection("AttendanceRecord")
+                                                                                                .document(studentID)
+                                                                                                .set(stuID);
+
+                                                                                        String currentTime = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date());
+
+                                                                                        //Adds date, module and attended checker to student's personal attendance record
+                                                                                        Map<String, Object> attend = new HashMap<>();
+                                                                                        attend.put("date", currentDate);
+                                                                                        attend.put("module", moduleID);
+                                                                                        attend.put("attended", false);
+                                                                                        attend.put("time", currentTime);
+
+                                                                                        //Removes spaces for the ID of the generated attendance document
+                                                                                        String docName = moduleID.replaceAll("\\s+", "") + currentDate.replaceAll("\\s+", "");
+
+                                                                                        db.collection("School")
+                                                                                                .document("0DKXnQhueh18DH7TSjsb")
+                                                                                                .collection("AttendanceRecord")
+                                                                                                .document(studentID)
+                                                                                                .collection("Records")
+                                                                                                .document(docName)
+                                                                                                .set(attend, SetOptions.merge());
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        });
+
+                                                                        //Passes QR Code and module to CodeScreen class
+                                                                        Intent intent = new Intent(GenerateCode.this, CodeScreen.class);
+                                                                        intent.putExtra("QR_CODE", qrCode);
+                                                                        intent.putExtra("MOD_ID", moduleID);
+                                                                        startActivity(intent);
+
+                                                                    }
+                                                                });
+                                                                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                                                    @Override
+                                                                    public void onClick(DialogInterface dialog, int which) {
+                                                                        dialog.dismiss();
+                                                                    }
+                                                                });
+                                                                AlertDialog alert = builder.create();
+                                                                alert.show();
+                                                            } else {
+
+                                                                //Adds current date record to database
                                                                 db.collection("School")
                                                                         .document("0DKXnQhueh18DH7TSjsb")
                                                                         .collection("Attendance")
                                                                         .document(moduleID)
                                                                         .collection("Date")
                                                                         .document(currentDate)
-                                                                        .collection("Students")
-                                                                        .document(studentID)
-                                                                        .set(attended);
+                                                                        .set(date);
 
-                                                                //Adds student ID document to AttendanceRecord collection
-                                                                Map<String, Object> stuID = new HashMap<>();
-                                                                stuID.put("student_id", studentID);
-
-                                                                db.collection("School")
+                                                                //Determines database path for all the students enrolled in the selected module
+                                                                CollectionReference studentRef = db.collection("School")
                                                                         .document("0DKXnQhueh18DH7TSjsb")
-                                                                        .collection("AttendanceRecord")
-                                                                        .document(studentID)
-                                                                        .set(stuID);
+                                                                        .collection("Modules")
+                                                                        .document(moduleID)
+                                                                        .collection("Students");
 
-                                                                String currentTime = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date());
+                                                                //Gets all students enrolled in the module and adds them to the Attendance collection
+                                                                Query query = studentRef.orderBy("student_id", Query.Direction.DESCENDING);
+                                                                query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                                    @Override
+                                                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
-                                                                //Adds date, module and attended checker to student's personal attendance record
-                                                                Map<String, Object> attend = new HashMap<>();
-                                                                attend.put("date", currentDate);
-                                                                attend.put("module", moduleID);
-                                                                attend.put("attended", false);
-                                                                attend.put("time", currentTime);
+                                                                        if (task.isSuccessful()) {
+                                                                            for (QueryDocumentSnapshot queryDocumentSnapshot : Objects.requireNonNull(task.getResult())) {
 
-                                                                //Removes spaces for the ID of the generated attendance document
-                                                                String docName = moduleID.replaceAll("\\s+", "") + currentDate.replaceAll("\\s+", "");
+                                                                                String studentID = queryDocumentSnapshot.getId();
+                                                                                Log.d("STU_ID", studentID);
 
-                                                                db.collection("School")
-                                                                        .document("0DKXnQhueh18DH7TSjsb")
-                                                                        .collection("AttendanceRecord")
-                                                                        .document(studentID)
-                                                                        .collection("Records")
-                                                                        .document(docName)
-                                                                        .set(attend, SetOptions.merge());
+                                                                                //Attendance sent to false by default. Updated to true when they scan the code
+                                                                                Map<String, Object> attended = new HashMap<>();
+                                                                                attended.put("attended", false);
+                                                                                attended.put("student_id", studentID);
+
+                                                                                db.collection("School")
+                                                                                        .document("0DKXnQhueh18DH7TSjsb")
+                                                                                        .collection("Attendance")
+                                                                                        .document(moduleID)
+                                                                                        .collection("Date")
+                                                                                        .document(currentDate)
+                                                                                        .collection("Students")
+                                                                                        .document(studentID)
+                                                                                        .set(attended);
+
+                                                                                //Adds student ID document to AttendanceRecord collection
+                                                                                Map<String, Object> stuID = new HashMap<>();
+                                                                                stuID.put("student_id", studentID);
+
+                                                                                db.collection("School")
+                                                                                        .document("0DKXnQhueh18DH7TSjsb")
+                                                                                        .collection("AttendanceRecord")
+                                                                                        .document(studentID)
+                                                                                        .set(stuID);
+
+                                                                                String currentTime = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date());
+
+                                                                                //Adds date, module and attended checker to student's personal attendance record
+                                                                                Map<String, Object> attend = new HashMap<>();
+                                                                                attend.put("date", currentDate);
+                                                                                attend.put("module", moduleID);
+                                                                                attend.put("attended", false);
+                                                                                attend.put("time", currentTime);
+
+                                                                                //Removes spaces for the ID of the generated attendance document
+                                                                                String docName = moduleID.replaceAll("\\s+", "") + currentDate.replaceAll("\\s+", "");
+
+                                                                                db.collection("School")
+                                                                                        .document("0DKXnQhueh18DH7TSjsb")
+                                                                                        .collection("AttendanceRecord")
+                                                                                        .document(studentID)
+                                                                                        .collection("Records")
+                                                                                        .document(docName)
+                                                                                        .set(attend, SetOptions.merge());
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                });
+
+                                                                //Passes QR Code and module to CodeScreen class
+                                                                Intent intent = new Intent(GenerateCode.this, CodeScreen.class);
+                                                                intent.putExtra("QR_CODE", qrCode);
+                                                                intent.putExtra("MOD_ID", moduleID);
+                                                                startActivity(intent);
                                                             }
                                                         }
                                                     }
                                                 });
-
-                                                //Passes QR Code and module to CodeScreen.class
-                                                Intent intent = new Intent(GenerateCode.this, CodeScreen.class);
-                                                intent.putExtra("QR_CODE", qrCode);
-                                                intent.putExtra("MOD_ID", moduleID);
-                                                startActivity(intent);
                                             }
                                         }
                                     }

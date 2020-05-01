@@ -11,6 +11,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -18,6 +19,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -36,6 +38,8 @@ public class OverallAttendance extends AppCompatActivity {
     TextView toolbarText;
     Toolbar toolbar;
 
+    private FloatingActionButton fab;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +52,8 @@ public class OverallAttendance extends AppCompatActivity {
         toolbarText = toolbar.findViewById(R.id.personalToolbarTV);
         setSupportActionBar(toolbar);
 
+        fab = findViewById(R.id.fab);
+
         Intent intent = getIntent();
         module = intent.getStringExtra("MOD_ID");
         Log.d("ATT_STUFF", "Module: " + module);
@@ -56,6 +62,23 @@ public class OverallAttendance extends AppCompatActivity {
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
 
         getAttendance();
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(OverallAttendance.this);
+                builder.setTitle("Delete Attendance");
+                builder.setMessage("Hold down on a date record to delete the attendance.");
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                AlertDialog alert = builder.create();
+                alert.show();
+            }
+        });
     }
 
     private void getAttendance() {

@@ -1,34 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:elevation="4dp"
-        android:background="@drawable/facebook">
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:src="@drawable/ic_info"
+        android:background="@android:color/transparent"
+        android:backgroundTint="#FFFFFF"
+        app:rippleColor="@color/colorAccent"
+        android:visibility="visible">
+    </com.google.android.material.floatingactionbutton.FloatingActionButton>
 
-        <TextView
-            android:id="@+id/personalToolbarTV"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Module"
-            android:textColor="#FFFFFF"
-            android:textSize="20sp" />
-
-    </androidx.appcompat.widget.Toolbar>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/overallAttRecyclerView"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/reef"
-        android:padding="5dp"
-        android:scrollbars="vertical"
-        android:layout_below="@+id/toolbar">
+        android:orientation="vertical">
 
-    </androidx.recyclerview.widget.RecyclerView>
-</RelativeLayout>
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:elevation="4dp"
+            android:background="@drawable/facebook">
+
+            <TextView
+                android:id="@+id/personalToolbarTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Module"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp" />
+
+        </androidx.appcompat.widget.Toolbar>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/overallAttRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/reef"
+            android:padding="5dp"
+            android:scrollbars="vertical"
+            android:layout_below="@+id/toolbar">
+
+        </androidx.recyclerview.widget.RecyclerView>
+    </LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

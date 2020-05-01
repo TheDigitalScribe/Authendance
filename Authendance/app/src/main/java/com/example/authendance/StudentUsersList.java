@@ -1,24 +1,24 @@
 package com.example.authendance;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Toast;
-
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-
 import java.util.Objects;
 
 public class StudentUsersList extends AppCompatActivity {
@@ -33,6 +33,7 @@ public class StudentUsersList extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
 
+        FloatingActionButton fab = findViewById(R.id.fab);
         getStudents();
 
         adapter.setOnItemClickListener(new StudentUserAdapter.OnItemClickListener() {
@@ -43,8 +44,26 @@ public class StudentUsersList extends AppCompatActivity {
 
                 Intent intent = new Intent(StudentUsersList.this, StudentAttendanceScreen.class);
                 intent.putExtra("STU_ID", studentID);
+                //Log.d("STU_ID", studentID);
                 startActivity(intent);
-                //Toast.makeText(StudentUsersList.this, "Position: " + position, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(StudentUsersList.this);
+                builder.setTitle("See Attendance");
+                builder.setMessage("Click student to see their overall attendance.");
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                AlertDialog alert = builder.create();
+                alert.show();
             }
         });
     }
@@ -61,10 +80,7 @@ public class StudentUsersList extends AppCompatActivity {
            public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if(task.isSuccessful()) {
 
-                    for(QueryDocumentSnapshot queryDocumentSnapshot : Objects.requireNonNull(task.getResult())) {
-
-                        //queryDocumentSnapshot.getString("student_id");
-                    }
+                    Objects.requireNonNull(task.getResult());
 
                 }
                 else {

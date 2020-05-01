@@ -73,6 +73,7 @@ public class StudentActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(StudentActivity.this, StudentAttendanceScreen.class);
+                intent.putExtra("STU_ID", idDisplay.getText().toString());
                 startActivity(intent);
             }
         });

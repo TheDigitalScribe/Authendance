@@ -17,20 +17,22 @@
             android:id="@+id/teacherIDText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
             android:text="Teacher ID"
-            android:textSize="20sp"
             android:textColor="@android:color/black"
-            android:layout_alignParentTop="true" />
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/teacherNameText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Teacher Name"
-            android:textSize="14sp"
-            android:textColor="@android:color/black"
             android:layout_below="@id/teacherIDText"
-            android:layout_marginTop="10dp"/>
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/raleway"
+            android:text="Teacher Name"
+            android:textColor="@android:color/black"
+            android:textSize="14sp" />
 
     </RelativeLayout>
 </androidx.cardview.widget.CardView>

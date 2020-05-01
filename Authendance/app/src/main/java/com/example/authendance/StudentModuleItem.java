@@ -15,6 +15,4 @@ public class StudentModuleItem {
     public String getModule() {
         return module;
     }
-
-
 }

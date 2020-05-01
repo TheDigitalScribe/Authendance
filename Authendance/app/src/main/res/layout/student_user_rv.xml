@@ -3,23 +3,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+    
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="end|bottom"
+        android:layout_margin="16dp"
+        android:background="@android:color/transparent"
+        app:rippleColor="#FFFFFF">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:elevation="4dp"
-        android:background="@drawable/facebook">
-
-        <TextView
-            android:id="@+id/personalToolbarTV"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Module"
-            android:textColor="#FFFFFF"
-            android:textSize="20sp" />
-
-    </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.floatingactionbutton.FloatingActionButton>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/studentUserRecyclerView"

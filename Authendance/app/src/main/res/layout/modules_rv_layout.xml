@@ -20,7 +20,8 @@
             android:text="Line 1"
             android:textSize="20sp"
             android:textColor="@android:color/black"
-            android:layout_alignParentTop="true" />
+            android:layout_alignParentTop="true"
+            android:gravity="start"/>
 
     </RelativeLayout>
 </androidx.cardview.widget.CardView>

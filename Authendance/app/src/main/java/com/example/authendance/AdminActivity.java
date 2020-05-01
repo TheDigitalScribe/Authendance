@@ -32,6 +32,7 @@ public class AdminActivity extends AppCompatActivity {
     TextView idDisplay;
 
     CardView studentsCard;
+    CardView teachersCard;
     CardView attendanceCard;
     CardView settingsCard;
 
@@ -52,6 +53,7 @@ public class AdminActivity extends AppCompatActivity {
         idDisplay = findViewById(R.id.idDisplay);
 
         studentsCard = findViewById(R.id.studentsCard);
+        teachersCard = findViewById(R.id.teachersCard);
         attendanceCard = findViewById(R.id.attendanceCard);
         settingsCard = findViewById(R.id.settingsCard);
 
@@ -64,6 +66,14 @@ public class AdminActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(AdminActivity.this, StudentUsersList.class);
+                startActivity(intent);
+            }
+        });
+
+        teachersCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(AdminActivity.this, TeacherUsersList.class);
                 startActivity(intent);
             }
         });

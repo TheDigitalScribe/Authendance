@@ -14,22 +14,22 @@
         android:layout_margin="10dp">
 
         <TextView
-            android:id="@+id/studentIDText"
+            android:id="@+id/teacherIDText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Student ID"
+            android:text="Teacher ID"
             android:textSize="20sp"
             android:textColor="@android:color/black"
             android:layout_alignParentTop="true" />
 
         <TextView
-            android:id="@+id/studentNameText"
+            android:id="@+id/teacherNameText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Student Name"
+            android:text="Teacher Name"
             android:textSize="14sp"
             android:textColor="@android:color/black"
-            android:layout_below="@id/studentIDText"
+            android:layout_below="@id/teacherIDText"
             android:layout_marginTop="10dp"/>
 
     </RelativeLayout>

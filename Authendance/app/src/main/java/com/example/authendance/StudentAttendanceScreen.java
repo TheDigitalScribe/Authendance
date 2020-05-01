@@ -37,6 +37,8 @@ public class StudentAttendanceScreen extends AppCompatActivity {
     private FirebaseAuth fAuth;
     private String uid;
 
+    private String studentID;
+
     private TextView totalAttTV;
     private TextView lecAttTV;
     private TextView lecMissedTV;
@@ -60,6 +62,9 @@ public class StudentAttendanceScreen extends AppCompatActivity {
         attendProgress = findViewById(R.id.attendProgress);
         spinner = findViewById(R.id.spinner);
         Button submitBtn = findViewById(R.id.submitBtn);
+
+        Intent intent = getIntent();
+        studentID = intent.getStringExtra("STU_ID");
 
         getRecord();
         populateSpinner();

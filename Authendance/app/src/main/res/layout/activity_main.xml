@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     android:background="@drawable/reef">
 
-<<<<<<< HEAD
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -18,15 +17,14 @@
 
             <ImageView
                 android:id="@+id/imageView"
-                android:layout_width="89dp"
-                android:layout_height="97dp"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
                 android:layout_marginTop="100dp"
                 app:layout_constraintBottom_toTopOf="@+id/loginTextView"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="?attr/actionModePasteDrawable"
-                tools:srcCompat="@drawable/attendanceimg" />
+                android:src="@drawable/authendancelogo"/>
 
             <TextView
                 android:id="@+id/loginTextView"
@@ -60,7 +58,6 @@
                 android:padding="30dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.313"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
@@ -135,7 +132,7 @@
                 android:layout_marginTop="8dp"
                 android:fontFamily="@font/raleway"
                 android:text="Forgot password?"
-                android:textColor="#8F8C8C"
+                android:textColor="#FFFFFF"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -156,10 +153,5 @@
                 app:layout_constraintTop_toBottomOf="@+id/forgotPasswordText" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </LinearLayout><![CDATA[
-    =======
-
-    >>>>>>> 1374f7e48022e0b2b1054949421c379ea27a04b6
-
-]]>
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

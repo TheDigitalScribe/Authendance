@@ -53,7 +53,18 @@ public class AttendanceSelect extends AppCompatActivity {
             @Override
             public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
                 month = month + 1;
-                final String datePicked = dayOfMonth + " " + "0" + month + " " + year;
+
+                final String datePicked;
+
+                //Adds padding of one zero to the day if its less than 10
+                if(dayOfMonth < 10) {
+                    datePicked = "0" + dayOfMonth + " " + "0" + month + " " + year;
+                    Log.d("ATT_SLCT", datePicked);
+                }
+                else {
+                    datePicked = dayOfMonth + " " + "0" + month + " " + year;
+                }
+
                 Log.d("ATT_SLCT", datePicked);
 
                 submitBtn.setOnClickListener(new View.OnClickListener() {

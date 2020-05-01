@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -22,23 +21,14 @@
 
     </androidx.appcompat.widget.Toolbar>
 
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/personalAttTabs"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/overallAttRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:tabGravity="fill"
-        app:tabIndicatorColor="#000000"
-        app:tabMode="fixed">
-
-    </com.google.android.material.tabs.TabLayout>
-
-    <androidx.viewpager.widget.ViewPager
-        android:id="@+id/personalVP"
+        android:layout_height="match_parent"
         android:background="@drawable/reef"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:padding="5dp"
+        android:scrollbars="vertical"
+        android:layout_below="@+id/toolbar">
 
-    </androidx.viewpager.widget.ViewPager>
-
-
-</LinearLayout>
+    </androidx.recyclerview.widget.RecyclerView>
+</RelativeLayout>

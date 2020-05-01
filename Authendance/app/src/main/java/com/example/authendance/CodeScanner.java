@@ -5,14 +5,12 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -25,14 +23,12 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.zxing.Result;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Objects;
 
+//This is the library that allows QR codes to be scanned
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
 import static android.Manifest.permission.CAMERA;
@@ -49,34 +45,31 @@ public class CodeScanner extends AppCompatActivity implements ZXingScannerView.R
 
     private String currentDate;
 
-    private FirebaseAuth fAuth;
     private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        fAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
+        //Checks if camera permission was granted
         if (checkPermission()) {
             Toast.makeText(CodeScanner.this, "Please scan the QR code now.", Toast.LENGTH_SHORT).show();
         } else {
             requestCameraPermission();
         }
 
+        //Gets current date
         currentDate = new SimpleDateFormat("dd MM YYYY", Locale.getDefault()).format(new Date());
 
+        //Retrieves QR code, module and student ID from ModulePicker.class
         Intent intent = getIntent();
         Bundle data = intent.getExtras();
         assert data != null;
         qrCode = data.getString("QR_CODE");
         moduleID = data.getString("MOD_ID");
         studentID = data.getString("STU_ID");
-
-        Log.d(TAG, "Module ID: " + moduleID);
-        Log.d(TAG, "Student ID: " + studentID);
-        Log.d(TAG, "QR Code: " + qrCode);
 
     }
 
@@ -85,6 +78,7 @@ public class CodeScanner extends AppCompatActivity implements ZXingScannerView.R
         return (ContextCompat.checkSelfPermission(CodeScanner.this, CAMERA) == PackageManager.PERMISSION_GRANTED);
     }
 
+    //Requests camera permission using an AlertDialog
     private void requestCameraPermission() {
         if (ActivityCompat.shouldShowRequestPermissionRationale(this, CAMERA)) {
             new AlertDialog.Builder(this)
@@ -109,7 +103,7 @@ public class CodeScanner extends AppCompatActivity implements ZXingScannerView.R
         }
     }
 
-    //Checks if permission was granted
+    //Checks if permission was granted already
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == REQUEST_CAMERA) {
@@ -146,11 +140,14 @@ public class CodeScanner extends AppCompatActivity implements ZXingScannerView.R
     @Override
     public void handleResult(Result result) {
 
+
+        //If the QR code they scan matches the one the teacher generated
         if (qrCode.equals(result.getText())) {
 
             addAttendance();
             addAttendanceRecord();
 
+            //Notifies the user their attendance is recorded
             AlertDialog.Builder builder = new AlertDialog.Builder(CodeScanner.this);
             builder.setTitle("Attendance Authenticated!");
             builder.setMessage("Your attendance for " + moduleID + " on " + currentDate + " has been recorded.");
@@ -164,6 +161,8 @@ public class CodeScanner extends AppCompatActivity implements ZXingScannerView.R
             AlertDialog alert = builder.create();
             alert.show();
         } else {
+
+            //Notifies the user the QR code is invalid
             AlertDialog.Builder builder = new AlertDialog.Builder(CodeScanner.this);
             builder.setTitle("Invalid QR code");
             builder.setMessage("This code is invalid.");
@@ -179,9 +178,9 @@ public class CodeScanner extends AppCompatActivity implements ZXingScannerView.R
         }
     }
 
+    //Adds attendance to the database collection where the teacher can see his students' attendance
     private void addAttendance() {
 
-        //Adds attendance record
         DocumentReference documentReference = db.collection("School")
                 .document("0DKXnQhueh18DH7TSjsb")
                 .collection("Attendance")
@@ -208,6 +207,7 @@ public class CodeScanner extends AppCompatActivity implements ZXingScannerView.R
 
     }
 
+    //Adds attendance record to students' personal attendance
     private void addAttendanceRecord() {
 
         CollectionReference attendRef = db.collection("School")

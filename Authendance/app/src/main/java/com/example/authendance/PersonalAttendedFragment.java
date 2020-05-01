@@ -5,14 +5,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.SearchView;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -28,7 +25,6 @@ public class PersonalAttendedFragment extends Fragment {
 
     private String module;
     private String studentID;
-    private SearchView searchView;
 
     private FirebaseFirestore db;
     private PersonalAttendanceAdapter adapter;
@@ -47,6 +43,7 @@ public class PersonalAttendedFragment extends Fragment {
 
         db = FirebaseFirestore.getInstance();
 
+        //Retrieves module and student ID from the PersonalAttendance class using an interface
         PersonalAttFragInterface activity = (PersonalAttFragInterface) getActivity();
         assert activity != null;
         module = activity.getModuleName();
@@ -59,12 +56,14 @@ public class PersonalAttendedFragment extends Fragment {
 
     private void getDates() {
 
+        //Looks for the student's personal attendance record based on their student ID
         CollectionReference recordRef = db.collection("School")
                 .document("0DKXnQhueh18DH7TSjsb")
                 .collection("AttendanceRecord")
                 .document(studentID)
                 .collection("Records");
 
+        //Retrieves the dates they were present for the selected module
         final Query query = recordRef.whereEqualTo("module", module).whereEqualTo("attended", true);
         query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -79,6 +78,7 @@ public class PersonalAttendedFragment extends Fragment {
             }
         });
 
+        //Builds the RecyclerView
         FirestoreRecyclerOptions<Date> dates = new FirestoreRecyclerOptions.Builder<Date>()
                 .setQuery(query, Date.class)
                 .build();
@@ -89,12 +89,14 @@ public class PersonalAttendedFragment extends Fragment {
         adapter.notifyDataSetChanged();
     }
 
+    //Starts listening for changes to the RecyclerView when Activity starts
     @Override
     public void onStart() {
         super.onStart();
         adapter.startListening();
     }
 
+    //Stops listening for changes to the RecyclerView when Activity stops
     @Override
     public void onStop() {
         super.onStop();

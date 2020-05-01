@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Toast;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -22,6 +23,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -57,11 +59,9 @@ public class ModuleSelect extends AppCompatActivity implements AdapterView.OnIte
             Log.d(TAG, "User not found");
         }
 
+        //Retrieves student ID from StudentActivity.class
         Intent intent = getIntent();
-        //studentName = intent.getStringExtra("STUDENT_NAME");
         studentID = intent.getStringExtra("STUDENT_ID");
-
-        Log.d(TAG, "Student ID: " + studentID);
 
         populateSpinner();
 
@@ -73,9 +73,9 @@ public class ModuleSelect extends AppCompatActivity implements AdapterView.OnIte
         });
     }
 
-    //To fill the spinner up with the current user's modules
     private void populateSpinner() {
 
+        //Determines database path for the user's modules
         final CollectionReference moduleRef = db.collection("School")
                 .document("0DKXnQhueh18DH7TSjsb")
                 .collection("User")
@@ -92,8 +92,10 @@ public class ModuleSelect extends AppCompatActivity implements AdapterView.OnIte
         moduleRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful()) {
-                    for(QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()) {
+                if (task.isSuccessful()) {
+
+                    for (QueryDocumentSnapshot queryDocumentSnapshot : Objects.requireNonNull(task.getResult())) {
+
                         modulesList.add(queryDocumentSnapshot.getId());
                         Log.d(TAG, "Modules: " + modulesList);
                     }
@@ -109,6 +111,7 @@ public class ModuleSelect extends AppCompatActivity implements AdapterView.OnIte
         //Spinner value determines which module they want to record their attendance for
         final String spinnerValue = spinner.getSelectedItem().toString();
 
+        //Determines document path for the chosen module
         DocumentReference moduleRef = db.collection("School")
                 .document("0DKXnQhueh18DH7TSjsb")
                 .collection("Modules")
@@ -124,9 +127,11 @@ public class ModuleSelect extends AppCompatActivity implements AdapterView.OnIte
                     assert documentSnapshot != null;
                     if (documentSnapshot.exists()) {
 
+                        //Retrieves QR code and document ID for the module
                         String qrCode = documentSnapshot.getString("qr_code");
                         String moduleID = documentSnapshot.getId();
 
+                        //If qr_code is not null. Meaning the QR code has not been generated
                         if (qrCode != null) {
                             codeCheck = true;
                         }
@@ -147,14 +152,14 @@ public class ModuleSelect extends AppCompatActivity implements AdapterView.OnIte
                     } else {
                         Toast.makeText(ModuleSelect.this, "No document exists", Toast.LENGTH_SHORT).show();
                     }
-                }
-                else {
-                    Toast.makeText(ModuleSelect.this, "Error. " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(ModuleSelect.this, "Error. " + task.getException(), Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
 
+    //Methods for the spinner. Unused but required
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 

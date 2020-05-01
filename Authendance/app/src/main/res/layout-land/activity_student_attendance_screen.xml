@@ -10,9 +10,10 @@
 
     <Button
         android:id="@+id/submitBtn"
-        android:layout_width="250dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="40dp"
+        android:layout_width="100dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="260dp"
+        android:layout_marginEnd="100dp"
         android:background="@drawable/custom_button"
         android:fontFamily="@font/raleway"
         android:text="Submit"
@@ -20,8 +21,9 @@
         android:textColor="#330000"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spinner" />
+        app:layout_constraintHorizontal_bias="0.65"
+        app:layout_constraintStart_toEndOf="@+id/spinner"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/totalAttTV"
@@ -32,7 +34,7 @@
         android:foregroundGravity="center_vertical|center"
         android:text="Total Attendance:"
         android:textColor="@android:color/black"
-        android:textSize="18sp"
+        android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/attendProgress" />
@@ -41,13 +43,13 @@
         android:id="@+id/percentageTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="20dp"
         android:fontFamily="sans-serif"
         android:foregroundGravity="center_vertical|center"
         android:gravity="center_horizontal|center_vertical"
         android:text="Percentage"
         android:textColor="@android:color/black"
-        android:textSize="30sp"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -61,7 +63,7 @@
         android:foregroundGravity="center_vertical|center"
         android:text="Lectures Attended:"
         android:textColor="@android:color/black"
-        android:textSize="18sp"
+        android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/totalAttTV" />
@@ -75,7 +77,7 @@
         android:foregroundGravity="center_vertical|center"
         android:text="Lectures Missed:"
         android:textColor="@android:color/black"
-        android:textSize="18sp"
+        android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/lecAttTV" />
@@ -83,8 +85,8 @@
     <ProgressBar
         android:id="@+id/attendProgress"
         style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_marginTop="13dp"
         android:foregroundGravity="center_vertical|center"
         android:progressDrawable="@drawable/attendancepercentage"
@@ -94,10 +96,10 @@
 
     <Spinner
         android:id="@+id/spinner"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
+        android:layout_width="250dp"
+        android:layout_height="30dp"
         android:layout_marginStart="1dp"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="1dp"
         android:background="@drawable/custom_spinner"
         app:layout_constraintEnd_toEndOf="parent"

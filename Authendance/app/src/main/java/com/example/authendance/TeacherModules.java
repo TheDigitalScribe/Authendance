@@ -51,10 +51,9 @@ public class TeacherModules extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if(task.isSuccessful()) {
-                    for(QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()) {
+                    for(QueryDocumentSnapshot queryDocumentSnapshot : Objects.requireNonNull(task.getResult())) {
                         queryDocumentSnapshot.getId();
                     }
-                    moduleAdapter.notifyDataSetChanged();
                 }
             }
         });
@@ -65,9 +64,9 @@ public class TeacherModules extends AppCompatActivity {
 
         moduleAdapter = new ModuleAdapter(modules);
         RecyclerView recyclerView = findViewById(R.id.classRecyclerView);
-        recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(TeacherModules.this));
         recyclerView.setAdapter(moduleAdapter);
+        moduleAdapter.notifyDataSetChanged();
     }
 
     @Override

@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -84,10 +86,10 @@ public class StudentActivity extends AppCompatActivity {
         });
     }
 
+    //Asks if user wants to log out when back button is pressed
     @Override
     public void onBackPressed() {
 
-        //Checks if back button was clicked twice within 2 seconds
         if(backPressed + 2000 > System.currentTimeMillis()) {
             super.onBackPressed();
             return;
@@ -117,6 +119,7 @@ public class StudentActivity extends AppCompatActivity {
         backPressed = System.currentTimeMillis();
     }
 
+    //Retrieves current user's name and ID from database and displays it
     private void getNameID() {
         String uid = Objects.requireNonNull(fAuth.getCurrentUser()).getUid();
 
@@ -129,16 +132,26 @@ public class StudentActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if(task.isSuccessful()) {
+
                     DocumentSnapshot documentSnapshot = task.getResult();
 
                     assert documentSnapshot != null;
                     if(documentSnapshot.exists()) {
+
+                        //Retrieves name and student ID
                         String studentName = documentSnapshot.getString("name");
                         String studentID = documentSnapshot.getString("student_id");
 
+                        //Sets display TextViews to the student's name and ID
                         nameDisplay.setText(studentName);
                         idDisplay.setText(studentID);
                     }
+                    else {
+                        Toast.makeText(StudentActivity.this, "Document doesn't exist", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else {
+                    Toast.makeText(StudentActivity.this, "Error: " + task.getException(), Toast.LENGTH_SHORT).show();
                 }
             }
         });

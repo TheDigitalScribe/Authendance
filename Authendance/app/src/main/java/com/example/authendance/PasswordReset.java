@@ -34,7 +34,7 @@ public class PasswordReset extends AppCompatActivity {
         submitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(validateEmail()) {
+                if (validateEmail()) {
 
                     final FirebaseAuth auth = FirebaseAuth.getInstance();
                     String emailAddress = resetEmailField.getText().toString();
@@ -48,9 +48,8 @@ public class PasswordReset extends AppCompatActivity {
 
                                         //Localises email using the user's device language
                                         auth.useAppLanguage();
-                                    }
-                                    else {
-                                        Toast.makeText(PasswordReset.this, "Error. " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(PasswordReset.this, "Error. " + task.getException(), Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             });
@@ -74,6 +73,8 @@ public class PasswordReset extends AppCompatActivity {
             resetEmailField.setError("Please enter your email address");
             resetEmailField.requestFocus();
             return false;
+
+            //Checks if email is formatted properly
         } else if (!Patterns.EMAIL_ADDRESS.matcher(resetEmail).matches()) {
             resetEmailField.setError("Please enter a valid email address");
             resetEmailField.requestFocus();

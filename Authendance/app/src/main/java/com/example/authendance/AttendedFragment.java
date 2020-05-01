@@ -10,14 +10,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -39,11 +37,17 @@ public class AttendedFragment extends Fragment {
     private AttendanceAdapter attendAdapter;
     private RecyclerView recyclerView;
 
+    private OnItemClickListener clickListener;
+
     private String module;
     private String date;
 
     public AttendedFragment() {
 
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(int position);
     }
 
     @Nullable
@@ -55,6 +59,7 @@ public class AttendedFragment extends Fragment {
 
         db = FirebaseFirestore.getInstance();
 
+        //Module and date retrieved from AttendanceScreen class using an interface
         AttFragInterface activity = (AttFragInterface) getActivity();
         assert activity != null;
         module = activity.getModule();
@@ -76,6 +81,7 @@ public class AttendedFragment extends Fragment {
                 .collection("Students");
 
 
+        //Looks for the students who HAVE attended the module
         Query query = moduleRef.whereEqualTo("attended", true);
         query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -85,11 +91,12 @@ public class AttendedFragment extends Fragment {
                         queryDocumentSnapshot.getId();
                     }
                 } else {
-                    Log.d("ATT_SCREEN", "Something went wrong");
+                    Toast.makeText(getContext(), "Query failed", Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
+        //Builds the RecyclerView
         FirestoreRecyclerOptions<Student> students = new FirestoreRecyclerOptions.Builder<Student>()
                 .setQuery(query, Student.class)
                 .build();
@@ -99,9 +106,23 @@ public class AttendedFragment extends Fragment {
         recyclerView.setAdapter(attendAdapter);
         attendAdapter.notifyDataSetChanged();
 
-        attendAdapter.setOnItemLongClickListener(new AttendanceAdapter.OnItemLongClickListener() {
+        //Goes to student's attendance record for that module
+        attendAdapter.setOnItemClickListener(new AttendanceAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(DocumentSnapshot documentSnapshot, int position) {
+
+                String studentID = documentSnapshot.getId();
+
+                Intent intent = new Intent(getActivity(), PersonalAttendance.class);
+                intent.putExtra("STU_ID", studentID);
+                intent.putExtra("MOD_ID", module);
+                startActivity(intent);
+            }
+        });
+
+        attendAdapter.setOnItemLongClickListener(new AttendanceAdapter.OnItemLongClickListener() {
+            @Override
+            public void onItemLongClick(DocumentSnapshot documentSnapshot, int position) {
 
                 final String studentID = documentSnapshot.getId();
 
@@ -137,7 +158,7 @@ public class AttendedFragment extends Fragment {
                                     }
                                 });
 
-                        String docName = module.replaceAll("\\s+","") + date.replaceAll("\\s+","");
+                        String docName = module.replaceAll("\\s+", "") + date.replaceAll("\\s+", "");
 
                         DocumentReference docRef = db.collection("School")
                                 .document("0DKXnQhueh18DH7TSjsb")
@@ -170,15 +191,16 @@ public class AttendedFragment extends Fragment {
                 alert.show();
             }
         });
-
     }
 
+    //Starts listening for changes to the RecyclerView when Activity starts
     @Override
     public void onStart() {
         super.onStart();
         attendAdapter.startListening();
     }
 
+    //Stops listening for changes to the RecyclerView when Activity stops
     @Override
     public void onStop() {
         super.onStop();

@@ -1,15 +1,13 @@
-//This fragment shows a list of the students who have not attended the selected module on the selected date
-
 package com.example.authendance;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -28,7 +26,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-
 import java.util.Objects;
 
 public class AbsentFragment extends Fragment {
@@ -51,6 +48,7 @@ public class AbsentFragment extends Fragment {
         View v = inflater.inflate(R.layout.absent_fragment, container, false);
         recyclerView = v.findViewById(R.id.absentRV);
 
+        //Retrieves module and date from the AttendanceScreen class through an interface
         AttFragInterface activity = (AttFragInterface) getActivity();
         assert activity != null;
         module = activity.getModule();
@@ -69,7 +67,6 @@ public class AbsentFragment extends Fragment {
     }
 
     private void getStudents() {
-
 
         CollectionReference moduleRef = db.collection("School")
                 .document("0DKXnQhueh18DH7TSjsb")
@@ -104,9 +101,24 @@ public class AbsentFragment extends Fragment {
         recyclerView.setAdapter(attendAdapter);
         attendAdapter.notifyDataSetChanged();
 
-        attendAdapter.setOnItemLongClickListener(new AttendanceAdapter.OnItemLongClickListener() {
+        //Shows overall student attendance for that module
+        attendAdapter.setOnItemClickListener(new AttendanceAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(DocumentSnapshot documentSnapshot, int position) {
+
+                String studentID = documentSnapshot.getId();
+
+                Intent intent = new Intent(getActivity(), PersonalAttendance.class);
+                intent.putExtra("STU_ID", studentID);
+                intent.putExtra("MOD_ID", module);
+                startActivity(intent);
+            }
+        });
+
+        //Allows the teacher to set the user as present or absent
+        attendAdapter.setOnItemLongClickListener(new AttendanceAdapter.OnItemLongClickListener() {
+            @Override
+            public void onItemLongClick(DocumentSnapshot documentSnapshot, int position) {
 
                 final String studentID = documentSnapshot.getId();
 

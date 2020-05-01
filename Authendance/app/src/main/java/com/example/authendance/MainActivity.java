@@ -3,7 +3,6 @@ package com.example.authendance;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -16,7 +15,6 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -62,13 +60,14 @@ public class MainActivity extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
         fAuth = FirebaseAuth.getInstance();
+
+        //Following code auto-logs in the user if they have logged in before
         fAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
 
                 FirebaseUser fUser = firebaseAuth.getCurrentUser();
 
-                //User is logged in
                 if (fUser != null) {
 
                     //User's UID is retrieved to find their record in the database
@@ -87,29 +86,40 @@ public class MainActivity extends AppCompatActivity {
                                 DocumentSnapshot document = task.getResult();
                                 if (document != null) {
 
+                                    //Retrieves user's user_type and name
                                     String userType = document.getString("user_type");
                                     String userName = document.getString("name");
 
 
                                     assert userType != null;
-                                    if(userType.equals("Teacher")) {
-                                        Intent teacherIntent = new Intent(MainActivity.this, TeacherActivity.class);
-                                        Toast.makeText(MainActivity.this, "Welcome, " + userName, Toast.LENGTH_SHORT).show();
-                                        startActivity(teacherIntent);
-                                    }
-                                    else if(userType.equals("Student")) {
-                                        Intent studentIntent = new Intent(MainActivity.this, StudentActivity.class);
-                                        Toast.makeText(MainActivity.this, "Welcome, " + userName, Toast.LENGTH_SHORT).show();
-                                        startActivity(studentIntent);
+
+                                    //If the user is a teacher, bring them to the Teacher dashboard screen and show welcome message
+                                    switch (userType) {
+                                        case "Teacher":
+                                            Intent teacherIntent = new Intent(MainActivity.this, TeacherActivity.class);
+                                            Toast.makeText(MainActivity.this, "Welcome, " + userName, Toast.LENGTH_SHORT).show();
+                                            startActivity(teacherIntent);
+                                            break;
+
+                                        //If the user is a student, bring them to the Student dashboard screen and show welcome message
+                                        case "Student":
+                                            Intent studentIntent = new Intent(MainActivity.this, StudentActivity.class);
+                                            Toast.makeText(MainActivity.this, "Welcome, " + userName, Toast.LENGTH_SHORT).show();
+                                            startActivity(studentIntent);
+                                            break;
+                                        case "Admin":
+                                            Intent adminIntent = new Intent(MainActivity.this, AdminActivity.class);
+                                            Toast.makeText(MainActivity.this, "Welcome, " + userName, Toast.LENGTH_SHORT).show();
+                                            startActivity(adminIntent);
+                                            break;
+                                        default:
+                                            Toast.makeText(MainActivity.this, "User type could not be determined", Toast.LENGTH_SHORT).show();
+                                            break;
                                     }
                                 }
                             }
                         }
                     });
-                }
-                //User is not logged in
-                else {
-                    Log.d(TAG, "user not found");
                 }
             }
         };
@@ -126,13 +136,18 @@ public class MainActivity extends AppCompatActivity {
 
                 //If email and password fields are properly filled in
                 if (validateEmail() && validatePassword()) {
+
+                    //Firestore approach to sign in users
                     fAuth.signInWithEmailAndPassword(email, password)
                             .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                                 @RequiresApi(api = Build.VERSION_CODES.KITKAT)
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if (task.isSuccessful()) {
+
                                         Log.d(TAG, "Login successful");
+
+                                        //Saves entered email and password
                                         saveData();
 
                                         //User's UID is retrieved to find their record in the database
@@ -144,7 +159,6 @@ public class MainActivity extends AppCompatActivity {
                                                 .collection("User")
                                                 .document(uid);
 
-                                        //This code retrieves the user type, name and ID of the user
                                         userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                             @Override
                                             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -152,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
                                                     DocumentSnapshot document = task.getResult();
                                                     if (document != null) {
 
-                                                        String userType = document.getString("user_type"); //This determines if the user is a teacher or student
+                                                        String userType = document.getString("user_type");
                                                         String userName = document.getString("name");
 
                                                         assert userType != null;
@@ -167,11 +181,16 @@ public class MainActivity extends AppCompatActivity {
                                                                 Toast.makeText(MainActivity.this, "Welcome, " + userName, Toast.LENGTH_SHORT).show();
                                                                 startActivity(studentIntent);
                                                                 break;
+                                                            case "Admin":
+                                                                Intent adminIntent = new Intent(MainActivity.this, AdminActivity.class);
+                                                                Toast.makeText(MainActivity.this, "Welcome, " + userName, Toast.LENGTH_SHORT).show();
+                                                                startActivity(adminIntent);
+                                                                break;
                                                             default:
                                                                 Toast.makeText(MainActivity.this, "User type could not be determined.", Toast.LENGTH_SHORT).show();
                                                         }
                                                     } else {
-                                                        Log.d(TAG, "Document not found");
+                                                        Toast.makeText(MainActivity.this, "Error: " + task.getException(), Toast.LENGTH_SHORT).show();
                                                     }
                                                 }
                                             }
@@ -264,6 +283,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    //Checks if password has been entered
     private boolean validatePassword() {
         String password = passwordField.getText().toString().trim();
 

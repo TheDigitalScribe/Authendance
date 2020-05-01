@@ -13,16 +13,13 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class SettingsActivity extends AppCompatActivity {
 
-    private Button resetPassBtn;
-    private Button logOutBtn;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-        resetPassBtn = findViewById(R.id.resetPassBtn);
-        logOutBtn = findViewById(R.id.logOutBtn);
+        Button resetPassBtn = findViewById(R.id.resetPassBtn);
+        Button logOutBtn = findViewById(R.id.logOutBtn);
 
         resetPassBtn.setOnClickListener(new View.OnClickListener() {
             @Override

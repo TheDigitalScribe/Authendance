@@ -90,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
                                     String userType = document.getString("user_type");
                                     String userName = document.getString("name");
 
+
                                     assert userType != null;
                                     if(userType.equals("Teacher")) {
                                         Intent teacherIntent = new Intent(MainActivity.this, TeacherActivity.class);

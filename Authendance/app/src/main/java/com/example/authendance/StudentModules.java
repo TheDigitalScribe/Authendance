@@ -54,7 +54,8 @@ public class StudentModules extends AppCompatActivity {
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if(task.isSuccessful()) {
                     for(QueryDocumentSnapshot queryDocumentSnapshot : Objects.requireNonNull(task.getResult())) {
-                        queryDocumentSnapshot.getId();
+                        //queryDocumentSnapshot.getId();
+                        queryDocumentSnapshot.getData();
                     }
                 }
             }

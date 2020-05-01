@@ -9,18 +9,41 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="8dp"
-        android:layout_margin="10dp">
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:padding="8dp">
 
         <TextView
             android:id="@+id/moduleName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Line 1"
-            android:textSize="20sp"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="7dp"
+            android:text="TextView"
+            android:textColor="#000000"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/module_lecturer_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/moduleName"
+            android:layout_marginTop="5dp"
+            android:text="Info"
             android:textColor="@android:color/black"
-            android:layout_alignParentTop="true" />
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/lecture_date"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="48dp"
+            android:layout_marginEnd="24dp"
+            android:text="date"
+            android:textSize="12sp" />
 
     </RelativeLayout>
 </androidx.cardview.widget.CardView>

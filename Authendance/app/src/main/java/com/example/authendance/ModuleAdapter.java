@@ -21,6 +21,8 @@ public class ModuleAdapter extends FirestoreRecyclerAdapter<StudentModuleItem, M
     @Override
     protected void onBindViewHolder(@NonNull ModuleHolder holder, int position, @NonNull StudentModuleItem model) {
         holder.name.setText(model.getModule());
+        holder.lecturer_name.setText(model.getModuleLecturer());
+        holder.date.setText(model.getModuleDate());
     }
 
     @NonNull
@@ -32,10 +34,14 @@ public class ModuleAdapter extends FirestoreRecyclerAdapter<StudentModuleItem, M
 
     class ModuleHolder extends RecyclerView.ViewHolder {
         TextView name;
+        TextView lecturer_name;
+        TextView date;
 
         public ModuleHolder(@NonNull View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.moduleName);
+            lecturer_name = itemView.findViewById(R.id.module_lecturer_name);
+            date = itemView.findViewById(R.id.lecture_date);
         }
     }
 }

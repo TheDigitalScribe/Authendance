@@ -32,7 +32,6 @@
                 android:id="@+id/personalToolbarTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Module"
                 android:textColor="#FFFFFF"
                 android:textSize="20sp" />
 
@@ -44,9 +43,10 @@
             android:layout_height="match_parent"
             android:background="@drawable/reef"
             android:padding="5dp"
-            android:scrollbars="vertical"
-            android:layout_below="@+id/toolbar">
+            android:scrollbars="vertical">
 
         </androidx.recyclerview.widget.RecyclerView>
+
     </LinearLayout>
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

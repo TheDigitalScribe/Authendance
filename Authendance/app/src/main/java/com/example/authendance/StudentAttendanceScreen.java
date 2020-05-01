@@ -3,11 +3,9 @@ package com.example.authendance;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -15,7 +13,6 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -37,9 +34,7 @@ public class StudentAttendanceScreen extends AppCompatActivity {
     private FirebaseFirestore db;
     private FirebaseAuth fAuth;
     private String uid;
-
     private String studentID;
-
     private TextView totalAttTV;
     private TextView lecAttTV;
     private TextView lecMissedTV;
@@ -47,6 +42,7 @@ public class StudentAttendanceScreen extends AppCompatActivity {
     private ProgressBar attendProgress;
     private Spinner spinner;
     private Button submitBtn;
+    private int totalCounter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +52,6 @@ public class StudentAttendanceScreen extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         fAuth = FirebaseAuth.getInstance();
         uid = Objects.requireNonNull(fAuth.getCurrentUser()).getUid();
-
         totalAttTV = findViewById(R.id.totalAttTV);
         lecAttTV = findViewById(R.id.lecAttTV);
         lecMissedTV = findViewById(R.id.lecMissedTV);
@@ -65,6 +60,7 @@ public class StudentAttendanceScreen extends AppCompatActivity {
         spinner = findViewById(R.id.spinner);
         submitBtn = findViewById(R.id.submitBtn);
 
+        //Retrieves student ID from AdminActivity class
         Intent intent = getIntent();
         studentID = intent.getStringExtra("STU_ID");
 
@@ -75,7 +71,10 @@ public class StudentAttendanceScreen extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                //Gets current user's UID
                 uid = fAuth.getCurrentUser().getUid();
+
+                //Retrieves value selected in the spinner
                 final String spinnerValue = spinner.getSelectedItem().toString();
 
                 //Determines database path for the user's document
@@ -87,7 +86,9 @@ public class StudentAttendanceScreen extends AppCompatActivity {
                 documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
                         if (task.isSuccessful()) {
+
                             DocumentSnapshot documentSnapshot = task.getResult();
 
                             assert documentSnapshot != null;
@@ -95,10 +96,10 @@ public class StudentAttendanceScreen extends AppCompatActivity {
 
                                 //Retrieves student ID
                                 studentID = documentSnapshot.getString("student_id");
-                                assert studentID != null;
-                                Log.d("STU_ATT", studentID + " " + spinnerValue);
 
-                                //Passes spinner value and student ID to the PersonalAttendance class
+                                /*Passes spinner value and student ID to the PersonalAttendance class
+                                so that they can see module-specific attendance
+                                 */
                                 Bundle bundle = new Bundle();
                                 bundle.putString("MOD_ID", spinnerValue);
                                 bundle.putString("STU_ID", studentID);
@@ -106,6 +107,8 @@ public class StudentAttendanceScreen extends AppCompatActivity {
                                 intent.putExtras(bundle);
                                 startActivity(intent);
                             }
+                        } else {
+                            Toast.makeText(StudentAttendanceScreen.this, "Error: " + task.getException(), Toast.LENGTH_LONG).show();
                         }
                     }
                 });
@@ -113,8 +116,10 @@ public class StudentAttendanceScreen extends AppCompatActivity {
         });
     }
 
+    //Retrieves student's modules and populates the spinner with them
     private void populateSpinner() {
 
+        //Determines database path for the student's database record
         DocumentReference documentReference = db.collection("School")
                 .document("0DKXnQhueh18DH7TSjsb")
                 .collection("User")
@@ -123,23 +128,33 @@ public class StudentAttendanceScreen extends AppCompatActivity {
         documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful()) {
+
+                if (task.isSuccessful()) {
 
                     DocumentSnapshot documentSnapshot = task.getResult();
 
                     assert documentSnapshot != null;
+
+                    /*Gets the value in the user_type field to determine if the user
+                    is a student or admin
+                     */
                     String userType = documentSnapshot.getString("user_type");
 
-                    Log.d("STU_ATT", "User type: " + userType);
+                    //Log.d("STU_ATT", "User type: " + userType);
 
                     assert userType != null;
-                    if(userType.equals("Admin")) {
+
+                    /*If admin account accesses this class, remove the button and spinner
+                    This is done so that the admin can't query the student's module-specific
+                    attendance as it would mean having to complicate the query
+                     */
+                    if (userType.equals("Admin")) {
 
                         submitBtn.setVisibility(View.GONE);
                         spinner.setVisibility(View.GONE);
-                    }
-                    else {
+                    } else {
 
+                        //Determines database path to the student's modules
                         CollectionReference moduleRef = db.collection("School")
                                 .document("0DKXnQhueh18DH7TSjsb")
                                 .collection("User")
@@ -166,35 +181,15 @@ public class StudentAttendanceScreen extends AppCompatActivity {
                             }
                         });
                     }
-                }
-                else {
+                } else {
                     Toast.makeText(StudentAttendanceScreen.this, "Error: " + task.getException(), Toast.LENGTH_LONG).show();
                 }
             }
         });
     }
 
+    //Method to retrieve student's attendance
     private void getRecord() {
-
-        /*Determines database path for user's document
-        DocumentReference documentReference = db.collection("School")
-                .document("0DKXnQhueh18DH7TSjsb")
-                .collection("User")
-                .document(uid);*/
-
-        /*Gets student ID from the user's document by using their UID
-        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull final Task<DocumentSnapshot> task) {
-                if(task.isSuccessful()) {
-                    DocumentSnapshot documentSnapshot = task.getResult();
-
-                    assert documentSnapshot != null;
-                    if(documentSnapshot.exists()) {
-
-                        String studentID = documentSnapshot.getString("student_id");
-
-                        Log.d("STU_ATT", "stuId: " + studentID);*/
 
         assert studentID != null;
         final CollectionReference recordRef = db.collection("School")
@@ -208,44 +203,47 @@ public class StudentAttendanceScreen extends AppCompatActivity {
         totalQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
                 if (task.isSuccessful()) {
 
-                    int totalCounter = 0;
+                    //Counter for total number of lectures
+                    totalCounter = 0;
 
-                    for (QueryDocumentSnapshot queryDocumentSnapshot : Objects.requireNonNull(task.getResult())) {
+                    //For each date field the query finds, increment the counter
+                    for (QueryDocumentSnapshot ignored : Objects.requireNonNull(task.getResult())) {
 
                         totalCounter++;
                     }
 
-                    Log.d("STU_ATT", "Total: " + totalCounter);
-
                     //Gets amount of lectures the student attended
                     Query attendedQuery = recordRef.whereEqualTo("attended", true);
-                    final int finalTotalCounter = totalCounter;
+
                     attendedQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @RequiresApi(api = Build.VERSION_CODES.N)
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
                             if (task.isSuccessful()) {
 
+                                //Counter for lectures the student has attended
                                 int attendedCounter = 0;
 
-                                for (QueryDocumentSnapshot queryDocumentSnapshot : Objects.requireNonNull(task.getResult())) {
+                                //Wherever the attended field equals true, increment the counter
+                                for (QueryDocumentSnapshot ignored : Objects.requireNonNull(task.getResult())) {
 
                                     attendedCounter++;
-
                                 }
 
-                                String totalAttendance = "Total Attendance: " + attendedCounter + "/" + finalTotalCounter;
+                                //Displays attended lectures/total lectures
+                                String totalAttendance = "Total Attendance: " + attendedCounter + "/" + totalCounter;
                                 totalAttTV.setText(totalAttendance);
 
-                                String lecAttended = "Total Lectures Attended: " + attendedCounter;
+                                //Displays attended lectures
+                                String lecAttended = "Lectures Attended: " + attendedCounter;
                                 lecAttTV.setText(lecAttended);
 
-                                Log.d("STU_ATT", "Attended: " + attendedCounter + " " + "Total: " + finalTotalCounter);
-
                                 //Gets total percentage of attendance formatted to two decimal places
-                                float totalPercentage = (float) attendedCounter / finalTotalCounter * 100;
+                                float totalPercentage = (float) attendedCounter / totalCounter * 100;
                                 String formattedNum = String.format(Locale.getDefault(), "%.2f", totalPercentage);
 
                                 /*Set progress of circular ProgressBar and shows attendance percentage in a TextView
@@ -254,7 +252,7 @@ public class StudentAttendanceScreen extends AppCompatActivity {
                                 int percentage = Math.round(totalPercentage);
                                 String showPercent = formattedNum + "%";
 
-                                //Converts percentage to a float for the isNaN check
+                                //Converts percentage to a float for the isNaN check (no percentage calculated)
                                 float floatPercent = Float.parseFloat(formattedNum);
 
                                 //Checks if there is any value shown for the percentage TextView
@@ -264,6 +262,8 @@ public class StudentAttendanceScreen extends AppCompatActivity {
                                 } else {
                                     percentageTV.setText(showPercent);
                                 }
+
+                                //Sets progress for the ProgressBar
                                 attendProgress.setProgress(percentage, true);
 
                                 //Finds number of missed lectures
@@ -271,29 +271,32 @@ public class StudentAttendanceScreen extends AppCompatActivity {
                                 missedQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                     @Override
                                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
                                         if (task.isSuccessful()) {
 
+                                            //Counter for missed lectures
                                             int missedCounter = 0;
 
-                                            for (QueryDocumentSnapshot queryDocumentSnapshot : Objects.requireNonNull(task.getResult())) {
+                                            //Wherever the attended field equals false, increment the counter
+                                            for (QueryDocumentSnapshot ignored : Objects.requireNonNull(task.getResult())) {
 
                                                 missedCounter++;
                                             }
 
-                                            String missedLec = "Total Lectures Missed: " + missedCounter;
+                                            String missedLec = "Lectures Missed: " + missedCounter;
                                             lecMissedTV.setText(missedLec);
                                         } else {
-                                            Log.d("STU_ATT", "Error: " + task.getException());
+                                            Toast.makeText(StudentAttendanceScreen.this, "Error: " + task.getException(), Toast.LENGTH_LONG).show();
                                         }
                                     }
                                 });
                             } else {
-                                Log.d("STU_ATT", "Error: " + task.getException());
+                                Toast.makeText(StudentAttendanceScreen.this, "Error: " + task.getException(), Toast.LENGTH_LONG).show();
                             }
                         }
                     });
                 } else {
-                    Log.d("STU_ATT", "Error: " + task.getException());
+                    Toast.makeText(StudentAttendanceScreen.this, "Error: " + task.getException(), Toast.LENGTH_LONG).show();
                 }
             }
         });

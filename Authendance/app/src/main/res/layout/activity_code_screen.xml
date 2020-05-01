@@ -15,7 +15,7 @@
         android:layout_marginTop="30dp"
         android:background="@drawable/custom_button"
         android:fontFamily="@font/raleway"
-        android:text="Done"
+        android:text="@string/done_btn"
         android:textAllCaps="false"
         android:textColor="#330000"
         android:textSize="18sp"
@@ -49,6 +49,7 @@
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/codeField"
-        tools:srcCompat="@tools:sample/avatars" />
+        tools:srcCompat="@tools:sample/avatars"
+        android:contentDescription="@string/qr_code_description" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

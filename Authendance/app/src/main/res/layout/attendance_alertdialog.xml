@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
@@ -12,7 +11,7 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/raleway"
         android:gravity="center_horizontal|center_vertical"
-        android:text="Which module do you want to check attendance for?"
+        android:text="@string/check_attendance_prompt"
         android:textColor="#000000"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -36,7 +35,7 @@
         android:layout_marginTop="40dp"
         android:background="@drawable/custom_button"
         android:fontFamily="@font/raleway"
-        android:text="Submit"
+        android:text="@string/submitBtn"
         android:textAllCaps="false"
         android:textColor="#330000"
         android:textSize="18sp"

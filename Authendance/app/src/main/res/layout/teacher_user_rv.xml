@@ -14,7 +14,6 @@
             android:id="@+id/teacherToolbarTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Lecturers"
             android:textColor="#FFFFFF"
             android:textSize="20sp" />
 
@@ -30,4 +29,5 @@
         android:layout_below="@+id/toolbar">
 
     </androidx.recyclerview.widget.RecyclerView>
+
 </RelativeLayout>

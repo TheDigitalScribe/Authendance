@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -23,10 +22,8 @@ import java.util.Objects;
 public class StudentActivity extends AppCompatActivity {
 
     private long backPressed;
-
     private FirebaseFirestore db;
     private FirebaseAuth fAuth;
-
     TextView nameDisplay;
     TextView idDisplay;
 
@@ -37,12 +34,10 @@ public class StudentActivity extends AppCompatActivity {
 
         nameDisplay = findViewById(R.id.nameDisplay);
         idDisplay = findViewById(R.id.idDisplay);
-
         CardView scanCard = findViewById(R.id.scanCard);
         CardView moduleCard = findViewById(R.id.moduleCard);
         CardView attendanceCard = findViewById(R.id.attendanceCard);
         CardView settingsCard = findViewById(R.id.settingsCard);
-
         db = FirebaseFirestore.getInstance();
         fAuth = FirebaseAuth.getInstance();
 
@@ -152,7 +147,7 @@ public class StudentActivity extends AppCompatActivity {
                     }
                 }
                 else {
-                    Toast.makeText(StudentActivity.this, "Error: " + task.getException(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(StudentActivity.this, "Error: " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_LONG).show();
                 }
             }
         });

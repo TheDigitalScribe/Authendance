@@ -40,7 +40,7 @@
         android:layout_marginTop="130dp"
         android:fontFamily="@font/raleway"
         android:gravity="center|center_horizontal"
-        android:text="Please choose module to record attendance for"
+        android:text="@string/record_attendance_prompt"
         android:textColor="#000000"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"

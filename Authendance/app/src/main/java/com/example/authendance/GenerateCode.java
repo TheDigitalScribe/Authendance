@@ -3,6 +3,7 @@ package com.example.authendance;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -27,6 +28,7 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -42,19 +44,15 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
 
     private FirebaseFirestore db;
     private String uid;
-
     private Spinner teacherSpinner;
 
-
     @Override
-
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_generate_code);
 
         Button genCodeBtn = findViewById(R.id.genCodeBtn);
         teacherSpinner = findViewById(R.id.spinner);
-
         FirebaseAuth fAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         uid = Objects.requireNonNull(fAuth.getCurrentUser()).getUid();
@@ -97,9 +95,8 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
                         modulesList.add(moduleName);
                     }
                     adapter.notifyDataSetChanged();
-                }
-                else {
-                    Toast.makeText(GenerateCode.this, "Error: " + task.getException(), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(GenerateCode.this, "Error: " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -365,15 +362,30 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
                                                                 startActivity(intent);
                                                             }
                                                         }
+                                                        else {
+                                                            Toast.makeText(GenerateCode.this, "Error: " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_LONG).show();
+                                                        }
                                                     }
                                                 });
                                             }
+                                            else {
+                                                Toast.makeText(GenerateCode.this, "Nothing found.", Toast.LENGTH_LONG).show();
+                                            }
+                                        }
+                                        else {
+                                            Toast.makeText(GenerateCode.this, "Error: " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_LONG).show();
                                         }
                                     }
                                 });
                             }
                         });
                     }
+                    else {
+                        Toast.makeText(GenerateCode.this, "Document doesn't exist.", Toast.LENGTH_LONG).show();
+                    }
+                }
+                else {
+                    Toast.makeText(GenerateCode.this, "Error: " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_LONG).show();
                 }
             }
         });

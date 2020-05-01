@@ -1,12 +1,15 @@
 package com.example.authendance;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -18,6 +21,8 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class StudentModules extends AppCompatActivity {
@@ -71,6 +76,27 @@ public class StudentModules extends AppCompatActivity {
         recyclerView.setAdapter(moduleAdapter);
         moduleAdapter.notifyDataSetChanged();
     }
+
+    void show()
+    {
+        final List<String> ListItems = new ArrayList<>();
+        ListItems.add("사과");
+        ListItems.add("배");
+        ListItems.add("귤");
+        ListItems.add("바나나");
+        final CharSequence[] items =  ListItems.toArray(new String[ ListItems.size()]);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("AlertDialog Title");
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int pos) {
+                String selectedText = items[pos].toString();
+                Toast.makeText(StudentModules.this, selectedText, Toast.LENGTH_SHORT).show();
+            }
+        });
+        builder.show();
+    }
+
 
     @Override
     protected void onStart() {

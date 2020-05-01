@@ -59,8 +59,9 @@ public class StudentModules extends AppCompatActivity {
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if(task.isSuccessful()) {
                     for(QueryDocumentSnapshot queryDocumentSnapshot : Objects.requireNonNull(task.getResult())) {
-                        //queryDocumentSnapshot.getId();
-                        queryDocumentSnapshot.getData();
+                        queryDocumentSnapshot.getId();
+                        queryDocumentSnapshot.getString("module_lecturer");
+                        queryDocumentSnapshot.getString("module_date");
                     }
                 }
             }
@@ -73,28 +74,31 @@ public class StudentModules extends AppCompatActivity {
         moduleAdapter = new ModuleAdapter(modules);
         RecyclerView recyclerView = findViewById(R.id.classRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(StudentModules.this));
+
+
+        class Callback implements ModuleAdapter.ActionCallback{
+
+            @Override
+            public void onLongClickListener() {
+                final List<String> ListItems = new ArrayList<>();
+                ListItems.add("사과");
+                ListItems.add("배");
+                final CharSequence[] items =  ListItems.toArray(new String[ ListItems.size()]);
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(StudentModules.this);
+                builder.setTitle("AlertDialog Title");
+                builder.setItems(items, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int pos) {
+                        String selectedText = items[pos].toString();
+                        Toast.makeText(StudentModules.this, selectedText, Toast.LENGTH_SHORT).show();
+                    }
+                });
+                builder.show();
+            }
+        }
+        moduleAdapter.addActionCallback(new Callback());
         recyclerView.setAdapter(moduleAdapter);
         moduleAdapter.notifyDataSetChanged();
-    }
-
-    void show()
-    {
-        final List<String> ListItems = new ArrayList<>();
-        ListItems.add("사과");
-        ListItems.add("배");
-        ListItems.add("귤");
-        ListItems.add("바나나");
-        final CharSequence[] items =  ListItems.toArray(new String[ ListItems.size()]);
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("AlertDialog Title");
-        builder.setItems(items, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int pos) {
-                String selectedText = items[pos].toString();
-                Toast.makeText(StudentModules.this, selectedText, Toast.LENGTH_SHORT).show();
-            }
-        });
-        builder.show();
     }
 
 

@@ -26,10 +26,10 @@ public class StudentModuleItem {
     public String getModule() {
         return module;
     }
-    public String getModuleLecturer() {
+    public String getModule_lecturer() {
         return module_lecturer;
     }
-    public String getModuleDate() {
+    public String getModule_date() {
         return module_date;
     }
 

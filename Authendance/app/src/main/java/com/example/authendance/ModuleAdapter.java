@@ -12,6 +12,10 @@ import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 
 public class ModuleAdapter extends FirestoreRecyclerAdapter<StudentModuleItem, ModuleAdapter.ModuleHolder> {
+    public interface ActionCallback {
+        void onLongClickListener();
+    }
+    private ActionCallback mActionCallbacks;
 
     public ModuleAdapter(@NonNull FirestoreRecyclerOptions<StudentModuleItem> options) {
         super(options);
@@ -20,8 +24,8 @@ public class ModuleAdapter extends FirestoreRecyclerAdapter<StudentModuleItem, M
     @Override
     protected void onBindViewHolder(@NonNull ModuleHolder holder, int position, @NonNull StudentModuleItem model) {
         holder.name.setText(model.getModule());
-        holder.lecturer_name.setText(model.getModuleLecturer());
-        holder.date.setText(model.getModuleDate());
+        holder.lecturer_name.setText(model.getModule_lecturer());
+        holder.date.setText(model.getModule_date());
     }
 
     @NonNull
@@ -31,7 +35,7 @@ public class ModuleAdapter extends FirestoreRecyclerAdapter<StudentModuleItem, M
         return new ModuleHolder(v);
     }
 
-    class ModuleHolder extends RecyclerView.ViewHolder {
+    class ModuleHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener{
         TextView name;
         TextView lecturer_name;
         TextView date;
@@ -42,5 +46,17 @@ public class ModuleAdapter extends FirestoreRecyclerAdapter<StudentModuleItem, M
             lecturer_name = itemView.findViewById(R.id.module_lecturer_name);
             date = itemView.findViewById(R.id.lecture_date);
         }
+
+        @Override
+        public boolean onLongClick(View v) {
+            if (mActionCallbacks != null) {
+                mActionCallbacks.onLongClickListener();
+            }
+            return true;
+        }
+    }
+
+    public void addActionCallback(ActionCallback actionCallbacks) {
+        mActionCallbacks = actionCallbacks;
     }
 }

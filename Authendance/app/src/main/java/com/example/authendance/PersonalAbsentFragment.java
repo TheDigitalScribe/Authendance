@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,7 +28,6 @@ public class PersonalAbsentFragment extends Fragment {
 
     private String module;
     private String studentID;
-
     private PersonalAttendanceAdapter adapter;
     private FirebaseFirestore db;
     private RecyclerView recyclerView;
@@ -56,6 +56,7 @@ public class PersonalAbsentFragment extends Fragment {
 
     private void getDates() {
 
+        //Determines database path for student's personal attendance records
         CollectionReference recordRef = db.collection("School")
                 .document("0DKXnQhueh18DH7TSjsb")
                 .collection("AttendanceRecord")
@@ -66,16 +67,22 @@ public class PersonalAbsentFragment extends Fragment {
         query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
                 if(task.isSuccessful()) {
+
                     for(QueryDocumentSnapshot queryDocumentSnapshot : Objects.requireNonNull(task.getResult())) {
+
                         String date = queryDocumentSnapshot.getString("date");
 
-                        Log.d("PERS", "Docs: " + date);
                     }
+                }
+                else {
+                    Toast.makeText(getActivity(), "Error: " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_LONG).show();
                 }
             }
         });
 
+        //Builds RecyclerView
         FirestoreRecyclerOptions<Date> dates = new FirestoreRecyclerOptions.Builder<Date>()
                 .setQuery(query, Date.class)
                 .build();

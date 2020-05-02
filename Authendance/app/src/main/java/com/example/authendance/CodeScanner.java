@@ -15,7 +15,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -37,14 +36,12 @@ public class CodeScanner extends AppCompatActivity implements ZXingScannerView.R
 
     private static final int REQUEST_CAMERA = 1;
     private static final String TAG = "CODE_SCAN";
-    private ZXingScannerView scannerView;
 
+    private ZXingScannerView scannerView;
     private String moduleID;
     private String qrCode;
     private String studentID;
-
     private String currentDate;
-
     private FirebaseFirestore db;
 
     @Override

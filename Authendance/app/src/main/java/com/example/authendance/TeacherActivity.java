@@ -37,7 +37,6 @@ public class TeacherActivity extends AppCompatActivity {
         CardView moduleCard = findViewById(R.id.moduleCard);
         CardView attendanceCard = findViewById(R.id.attendanceCard);
         CardView settingsCard = findViewById(R.id.settingsCard);
-
         fAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 

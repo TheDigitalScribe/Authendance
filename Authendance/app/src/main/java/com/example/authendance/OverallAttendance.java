@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -33,12 +34,9 @@ public class OverallAttendance extends AppCompatActivity {
 
     private FirebaseFirestore db;
     private OverallAttendanceAdapter adapter;
-
     private String module;
     TextView toolbarText;
     Toolbar toolbar;
-
-    private FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +50,7 @@ public class OverallAttendance extends AppCompatActivity {
         toolbarText = toolbar.findViewById(R.id.personalToolbarTV);
         setSupportActionBar(toolbar);
 
-        fab = findViewById(R.id.fab);
+        FloatingActionButton fab = findViewById(R.id.fab);
 
         Intent intent = getIntent();
         module = intent.getStringExtra("MOD_ID");
@@ -93,21 +91,25 @@ public class OverallAttendance extends AppCompatActivity {
         query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful()) {
-                    for(QueryDocumentSnapshot queryDocumentSnapshot : Objects.requireNonNull(task.getResult())) {
+
+                if (task.isSuccessful()) {
+
+                    for (QueryDocumentSnapshot queryDocumentSnapshot : Objects.requireNonNull(task.getResult())) {
+
                         queryDocumentSnapshot.getId();
-
-                        Log.d("ATT_STUFF", queryDocumentSnapshot.getId());
-
                     }
+                }
+                else {
+                    Toast.makeText(OverallAttendance.this, "Error: " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_LONG).show();
                 }
             }
         });
 
+
+        //Builds RecyclerView
         FirestoreRecyclerOptions<AdminAttendance> attendance = new FirestoreRecyclerOptions.Builder<AdminAttendance>()
                 .setQuery(query, AdminAttendance.class)
                 .build();
-
 
         adapter = new OverallAttendanceAdapter(attendance);
         RecyclerView recyclerView = findViewById(R.id.overallAttRecyclerView);
@@ -115,6 +117,7 @@ public class OverallAttendance extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
+        //Allows admin to delete attendance instance when they long click on one
         adapter.setOnItemLongClickListener(new OverallAttendanceAdapter.OnItemLongClickListener() {
             @Override
             public void onItemLongClick(DocumentSnapshot documentSnapshot, int position) {
@@ -157,9 +160,9 @@ public class OverallAttendance extends AppCompatActivity {
                         studentRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                             @Override
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                if(task.isSuccessful()) {
+                                if (task.isSuccessful()) {
 
-                                    for(QueryDocumentSnapshot queryDocumentSnapshot : Objects.requireNonNull(task.getResult())) {
+                                    for (QueryDocumentSnapshot queryDocumentSnapshot : Objects.requireNonNull(task.getResult())) {
                                         String studentID = queryDocumentSnapshot.getId();
 
                                         String docName = module.replaceAll("\\s+", "") + dateID.replaceAll("\\s+", "");
@@ -185,8 +188,7 @@ public class OverallAttendance extends AppCompatActivity {
                                                     }
                                                 });
                                     }
-                                }
-                                else {
+                                } else {
                                     Toast.makeText(OverallAttendance.this, "Error: " + task.getException(), Toast.LENGTH_SHORT).show();
                                 }
                             }

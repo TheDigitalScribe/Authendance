@@ -8,10 +8,10 @@
     android:layout_marginTop="5dp">
 
     <RelativeLayout
-        android:onClick="show"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="8dp"
+        android:clickable="true"
         android:layout_margin="10dp">
 
         <TextView

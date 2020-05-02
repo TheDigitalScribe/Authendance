@@ -76,27 +76,7 @@ public class StudentModules extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(StudentModules.this));
 
 
-        class Callback implements ModuleAdapter.ActionCallback{
 
-            @Override
-            public void onLongClickListener() {
-                final List<String> ListItems = new ArrayList<>();
-                ListItems.add("사과");
-                ListItems.add("배");
-                final CharSequence[] items =  ListItems.toArray(new String[ ListItems.size()]);
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(StudentModules.this);
-                builder.setTitle("AlertDialog Title");
-                builder.setItems(items, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int pos) {
-                        String selectedText = items[pos].toString();
-                        Toast.makeText(StudentModules.this, selectedText, Toast.LENGTH_SHORT).show();
-                    }
-                });
-                builder.show();
-            }
-        }
-        moduleAdapter.addActionCallback(new Callback());
         recyclerView.setAdapter(moduleAdapter);
         moduleAdapter.notifyDataSetChanged();
     }

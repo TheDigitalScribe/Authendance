@@ -12,10 +12,6 @@ import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 
 public class ModuleAdapter extends FirestoreRecyclerAdapter<StudentModuleItem, ModuleAdapter.ModuleHolder> {
-    public interface ActionCallback {
-        void onLongClickListener();
-    }
-    private ActionCallback mActionCallbacks;
 
     public ModuleAdapter(@NonNull FirestoreRecyclerOptions<StudentModuleItem> options) {
         super(options);
@@ -35,7 +31,7 @@ public class ModuleAdapter extends FirestoreRecyclerAdapter<StudentModuleItem, M
         return new ModuleHolder(v);
     }
 
-    class ModuleHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener{
+    class ModuleHolder extends RecyclerView.ViewHolder {
         TextView name;
         TextView lecturer_name;
         TextView date;
@@ -47,16 +43,8 @@ public class ModuleAdapter extends FirestoreRecyclerAdapter<StudentModuleItem, M
             date = itemView.findViewById(R.id.lecture_date);
         }
 
-        @Override
-        public boolean onLongClick(View v) {
-            if (mActionCallbacks != null) {
-                mActionCallbacks.onLongClickListener();
-            }
-            return true;
-        }
+
     }
 
-    public void addActionCallback(ActionCallback actionCallbacks) {
-        mActionCallbacks = actionCallbacks;
-    }
+
 }

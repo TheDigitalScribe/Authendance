@@ -24,7 +24,6 @@ public class StudentUserAdapter extends FirestoreRecyclerAdapter<StudentUsers, S
 
         holder.studentID.setText(model.getStudent_id());
         holder.studentName.setText(model.getName());
-
     }
 
     @NonNull

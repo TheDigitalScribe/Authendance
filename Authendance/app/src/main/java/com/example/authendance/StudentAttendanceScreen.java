@@ -3,7 +3,10 @@ package com.example.authendance;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -23,7 +26,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -71,47 +73,54 @@ public class StudentAttendanceScreen extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                //Gets current user's UID
-                uid = fAuth.getCurrentUser().getUid();
+                if (isConnectedtoInternet(StudentAttendanceScreen.this)) {
 
-                //Retrieves value selected in the spinner
-                final String spinnerValue = spinner.getSelectedItem().toString();
 
-                //Determines database path for the user's document
-                DocumentReference documentReference = db.collection("School")
-                        .document("0DKXnQhueh18DH7TSjsb")
-                        .collection("User")
-                        .document(uid);
+                    //Gets current user's UID
+                    uid = fAuth.getCurrentUser().getUid();
 
-                documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    //Retrieves value selected in the spinner
+                    final String spinnerValue = spinner.getSelectedItem().toString();
 
-                        if (task.isSuccessful()) {
+                    //Determines database path for the user's document
+                    DocumentReference documentReference = db.collection("School")
+                            .document("0DKXnQhueh18DH7TSjsb")
+                            .collection("User")
+                            .document(uid);
 
-                            DocumentSnapshot documentSnapshot = task.getResult();
+                    documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
-                            assert documentSnapshot != null;
-                            if (documentSnapshot.exists()) {
+                            if (task.isSuccessful()) {
 
-                                //Retrieves student ID
-                                studentID = documentSnapshot.getString("student_id");
+                                DocumentSnapshot documentSnapshot = task.getResult();
+
+                                assert documentSnapshot != null;
+                                if (documentSnapshot.exists()) {
+
+                                    //Retrieves student ID
+                                    studentID = documentSnapshot.getString("student_id");
 
                                 /*Passes spinner value and student ID to the PersonalAttendance class
                                 so that they can see module-specific attendance
                                  */
-                                Bundle bundle = new Bundle();
-                                bundle.putString("MOD_ID", spinnerValue);
-                                bundle.putString("STU_ID", studentID);
-                                Intent intent = new Intent(StudentAttendanceScreen.this, PersonalAttendance.class);
-                                intent.putExtras(bundle);
-                                startActivity(intent);
+                                    Bundle bundle = new Bundle();
+                                    bundle.putString("MOD_ID", spinnerValue);
+                                    bundle.putString("STU_ID", studentID);
+                                    Intent intent = new Intent(StudentAttendanceScreen.this, PersonalAttendance.class);
+                                    intent.putExtras(bundle);
+                                    startActivity(intent);
+                                }
+                            } else {
+                                Toast.makeText(StudentAttendanceScreen.this, "Error: " + task.getException(), Toast.LENGTH_LONG).show();
                             }
-                        } else {
-                            Toast.makeText(StudentAttendanceScreen.this, "Error: " + task.getException(), Toast.LENGTH_LONG).show();
                         }
-                    }
-                });
+                    });
+                }
+                else {
+                    Toast.makeText(StudentAttendanceScreen.this, "Please connect to internet to see module attendance", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -140,11 +149,9 @@ public class StudentAttendanceScreen extends AppCompatActivity {
                      */
                     String userType = documentSnapshot.getString("user_type");
 
-                    //Log.d("STU_ATT", "User type: " + userType);
-
                     assert userType != null;
 
-                    /*If admin account accesses this class, remove the button and spinner
+                    /*If admin account accesses this class, remove the button and spinner.
                     This is done so that the admin can't query the student's module-specific
                     attendance as it would mean having to complicate the query
                      */
@@ -300,5 +307,17 @@ public class StudentAttendanceScreen extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    public static boolean isConnectedtoInternet(@NonNull Context context) {
+        ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (cm == null)
+        {
+            Toast.makeText(context, "You're not connected to the internet", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     }
 }

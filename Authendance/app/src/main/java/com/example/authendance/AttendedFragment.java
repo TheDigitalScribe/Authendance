@@ -2,20 +2,25 @@
 
 package com.example.authendance;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -101,12 +106,17 @@ public class AttendedFragment extends Fragment {
             @Override
             public void onItemClick(DocumentSnapshot documentSnapshot, int position) {
 
-                String studentID = documentSnapshot.getId();
+                if(isConnectedtoInternet(Objects.requireNonNull(getActivity()))){
+                    String studentID = documentSnapshot.getId();
 
-                Intent intent = new Intent(getActivity(), PersonalAttendance.class);
-                intent.putExtra("STU_ID", studentID);
-                intent.putExtra("MOD_ID", module);
-                startActivity(intent);
+                    Intent intent = new Intent(getActivity(), PersonalAttendance.class);
+                    intent.putExtra("STU_ID", studentID);
+                    intent.putExtra("MOD_ID", module);
+                    startActivity(intent);
+                }
+                else {
+                    Toast.makeText(getActivity(), "Please connect to internet to see student attendance", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -115,81 +125,102 @@ public class AttendedFragment extends Fragment {
             @Override
             public void onItemLongClick(DocumentSnapshot documentSnapshot, int position) {
 
-                final String studentID = documentSnapshot.getId();
+                if (isConnectedtoInternet(Objects.requireNonNull(getActivity()))) {
 
-                androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(Objects.requireNonNull(getContext()));
-                builder.setTitle("Set Attendance");
-                builder.setMessage("Do you want to set the student as absent?");
-                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
 
-                        DocumentReference documentReference = db.collection("School")
-                                .document("0DKXnQhueh18DH7TSjsb")
-                                .collection("Attendance")
-                                .document(module)
-                                .collection("Date")
-                                .document(date)
-                                .collection("Students")
-                                .document(studentID);
+                    final String studentID = documentSnapshot.getId();
 
-                        documentReference.update("attended", false).addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
+                    androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(Objects.requireNonNull(getContext()));
+                    builder.setTitle("Set Attendance");
+                    builder.setMessage("Do you want to set the student as absent?");
+                    builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
 
-                                Log.d("ATT", "Attendance updated");
+                            DocumentReference documentReference = db.collection("School")
+                                    .document("0DKXnQhueh18DH7TSjsb")
+                                    .collection("Attendance")
+                                    .document(module)
+                                    .collection("Date")
+                                    .document(date)
+                                    .collection("Students")
+                                    .document(studentID);
 
-                            }
-                        })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.d("ATT", "Error updating field");
+                            documentReference.update("attended", false).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
 
-                                    }
-                                });
+                                    Log.d("ATT", "Attendance updated");
 
-                        //Removes spaces when adding document to the database so it can be queried properly
-                        String docName = module.replaceAll("\\s+", "") + date.replaceAll("\\s+", "");
+                                }
+                            })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.d("ATT", "Error updating field");
 
-                        DocumentReference docRef = db.collection("School")
-                                .document("0DKXnQhueh18DH7TSjsb")
-                                .collection("AttendanceRecord")
-                                .document(studentID)
-                                .collection("Records")
-                                .document(docName);
+                                        }
+                                    });
 
-                        docRef.update("attended", false).addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Log.d("ATT", "Personal attendance updated");
-                            }
-                        })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.d("ATT", "Failed to update");
-                                    }
-                                });
-                    }
-                });
-                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                AlertDialog alert = builder.create();
-                alert.show();
+                            //Removes spaces when adding document to the database so it can be queried properly
+                            String docName = module.replaceAll("\\s+", "") + date.replaceAll("\\s+", "");
+
+                            DocumentReference docRef = db.collection("School")
+                                    .document("0DKXnQhueh18DH7TSjsb")
+                                    .collection("AttendanceRecord")
+                                    .document(studentID)
+                                    .collection("Records")
+                                    .document(docName);
+
+                            docRef.update("attended", false).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Log.d("ATT", "Personal attendance updated");
+                                }
+                            })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.d("ATT", "Failed to update");
+                                        }
+                                    });
+                        }
+                    });
+                    builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    AlertDialog alert = builder.create();
+                    alert.show();
+                } else {
+                    Toast.makeText(getActivity(), "Please connect to internet to set attendance", Toast.LENGTH_SHORT).show();
+                }
             }
         });
+    }
+
+    public static boolean isConnectedtoInternet(@NonNull Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (cm == null) {
+            Toast.makeText(context, "You're not connected to the internet", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     }
 
     //Starts listening for changes to the RecyclerView when Activity starts
     @Override
     public void onStart() {
         super.onStart();
-        attendAdapter.startListening();
+
+        if (isConnectedtoInternet(Objects.requireNonNull(getActivity()))) {
+            attendAdapter.startListening();
+        }
+
     }
 
     //Stops listening for changes to the RecyclerView when Activity stops

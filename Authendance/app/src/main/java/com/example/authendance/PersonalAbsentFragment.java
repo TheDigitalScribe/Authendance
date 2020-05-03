@@ -1,5 +1,8 @@
 package com.example.authendance;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -93,10 +96,25 @@ public class PersonalAbsentFragment extends Fragment {
         adapter.notifyDataSetChanged();
     }
 
+    public static boolean isConnectedtoInternet(@NonNull Context context) {
+        ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (cm == null)
+        {
+            Toast.makeText(context, "You're not connected to the internet", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+    }
+
     @Override
     public void onStart() {
         super.onStart();
-        adapter.startListening();
+
+        if(isConnectedtoInternet(Objects.requireNonNull(getActivity()))){
+            adapter.startListening();
+        }
     }
 
     @Override

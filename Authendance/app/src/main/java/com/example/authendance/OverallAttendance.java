@@ -7,8 +7,11 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -122,95 +125,116 @@ public class OverallAttendance extends AppCompatActivity {
             @Override
             public void onItemLongClick(DocumentSnapshot documentSnapshot, int position) {
 
-                final String dateID = documentSnapshot.getId();
+                if (isConnectedtoInternet(OverallAttendance.this)) {
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(OverallAttendance.this);
-                builder.setTitle("Delete Attendance Record?");
-                builder.setMessage("Are you sure you want to delete this attendance record");
-                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
 
-                        db.collection("School")
-                                .document("0DKXnQhueh18DH7TSjsb")
-                                .collection("Attendance")
-                                .document(module)
-                                .collection("Date")
-                                .document(dateID)
-                                .delete()
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Toast.makeText(OverallAttendance.this, "Record: " + dateID + " successfully deleted", Toast.LENGTH_SHORT).show();
+                    final String dateID = documentSnapshot.getId();
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(OverallAttendance.this);
+                    builder.setTitle("Delete Attendance Record?");
+                    builder.setMessage("Are you sure you want to delete this attendance record");
+                    builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                            db.collection("School")
+                                    .document("0DKXnQhueh18DH7TSjsb")
+                                    .collection("Attendance")
+                                    .document(module)
+                                    .collection("Date")
+                                    .document(dateID)
+                                    .delete()
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            Toast.makeText(OverallAttendance.this, "Record: " + dateID + " successfully deleted", Toast.LENGTH_SHORT).show();
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Toast.makeText(OverallAttendance.this, "Record: " + dateID + " failed to delete", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+
+                            CollectionReference studentRef = db.collection("School")
+                                    .document("0DKXnQhueh18DH7TSjsb")
+                                    .collection("Modules")
+                                    .document(module)
+                                    .collection("Students");
+
+                            studentRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                    if (task.isSuccessful()) {
+
+                                        for (QueryDocumentSnapshot queryDocumentSnapshot : Objects.requireNonNull(task.getResult())) {
+                                            String studentID = queryDocumentSnapshot.getId();
+
+                                            String docName = module.replaceAll("\\s+", "") + dateID.replaceAll("\\s+", "");
+                                            Log.d("ATT_STUFF", "docname: " + docName);
+
+                                            db.collection("School")
+                                                    .document("0DKXnQhueh18DH7TSjsb")
+                                                    .collection("AttendanceRecord")
+                                                    .document(studentID)
+                                                    .collection("Records")
+                                                    .document(docName)
+                                                    .delete()
+                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                        @Override
+                                                        public void onSuccess(Void aVoid) {
+                                                            Log.d("ATT_STUFF", "Record deleted");
+                                                        }
+                                                    })
+                                                    .addOnFailureListener(new OnFailureListener() {
+                                                        @Override
+                                                        public void onFailure(@NonNull Exception e) {
+                                                            Log.d("ATT_STUFF", "Record not deleted");
+                                                        }
+                                                    });
+                                        }
+                                    } else {
+                                        Toast.makeText(OverallAttendance.this, "Error: " + task.getException(), Toast.LENGTH_SHORT).show();
                                     }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Toast.makeText(OverallAttendance.this, "Record: " + dateID + " failed to delete", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-
-                        CollectionReference studentRef = db.collection("School")
-                                .document("0DKXnQhueh18DH7TSjsb")
-                                .collection("Modules")
-                                .document(module)
-                                .collection("Students");
-
-                        studentRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                if (task.isSuccessful()) {
-
-                                    for (QueryDocumentSnapshot queryDocumentSnapshot : Objects.requireNonNull(task.getResult())) {
-                                        String studentID = queryDocumentSnapshot.getId();
-
-                                        String docName = module.replaceAll("\\s+", "") + dateID.replaceAll("\\s+", "");
-                                        Log.d("ATT_STUFF", "docname: " + docName);
-
-                                        db.collection("School")
-                                                .document("0DKXnQhueh18DH7TSjsb")
-                                                .collection("AttendanceRecord")
-                                                .document(studentID)
-                                                .collection("Records")
-                                                .document(docName)
-                                                .delete()
-                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                    @Override
-                                                    public void onSuccess(Void aVoid) {
-                                                        Log.d("ATT_STUFF", "Record deleted");
-                                                    }
-                                                })
-                                                .addOnFailureListener(new OnFailureListener() {
-                                                    @Override
-                                                    public void onFailure(@NonNull Exception e) {
-                                                        Log.d("ATT_STUFF", "Record not deleted");
-                                                    }
-                                                });
-                                    }
-                                } else {
-                                    Toast.makeText(OverallAttendance.this, "Error: " + task.getException(), Toast.LENGTH_SHORT).show();
                                 }
-                            }
-                        });
-                    }
-                });
-                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                AlertDialog alert = builder.create();
-                alert.show();
+                            });
+                        }
+                    });
+                    builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    AlertDialog alert = builder.create();
+                    alert.show();
+                }
+                else {
+                    Toast.makeText(OverallAttendance.this, "Please connect to internet to delete records", Toast.LENGTH_SHORT).show();
+                }
             }
         });
+    }
+
+    public static boolean isConnectedtoInternet(@NonNull Context context) {
+        ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (cm == null)
+        {
+            Toast.makeText(context, "You're not connected to the internet", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        adapter.startListening();
+        if(isConnectedtoInternet(getApplicationContext())){
+            adapter.startListening();
+        }
     }
 
     @Override

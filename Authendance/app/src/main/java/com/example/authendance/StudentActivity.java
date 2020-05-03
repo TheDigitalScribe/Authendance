@@ -4,8 +4,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
@@ -67,9 +70,16 @@ public class StudentActivity extends AppCompatActivity {
         attendanceCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(StudentActivity.this, StudentAttendanceScreen.class);
-                intent.putExtra("STU_ID", idDisplay.getText().toString());
-                startActivity(intent);
+
+                if(isConnectedtoInternet(StudentActivity.this)){
+                    Intent intent = new Intent(StudentActivity.this, StudentAttendanceScreen.class);
+                    intent.putExtra("STU_ID", idDisplay.getText().toString());
+                    startActivity(intent);
+                }
+                else {
+                    Toast.makeText(StudentActivity.this, "Please connect to internet to see attendance", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
 
@@ -151,5 +161,17 @@ public class StudentActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    public static boolean isConnectedtoInternet(@NonNull Context context) {
+        ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (cm == null)
+        {
+            Toast.makeText(context, "You're not connected to the internet", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     }
 }

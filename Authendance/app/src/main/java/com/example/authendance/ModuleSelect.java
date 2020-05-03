@@ -3,7 +3,10 @@ package com.example.authendance;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -68,7 +71,13 @@ public class ModuleSelect extends AppCompatActivity implements AdapterView.OnIte
         scanCodeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                moduleCheck();
+
+                if(isConnectedtoInternet(ModuleSelect.this)){
+                    moduleCheck();
+                }
+                else {
+                    Toast.makeText(ModuleSelect.this, "Please connect to internet to scan code", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -157,6 +166,19 @@ public class ModuleSelect extends AppCompatActivity implements AdapterView.OnIte
                 }
             }
         });
+    }
+
+    //Checks if user is connected to the internet
+    public static boolean isConnectedtoInternet(@NonNull Context context) {
+        ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (cm == null)
+        {
+            Toast.makeText(context, "You're not connected to the internet", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     }
 
     //Methods for the spinner. Unused but required

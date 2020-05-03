@@ -1,10 +1,15 @@
 package com.example.authendance;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -89,11 +94,27 @@ public class PersonalAttendedFragment extends Fragment {
         adapter.notifyDataSetChanged();
     }
 
+    public static boolean isConnectedtoInternet(@NonNull Context context) {
+        ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (cm == null)
+        {
+            Toast.makeText(context, "You're not connected to the internet", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+    }
+
     //Starts listening for changes to the RecyclerView when Activity starts
     @Override
     public void onStart() {
         super.onStart();
-        adapter.startListening();
+
+        if(isConnectedtoInternet(Objects.requireNonNull(getActivity()))){
+            adapter.startListening();
+        }
+
     }
 
     //Stops listening for changes to the RecyclerView when Activity stops

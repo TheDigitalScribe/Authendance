@@ -4,9 +4,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -14,6 +18,7 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -23,6 +28,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -77,32 +83,38 @@ public class AdminActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                //Shows AlertDialog asking the user which module to search attendance records for
-                AlertDialog.Builder builder = new AlertDialog.Builder(AdminActivity.this);
-                @SuppressLint("InflateParams") final View view = getLayoutInflater().inflate(R.layout.attendance_alertdialog, null);
-                builder.setCustomTitle(view);
-                spinner = view.findViewById(R.id.spinner);
-                submitBtn = view.findViewById(R.id.submitBtn);
+                if (isConnectedtoInternet(getApplicationContext())) {
 
-                populateSpinner();
+                    //Shows AlertDialog asking the user which module to search attendance records for
+                    AlertDialog.Builder builder = new AlertDialog.Builder(AdminActivity.this);
+                    @SuppressLint("InflateParams") final View view = getLayoutInflater().inflate(R.layout.attendance_alertdialog, null);
+                    builder.setCustomTitle(view);
+                    spinner = view.findViewById(R.id.spinner);
+                    submitBtn = view.findViewById(R.id.submitBtn);
 
-                AlertDialog alert = builder.create();
-                alert.show();
+                    populateSpinner();
 
-                submitBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+                    AlertDialog alert = builder.create();
+                    alert.show();
 
-                        String spinnerValue = spinner.getSelectedItem().toString();
 
-                        Intent intent = new Intent(AdminActivity.this, OverallAttendance.class);
-                        intent.putExtra("MOD_ID", spinnerValue);
-                        startActivity(intent);
-                    }
-                });
+                    submitBtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            String spinnerValue = spinner.getSelectedItem().toString();
+
+                            Intent intent = new Intent(AdminActivity.this, OverallAttendance.class);
+                            intent.putExtra("MOD_ID", spinnerValue);
+                            startActivity(intent);
+                        }
+                    });
+                } else {
+                    Toast.makeText(AdminActivity.this, "Please connect to internet to see attendance", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
-
 
         settingsCard.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -196,6 +208,7 @@ public class AdminActivity extends AppCompatActivity {
 
                         nameDisplay.setText(adminName);
                         idDisplay.setText(adminID);
+
                     } else {
                         Toast.makeText(AdminActivity.this, "Document doesn't exist", Toast.LENGTH_SHORT).show();
                     }
@@ -204,5 +217,17 @@ public class AdminActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    //Checks if user is connected to the internet
+    public static boolean isConnectedtoInternet(@NonNull Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (cm == null) {
+            Toast.makeText(context, "You're not connected to the internet", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     }
 }

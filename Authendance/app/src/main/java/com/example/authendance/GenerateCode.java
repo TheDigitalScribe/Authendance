@@ -3,8 +3,12 @@ package com.example.authendance;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -59,7 +63,15 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
         genCodeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                generateCode();
+
+                if(isConnectedtoInternet(GenerateCode.this)){
+                    generateCode();
+                }
+
+                else {
+                    Toast.makeText(GenerateCode.this, "Please connect to internet to generate code", Toast.LENGTH_LONG).show();
+                }
+
             }
         });
     }
@@ -405,6 +417,19 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
         }
         return stringBuilder.toString();
 
+    }
+
+    //Checks if user is connected to the internet
+    public static boolean isConnectedtoInternet(@NonNull Context context) {
+        ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (cm == null)
+        {
+            Toast.makeText(context, "You're not connected to the internet", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     }
 
     //Methods for the spinner. Unused but required

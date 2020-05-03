@@ -5,6 +5,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.widget.Toast;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -33,6 +37,10 @@ public class TeacherUsersList extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
 
         getTeachers();
+
+        if(!isConnectedtoInternet(TeacherUsersList.this)){
+            Toast.makeText(TeacherUsersList.this, "Please connect to internet to see list", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void getTeachers() {
@@ -69,10 +77,25 @@ public class TeacherUsersList extends AppCompatActivity {
         adapter.notifyDataSetChanged();
     }
 
+    public static boolean isConnectedtoInternet(@NonNull Context context) {
+        ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (cm == null)
+        {
+            Toast.makeText(context, "You're not connected to the internet", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
-        adapter.startListening();
+        if(isConnectedtoInternet(TeacherUsersList.this))
+        {
+            adapter.startListening();
+        }
     }
 
     @Override

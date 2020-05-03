@@ -1,5 +1,4 @@
 //Model class for showing all the attendance date records to the admin
-
 package com.example.authendance;
 
 public class AdminAttendance {

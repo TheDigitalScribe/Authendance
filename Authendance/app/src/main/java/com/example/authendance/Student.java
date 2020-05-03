@@ -11,8 +11,6 @@ public class Student {
     }
 
     public Student() {
-
-        this.student_id = "No information available";
     }
 
     public String getStudent_id() {

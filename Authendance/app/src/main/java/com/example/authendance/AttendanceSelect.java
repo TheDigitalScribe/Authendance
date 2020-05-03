@@ -3,7 +3,10 @@ package com.example.authendance;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -66,49 +69,50 @@ public class AttendanceSelect extends AppCompatActivity {
                     datePicked = dayOfMonth + " " + "0" + month + " " + year;
                 }
 
+
                 submitBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (datePicked.isEmpty()) {
-                            Toast.makeText(AttendanceSelect.this, "Please enter date", Toast.LENGTH_SHORT).show();
 
-                        } else {
+                            if(isConnectedtoInternet(AttendanceSelect.this)){
 
-                            final String spinnerValue = attendanceSpinner.getSelectedItem().toString();
+                                final String spinnerValue = attendanceSpinner.getSelectedItem().toString();
 
-                            //Determines database path for the record of the chosen date
-                            DocumentReference dateRef = db.collection("School")
-                                    .document("0DKXnQhueh18DH7TSjsb")
-                                    .collection("Attendance")
-                                    .document(spinnerValue)
-                                    .collection("Date")
-                                    .document(datePicked);
+                                //Determines database path for the record of the chosen date
+                                DocumentReference dateRef = db.collection("School")
+                                        .document("0DKXnQhueh18DH7TSjsb")
+                                        .collection("Attendance")
+                                        .document(spinnerValue)
+                                        .collection("Date")
+                                        .document(datePicked);
 
-                            dateRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                    if (task.isSuccessful()) {
-                                        DocumentSnapshot documentSnapshot = task.getResult();
+                                dateRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                        if (task.isSuccessful()) {
+                                            DocumentSnapshot documentSnapshot = task.getResult();
 
-                                        assert documentSnapshot != null;
-                                        if (documentSnapshot.exists()) {
+                                            assert documentSnapshot != null;
+                                            if (documentSnapshot.exists()) {
 
-                                            Intent intent = new Intent(AttendanceSelect.this, AttendanceScreen.class);
+                                                Intent intent = new Intent(AttendanceSelect.this, AttendanceScreen.class);
 
-                                            Bundle bundle = new Bundle();
-                                            bundle.putString("MOD_ID", spinnerValue);
-                                            bundle.putString("DATE_PICKED", datePicked);
-                                            intent.putExtras(bundle);
-                                            startActivity(intent);
-                                        } else {
-                                            Toast.makeText(AttendanceSelect.this, "No attendance record for this module on " + datePicked, Toast.LENGTH_SHORT).show();
+                                                Bundle bundle = new Bundle();
+                                                bundle.putString("MOD_ID", spinnerValue);
+                                                bundle.putString("DATE_PICKED", datePicked);
+                                                intent.putExtras(bundle);
+                                                startActivity(intent);
+                                            } else {
+                                                Toast.makeText(AttendanceSelect.this, "No attendance record for this module on " + datePicked, Toast.LENGTH_SHORT).show();
+                                            }
                                         }
                                     }
-                                }
-                            });
-
+                                });
+                            }
+                            else {
+                                Toast.makeText(AttendanceSelect.this, "Please connect to internet to see attendance", Toast.LENGTH_SHORT).show();
+                            }
                         }
-                    }
                 });
             }
         });
@@ -143,5 +147,17 @@ public class AttendanceSelect extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    public static boolean isConnectedtoInternet(@NonNull Context context) {
+        ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (cm == null)
+        {
+            Toast.makeText(context, "You're not connected to the internet", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     }
 }

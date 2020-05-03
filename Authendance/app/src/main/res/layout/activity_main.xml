@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/reef">
@@ -19,15 +18,15 @@
 
             <ImageView
                 android:id="@+id/imageView"
-                android:layout_width="89dp"
-                android:layout_height="97dp"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
                 android:layout_marginTop="100dp"
                 app:layout_constraintBottom_toTopOf="@+id/loginTextView"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="?attr/actionModePasteDrawable"
-                tools:srcCompat="@drawable/attendanceimg" />
+                android:src="@drawable/authendancelogo"
+                android:contentDescription="@string/app_logo_description" />
 
             <TextView
                 android:id="@+id/loginTextView"
@@ -36,7 +35,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="50dp"
                 android:fontFamily="@font/raleway"
-                android:text="Authendance"
+                android:text="@string/app_name"
                 android:textColor="@android:color/white"
                 android:textSize="36sp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -61,7 +60,6 @@
                 android:padding="30dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.313"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
@@ -72,7 +70,6 @@
                     android:autofillHints=""
                     android:background="#11422D2D"
                     android:drawableStart="@drawable/ic_action_email"
-                    android:drawableLeft="@drawable/ic_action_email"
                     android:ems="10"
                     android:fontFamily="@font/raleway"
                     android:hint="@string/email_address"
@@ -110,7 +107,7 @@
                         android:layout_marginBottom="24dp"
                         android:background="@drawable/custom_button"
                         android:fontFamily="@font/raleway"
-                        android:text="Sign In"
+                        android:text="@string/sign_in"
                         android:textAllCaps="false"
                         android:textColor="#330000"
                         android:textSize="18sp"
@@ -135,8 +132,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:fontFamily="@font/raleway"
-                android:text="Forgot password?"
-                android:textColor="#8F8C8C"
+                android:text="@string/forgot_password"
+                android:textColor="#FFFFFF"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -161,9 +158,13 @@
 
     <![CDATA[
     =======
-    <<<<< HEAD
+    < android:layout_width = "match_parent" />
 
+    <<<<< HEAD
+<<<<<< HEAD
     >>>>>>> 1374f7e48022e0b2b1054949421c379ea27a04b6
 
 ]]>
+=======
+>>>>>>> 217c663837c3930affd864155a84128cd359c5be
 </androidx.constraintlayout.widget.ConstraintLayout>

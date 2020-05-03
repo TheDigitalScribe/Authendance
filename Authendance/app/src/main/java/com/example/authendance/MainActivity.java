@@ -3,6 +3,7 @@ package com.example.authendance;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -15,6 +16,7 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -39,8 +41,6 @@ public class MainActivity extends AppCompatActivity {
     private String passwordContent;
     private ProgressBar progressBar;
     private TextView forgotPasswordText;
-    Button signInBtn;
-
     private FirebaseAuth fAuth;
     private FirebaseFirestore db;
     private FirebaseAuth.AuthStateListener fAuthListener;
@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
 
         emailField = findViewById(R.id.emailField);
         passwordField = findViewById(R.id.passwordField);
-        signInBtn = findViewById(R.id.signInBtn);
+        Button signInBtn = findViewById(R.id.signInBtn);
         forgotPasswordText = findViewById(R.id.forgotPasswordText);
         progressBar = findViewById(R.id.circleProgressBar);
 
@@ -68,12 +68,13 @@ public class MainActivity extends AppCompatActivity {
 
                 FirebaseUser fUser = firebaseAuth.getCurrentUser();
 
+                //If user is already logged in
                 if (fUser != null) {
 
                     //User's UID is retrieved to find their record in the database
                     String uid = Objects.requireNonNull(fAuth.getCurrentUser()).getUid();
 
-                    //Searches for current user's record in the database based on UID
+                    //Determines database path for user's database record
                     final DocumentReference userRef = db.collection("School")
                             .document("0DKXnQhueh18DH7TSjsb")
                             .collection("User")
@@ -82,8 +83,11 @@ public class MainActivity extends AppCompatActivity {
                     userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
                             if (task.isSuccessful()) {
+
                                 DocumentSnapshot document = task.getResult();
+
                                 if (document != null) {
 
                                     //Retrieves user's user_type and name
@@ -93,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
 
                                     assert userType != null;
 
-                                    //If the user is a teacher, bring them to the Teacher dashboard screen and show welcome message
+                                    //If the user is a teacher, bring them to the TeacherActivity class and show welcome message
                                     switch (userType) {
                                         case "Teacher":
                                             Intent teacherIntent = new Intent(MainActivity.this, TeacherActivity.class);
@@ -101,22 +105,28 @@ public class MainActivity extends AppCompatActivity {
                                             startActivity(teacherIntent);
                                             break;
 
-                                        //If the user is a student, bring them to the Student dashboard screen and show welcome message
+                                        //If the user is a student, bring them to the StudentActivity class and show welcome message
                                         case "Student":
                                             Intent studentIntent = new Intent(MainActivity.this, StudentActivity.class);
                                             Toast.makeText(MainActivity.this, "Welcome, " + userName, Toast.LENGTH_SHORT).show();
                                             startActivity(studentIntent);
                                             break;
+
+                                        //If the user is an admin, bring them to the AdminActivity class and show welcome message
                                         case "Admin":
                                             Intent adminIntent = new Intent(MainActivity.this, AdminActivity.class);
                                             Toast.makeText(MainActivity.this, "Welcome, " + userName, Toast.LENGTH_SHORT).show();
                                             startActivity(adminIntent);
                                             break;
+
+                                        //User type couldn't be found
                                         default:
                                             Toast.makeText(MainActivity.this, "User type could not be determined", Toast.LENGTH_SHORT).show();
                                             break;
                                     }
                                 }
+                            } else {
+                                Toast.makeText(MainActivity.this, "Error: " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_LONG).show();
                             }
                         }
                     });
@@ -124,30 +134,35 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
+        //Forgot Password prompt is invisible at the beginning
         forgotPasswordText.setVisibility(View.INVISIBLE);
 
         signInBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                //Retrieves values from email and password fields
                 String email = emailField.getText().toString();
                 String password = passwordField.getText().toString();
 
+                //Shows ProgressBar
                 progressBar.setVisibility(View.VISIBLE);
 
                 //If email and password fields are properly filled in
                 if (validateEmail() && validatePassword()) {
 
-                    //Firestore approach to sign in users
+                    //Firestore-specific approach to sign in users
                     fAuth.signInWithEmailAndPassword(email, password)
                             .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                                 @RequiresApi(api = Build.VERSION_CODES.KITKAT)
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
+
                                     if (task.isSuccessful()) {
 
                                         Log.d(TAG, "Login successful");
 
-                                        //Saves entered email and password
+                                        //Saves entered email and password to show next time the app is opened
                                         saveData();
 
                                         //User's UID is retrieved to find their record in the database
@@ -170,6 +185,7 @@ public class MainActivity extends AppCompatActivity {
                                                         String userName = document.getString("name");
 
                                                         assert userType != null;
+
                                                         switch (userType) {
                                                             case "Teacher":
                                                                 Intent teacherIntent = new Intent(MainActivity.this, TeacherActivity.class);
@@ -190,16 +206,15 @@ public class MainActivity extends AppCompatActivity {
                                                                 Toast.makeText(MainActivity.this, "User type could not be determined.", Toast.LENGTH_SHORT).show();
                                                         }
                                                     } else {
-                                                        Toast.makeText(MainActivity.this, "Error: " + task.getException(), Toast.LENGTH_SHORT).show();
+                                                        Toast.makeText(MainActivity.this, "Error: " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_LONG).show();
                                                     }
                                                 }
                                             }
                                         });
                                     } else {
-                                        Toast.makeText(MainActivity.this, Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_LONG).show();
+                                        Toast.makeText(MainActivity.this, "Error: " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_LONG).show();
                                         progressBar.setVisibility(View.GONE);
                                         forgotPasswordText.setVisibility(View.VISIBLE);
-                                        Log.d(TAG, Objects.requireNonNull(task.getException().getMessage()));
                                     }
                                 }
                             });
@@ -306,8 +321,6 @@ public class MainActivity extends AppCompatActivity {
         editor.putString(PASSWORD, passwordField.getText().toString());
 
         editor.apply();
-
-        Log.d(TAG, "Email: " + emailField.getText().toString() + " and password " + passwordField.getText().toString() + " saved");
     }
 
     //Loads the last entered email and password

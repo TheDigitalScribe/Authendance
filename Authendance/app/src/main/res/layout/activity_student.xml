@@ -26,7 +26,6 @@
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="20dp"
                 android:fontFamily="@font/raleway"
-                android:text="Name"
                 android:textColor="#FFFFFF"
                 android:textSize="20sp" />
 
@@ -38,7 +37,6 @@
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="30dp"
                 android:fontFamily="sans-serif"
-                android:text="ID"
                 android:textColor="#FFFFFF"
                 android:textSize="20sp" />
 
@@ -68,12 +66,14 @@
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="16dp"
+                    tools:ignore="UseCompoundDrawables">
 
                     <ImageView
                         android:layout_width="80dp"
                         android:layout_height="80dp"
-                        android:src="@drawable/scancode" />
+                        android:src="@drawable/scancode"
+                        android:contentDescription="@string/scan_code_description" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -102,19 +102,21 @@
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="16dp"
+                    tools:ignore="UseCompoundDrawables">
 
                     <ImageView
                         android:layout_width="80dp"
                         android:layout_height="80dp"
-                        android:src="@drawable/attendanceimg" />
+                        android:src="@drawable/attendanceimg"
+                        android:contentDescription="@string/attendance_description" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
                         android:fontFamily="@font/raleway"
-                        android:text="Attendance"
+                        android:text="@string/attendance"
                         android:textColor="#000"
                         android:textSize="18sp" />
                 </LinearLayout>
@@ -136,19 +138,21 @@
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="16dp"
+                    tools:ignore="UseCompoundDrawables">
 
                     <ImageView
                         android:layout_width="80dp"
                         android:layout_height="80dp"
-                        android:src="@drawable/classimage" />
+                        android:src="@drawable/classimage"
+                        android:contentDescription="@string/modules_description" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
                         android:fontFamily="@font/raleway"
-                        android:text="Modules"
+                        android:text="@string/modules"
                         android:textColor="#000"
                         android:textSize="18sp" />
                 </LinearLayout>
@@ -176,14 +180,15 @@
                     <ImageView
                         android:layout_width="80dp"
                         android:layout_height="80dp"
-                        android:src="@drawable/settingsimg" />
+                        android:src="@drawable/settingsimg"
+                        android:contentDescription="@string/settings_description" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
                         android:fontFamily="@font/raleway"
-                        android:text="Settings"
+                        android:text="@string/settings"
                         android:textColor="#000"
                         android:textSize="18sp" />
                 </LinearLayout>

@@ -1,10 +1,42 @@
 <resources>
     <string name="app_name">Authendance</string>
-    <string name="app_logo">App Logo</string>
+    <string name="app_logo_description">Authendance Logo</string>
     <string name="email_address">Email Address</string>
     <string name="password">Password</string>
+    <string name="sign_in">Sign In</string>
+    <string name="forgot_password">Forgot Password?</string>
+
+    <string name="create_code_description">QR Code Image</string>
+    <string name="create_code">Create Code</string>
+    <string name="attendance_description">Attendance Image</string>
+    <string name="attendance">Attendance</string>
+    <string name="modules_description">Modules Image</string>
+    <string name="modules">Modules</string>
+    <string name="settings_description">Settings Image</string>
+    <string name="settings">Settings</string>
+
+    <string name="scan_code_description">Scan Code Image</string>
     <string name="scan_code">Scan Code</string>
+
+    <string name="students_description">Students Image</string>
+    <string name="students">Students</string>
+    <string name="teachers_description">TeachersImage</string>
+    <string name="teachers">Lecturers</string>
+
+    <string name="generate_prompt">Please choose which module to generate a code for</string>
     <string name="generate_code">Generate Code</string>
+
+    <string name="done_btn">Done</string>
+    <string name="qr_code_description">QR Code</string>
+
+    <string name="record_attendance_prompt">Please choose module to record attendance for</string>
+
+    <string name="check_attendance_prompt">Which module do you want to check attendance for?</string>
+    <string name="submitBtn">Submit</string>
+
+    <string name="reset_password">Reset Password</string>
+    <string name="log_out">Log Out</string>
+
     <string name="enter_text">Enter some text…</string>
     <string name="qr_code">QR Code placeholder</string>
     <string name="codePlaceholder">Your code</string>

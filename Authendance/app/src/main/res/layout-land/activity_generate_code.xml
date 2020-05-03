@@ -14,7 +14,7 @@
         android:layout_marginTop="130dp"
         android:fontFamily="@font/raleway"
         android:gravity="center_horizontal|center_vertical"
-        android:text="Please choose which module to generate a code for"
+        android:text="@string/generate_prompt"
         android:textColor="#000000"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"

@@ -1,44 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:elevation="4dp"
-        android:background="@drawable/facebook">
-
-        <TextView
-            android:id="@+id/attendanceToolbarTV"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Module"
-            android:textColor="#FFFFFF"
-            android:textSize="20sp" />
-
-    </androidx.appcompat.widget.Toolbar>
-
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/tabLayout"
-        android:layout_width="match_parent"
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:tabMode="fixed"
-        app:tabGravity="fill"
-        app:tabIndicatorColor="@color/colorAccent">
-
-</com.google.android.material.tabs.TabLayout>
-
-    <androidx.viewpager.widget.ViewPager
-        android:id="@+id/viewPager"
-        android:background="@drawable/reef"
+        android:layout_gravity="bottom|end"
+        android:src="@drawable/ic_info"
+        android:background="@android:color/transparent"
+        android:backgroundTint="#FFFFFF"
+        app:rippleColor="@color/colorAccent"
+        android:visibility="visible">
+    </com.google.android.material.floatingactionbutton.FloatingActionButton>
+    
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    </androidx.viewpager.widget.ViewPager>
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:elevation="4dp"
+            android:background="@drawable/facebook">
 
+            <TextView
+                android:id="@+id/attendanceToolbarTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp" />
+        </androidx.appcompat.widget.Toolbar>
 
-</LinearLayout>
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:tabMode="fixed"
+            app:tabGravity="fill"
+            app:tabIndicatorColor="@color/colorAccent">
+        </com.google.android.material.tabs.TabLayout>
+
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/viewPager"
+            android:background="@drawable/reef"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </androidx.viewpager.widget.ViewPager>
+
+    </LinearLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

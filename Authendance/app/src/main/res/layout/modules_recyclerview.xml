@@ -11,4 +11,5 @@
         android:background="@drawable/reef"
         android:padding="5dp"
         android:scrollbars="vertical" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -14,14 +14,13 @@
         android:roundIcon="@mipmap/ic_logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".StudentUsersList"></activity>
-        <activity android:name=".UsersActivity" />
+        <activity android:name=".TeacherUsersList" />
+        <activity android:name=".StudentUsersList" />
         <activity android:name=".OverallAttendance" />
         <activity android:name=".AdminActivity" />
         <activity android:name=".PersonalAttendance" />
         <activity android:name=".StudentAttendanceScreen" />
         <activity android:name=".AttendanceScreen" />
-        <activity android:name=".StudentAttendance" />
         <activity android:name=".SettingsActivity" />
         <activity android:name=".AttendanceSelect" />
         <activity android:name=".TeacherModules" />

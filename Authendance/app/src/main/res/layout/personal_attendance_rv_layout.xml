@@ -17,10 +17,10 @@
             android:id="@+id/dateText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Line 1"
             android:textSize="20sp"
             android:textColor="@android:color/black"
             android:layout_alignParentTop="true" />
 
     </RelativeLayout>
+
 </androidx.cardview.widget.CardView>

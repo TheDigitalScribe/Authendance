@@ -18,6 +18,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -25,7 +27,9 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.zxing.Result;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 
 //This is the library that allows QR codes to be scanned
@@ -186,16 +190,22 @@ public class CodeScanner extends AppCompatActivity implements ZXingScannerView.R
                 .collection("Attendance")
                 .document(moduleID)
                 .collection("Date")
-                .document(currentDate)
-                .collection("Students")
-                .document(studentID);
+                .document(currentDate);
 
-        documentReference.update("attended", true)
+        documentReference.collection("Students").document(studentID).update("attended", true)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.d(TAG, "Success");
+                        DocumentReference documentReference = db.collection("School")
+                                .document("0DKXnQhueh18DH7TSjsb")
+                                .collection("Attendance")
+                                .document(moduleID)
+                                .collection("Date")
+                                .document(currentDate);
 
+                        // Increment attendance number
+                        documentReference.update("attendance", FieldValue.increment(1));
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {

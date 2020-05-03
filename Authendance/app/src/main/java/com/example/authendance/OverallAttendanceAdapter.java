@@ -23,6 +23,8 @@ public class OverallAttendanceAdapter extends FirestoreRecyclerAdapter<AdminAtte
     protected void onBindViewHolder(@NonNull AttendanceHolder holder, int position, @NonNull AdminAttendance model) {
 
         holder.attendanceText.setText(model.getDate());
+        holder.attendanceNum.setText(String.valueOf(model.getAttendance()));
+
     }
 
     @NonNull
@@ -35,6 +37,7 @@ public class OverallAttendanceAdapter extends FirestoreRecyclerAdapter<AdminAtte
     class AttendanceHolder extends RecyclerView.ViewHolder {
 
         TextView attendanceText;
+        TextView attendanceNum;
 
         public AttendanceHolder(@NonNull View itemView) {
             super(itemView);
@@ -55,6 +58,7 @@ public class OverallAttendanceAdapter extends FirestoreRecyclerAdapter<AdminAtte
             });
 
             attendanceText = itemView.findViewById(R.id.attendanceText);
+            attendanceNum = itemView.findViewById(R.id.attendanceNum);
         }
 
 

@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -30,17 +31,14 @@ public class AdminActivity extends AppCompatActivity {
 
     TextView nameDisplay;
     TextView idDisplay;
-
     CardView studentsCard;
+    CardView teachersCard;
     CardView attendanceCard;
     CardView settingsCard;
-
     private FirebaseAuth fAuth;
     private FirebaseFirestore db;
-
     private Spinner spinner;
     private Button submitBtn;
-
     private long backPressed;
 
     @Override
@@ -50,11 +48,10 @@ public class AdminActivity extends AppCompatActivity {
 
         nameDisplay = findViewById(R.id.nameDisplay);
         idDisplay = findViewById(R.id.idDisplay);
-
         studentsCard = findViewById(R.id.studentsCard);
+        teachersCard = findViewById(R.id.teachersCard);
         attendanceCard = findViewById(R.id.attendanceCard);
         settingsCard = findViewById(R.id.settingsCard);
-
         fAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
@@ -68,13 +65,21 @@ public class AdminActivity extends AppCompatActivity {
             }
         });
 
+        teachersCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(AdminActivity.this, TeacherUsersList.class);
+                startActivity(intent);
+            }
+        });
+
         attendanceCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 //Shows AlertDialog asking the user which module to search attendance records for
                 AlertDialog.Builder builder = new AlertDialog.Builder(AdminActivity.this);
-                final View view = getLayoutInflater().inflate(R.layout.attendance_alertdialog, null);
+                @SuppressLint("InflateParams") final View view = getLayoutInflater().inflate(R.layout.attendance_alertdialog, null);
                 builder.setCustomTitle(view);
                 spinner = view.findViewById(R.id.spinner);
                 submitBtn = view.findViewById(R.id.submitBtn);
@@ -123,7 +128,7 @@ public class AdminActivity extends AppCompatActivity {
         moduleRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful()) {
+                if (task.isSuccessful()) {
 
                     for (QueryDocumentSnapshot queryDocumentSnapshot : Objects.requireNonNull(task.getResult())) {
 
@@ -140,11 +145,10 @@ public class AdminActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
 
-        if(backPressed + 2000 > System.currentTimeMillis()) {
+        if (backPressed + 2000 > System.currentTimeMillis()) {
             super.onBackPressed();
             return;
-        }
-        else {
+        } else {
             AlertDialog.Builder builder = new AlertDialog.Builder(AdminActivity.this);
             builder.setTitle("Log Out");
             builder.setMessage("Do you want to log out?");
@@ -180,28 +184,25 @@ public class AdminActivity extends AppCompatActivity {
         documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful()) {
+
+                if (task.isSuccessful()) {
                     DocumentSnapshot documentSnapshot = task.getResult();
 
                     assert documentSnapshot != null;
-                    if(documentSnapshot.exists()) {
+                    if (documentSnapshot.exists()) {
 
                         String adminName = documentSnapshot.getString("name");
                         String adminID = documentSnapshot.getString("admin_id");
 
                         nameDisplay.setText(adminName);
                         idDisplay.setText(adminID);
-                    }
-                    else {
+                    } else {
                         Toast.makeText(AdminActivity.this, "Document doesn't exist", Toast.LENGTH_SHORT).show();
                     }
-                }
-                else {
-                    Toast.makeText(AdminActivity.this, "Error: " + task.getException(), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(AdminActivity.this, "Error: " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
-
-
 }

@@ -14,23 +14,23 @@
         android:layout_margin="10dp">
 
         <TextView
-            android:id="@+id/attendanceText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:textColor="@android:color/black"
-            android:layout_alignParentTop="true" />
-
-        <TextView
-            android:id="@+id/attendanceNum"
+            android:id="@+id/teacherIDText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="33dp"
-            android:layout_marginEnd="14dp"
-            android:text="Attendance Count"
-            android:textSize="18sp" />
+            android:textColor="@android:color/black"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/teacherNameText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/teacherIDText"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/raleway"
+            android:textColor="@android:color/black"
+            android:textSize="14sp" />
 
     </RelativeLayout>
 

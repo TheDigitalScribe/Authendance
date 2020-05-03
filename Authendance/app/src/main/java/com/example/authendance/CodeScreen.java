@@ -36,22 +36,12 @@ import java.util.Objects;
 
 public class CodeScreen extends AppCompatActivity {
 
-    //private static final long START_TIME = 180000;
     private static final String TAG = "CODE_SCREEN";
 
     private ImageView qrCode;
-
-    /*private TextView textViewCountDown;
-    private CountDownTimer countDownTimer;
-    private long timeLeft = START_TIME;
-    private long endTime;
-    private boolean timerRunning;*/
-
     private FirebaseFirestore db;
-
     private String code;
     private String moduleID;
-
     private long backPressed;
     private Toast backPressToast;
 
@@ -64,11 +54,9 @@ public class CodeScreen extends AppCompatActivity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         db = FirebaseFirestore.getInstance();
-
         TextView codeField = findViewById(R.id.codeField);
         qrCode = findViewById(R.id.qrCode);
         Button finishBtn = findViewById(R.id.finishBtn);
-        //textViewCountDown = findViewById(R.id.countDownTimerText);
 
         //Retrieves generated QR code text and document ID for module from the GenerateCode class
         Intent intent = getIntent();
@@ -77,10 +65,6 @@ public class CodeScreen extends AppCompatActivity {
         codeField.setText(code);
 
         createQR();
-        //startTimer();
-
-
-        //Toast.makeText(CodeScreen.this, "Please do not exit screen or code will be reset!", Toast.LENGTH_SHORT).show();
 
         finishBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -156,48 +140,6 @@ public class CodeScreen extends AppCompatActivity {
 
     }
 
-    /*private void startTimer() {
-
-        //mEndTime ensures timer is correct when configuration changes occur
-        endTime = System.currentTimeMillis() + timeLeft;
-
-        countDownTimer = new CountDownTimer(timeLeft, 1000) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-                qrCode.setVisibility(View.VISIBLE);
-                timeLeft = millisUntilFinished;
-                updateTimer();
-            }
-
-            @Override
-            public void onFinish() {
-                timerRunning = false;
-                codeField.setText(null);
-                removeQR();
-                finish();
-            }
-        }.start();
-
-        timerRunning = true;
-    }
-
-    //Updates the countdown text field to show the timer is counting down
-    private void updateTimer() {
-        int minutes = (int) (timeLeft / 1000) / 60;
-        int seconds = (int) (timeLeft / 1000) % 60;
-
-        String timeRemaining = String.format(Locale.getDefault(),"%02d:%02d", minutes, seconds);
-        textViewCountDown.setText(timeRemaining);
-    }
-
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        removeQR();
-        finish();
-    }*/
-
     private void removeQR() {
 
         //Determines document path for the corresponding module
@@ -221,30 +163,4 @@ public class CodeScreen extends AppCompatActivity {
                     }
                 });
     }
-
-    /*The two methods below save and load variables when a configuration change occurs
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putLong("timeLeft", timeLeft);
-        outState.putBoolean("timerRunning", timerRunning);
-        outState.putLong("endTime", endTime);
-        outState.putString("qrCode", code);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-
-        timeLeft = savedInstanceState.getLong("timeLeft");
-        timerRunning = savedInstanceState.getBoolean("timerRunning");
-        codeField.setText(savedInstanceState.getString("qrCode"));
-        updateTimer();
-
-        if (timerRunning) {
-            endTime = savedInstanceState.getLong("endTime");
-            timeLeft = endTime - System.currentTimeMillis();
-            startTimer();
-        }
-    }*/
 }

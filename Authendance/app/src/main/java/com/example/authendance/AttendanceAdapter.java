@@ -1,4 +1,6 @@
-//This class is for retrieving the student ID's from Firestore database and storing it in a RecyclerView
+/*This adapter class is for retrieving the student ID's from Firestore database and storing it in a RecyclerView
+The class makes use of Firestore boilerplate code for the adapter, as that is best practice
+ */
 
 package com.example.authendance;
 
@@ -14,6 +16,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 
 public class AttendanceAdapter extends FirestoreRecyclerAdapter<Student, AttendanceAdapter.StudentHolder> {
 
+    //Listeners to handle short and long clicks on each RecyclerView item
     private OnItemClickListener listener;
     private OnItemLongClickListener longListener;
 
@@ -22,12 +25,14 @@ public class AttendanceAdapter extends FirestoreRecyclerAdapter<Student, Attenda
         super(options);
     }
 
+    //Sets each TextView in each item to the student's ID, retrieved from the Student class
     @Override
     protected void onBindViewHolder(@NonNull StudentHolder holder, int position, @NonNull Student model) {
 
         holder.studentTV.setText(model.getStudent_id());
     }
 
+    //Inflates layout for each item
     @NonNull
     @Override
     public StudentHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

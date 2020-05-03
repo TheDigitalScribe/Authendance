@@ -30,7 +30,6 @@
         <activity android:name=".PasswordReset" />
         <activity android:name=".TeacherActivity" />
         <activity android:name=".StudentActivity" />
-        <activity android:name=".RegisterScreen" />
         <activity android:name=".GenerateCode" />
         <activity android:name=".CodeScanner" />
         <activity android:name=".MainActivity">

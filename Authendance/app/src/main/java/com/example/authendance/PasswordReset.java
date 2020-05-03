@@ -11,7 +11,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -48,8 +47,9 @@ public class PasswordReset extends AppCompatActivity {
 
                                         //Localises email using the user's device language
                                         auth.useAppLanguage();
+
                                     } else {
-                                        Toast.makeText(PasswordReset.this, "Error. " + task.getException(), Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(PasswordReset.this, "Error. " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_LONG).show();
                                     }
                                 }
                             });

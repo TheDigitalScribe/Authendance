@@ -1,4 +1,4 @@
-//This fragment shows a list of the students who have not attended the selected module on the selected date
+//This fragment shows a list of the students who HAVE attended the selected module on the selected date
 
 package com.example.authendance;
 
@@ -36,19 +36,8 @@ public class AttendedFragment extends Fragment {
     private FirebaseFirestore db;
     private AttendanceAdapter attendAdapter;
     private RecyclerView recyclerView;
-
-    private OnItemClickListener clickListener;
-
     private String module;
     private String date;
-
-    public AttendedFragment() {
-
-    }
-
-    public interface OnItemClickListener {
-        void onItemClick(int position);
-    }
 
     @Nullable
     @Override
@@ -72,6 +61,7 @@ public class AttendedFragment extends Fragment {
 
     private void getStudents() {
 
+        //Determines document path for student attendance on the selected module and date
         CollectionReference moduleRef = db.collection("School")
                 .document("0DKXnQhueh18DH7TSjsb")
                 .collection("Attendance")
@@ -120,6 +110,7 @@ public class AttendedFragment extends Fragment {
             }
         });
 
+        //Allows the teacher to set the selected student as absent and updates the student's attendance record
         attendAdapter.setOnItemLongClickListener(new AttendanceAdapter.OnItemLongClickListener() {
             @Override
             public void onItemLongClick(DocumentSnapshot documentSnapshot, int position) {
@@ -158,6 +149,7 @@ public class AttendedFragment extends Fragment {
                                     }
                                 });
 
+                        //Removes spaces when adding document to the database so it can be queried properly
                         String docName = module.replaceAll("\\s+", "") + date.replaceAll("\\s+", "");
 
                         DocumentReference docRef = db.collection("School")

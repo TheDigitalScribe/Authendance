@@ -3,7 +3,6 @@ package com.example.authendance;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,7 +13,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -28,7 +26,6 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -104,9 +101,10 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
 
     private void generateCode() {
 
+        //Retrieves value from spinner
         final String spinnerValue = teacherSpinner.getSelectedItem().toString();
 
-        //Searches for the module the user selected in the spinner
+        //Determines database for the selected module's database record
         final DocumentReference moduleRef = db.collection("School")
                 .document("0DKXnQhueh18DH7TSjsb")
                 .collection("Modules")
@@ -119,6 +117,7 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
 
                     DocumentSnapshot documentSnapshot = task.getResult();
                     assert documentSnapshot != null;
+
                     if (documentSnapshot.exists()) {
 
                         //Retrieves the ID of the corresponding module document
@@ -164,6 +163,7 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
                                                         .document(moduleID)
                                                         .set(module);
 
+                                                //Determines database path for the right date document in the Attendance collection
                                                 DocumentReference dateCheck = db.collection("School")
                                                         .document("0DKXnQhueh18DH7TSjsb")
                                                         .collection("Attendance")
@@ -171,7 +171,9 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
                                                         .collection("Date")
                                                         .document(currentDate);
 
-                                                //Checks if code was already generated for the selected module on the current date
+                                                /*Checks if code was already generated for the selected module on the current date
+                                                and asks the user if they want to overwrite the previous attendance
+                                                 */
                                                 dateCheck.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                                     @Override
                                                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {

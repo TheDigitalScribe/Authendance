@@ -15,7 +15,6 @@ public class PersonalAttendance extends AppCompatActivity implements PersonalAtt
 
     private String module;
     private String studentID;
-
     TextView toolbarText;
     Toolbar toolbar;
 

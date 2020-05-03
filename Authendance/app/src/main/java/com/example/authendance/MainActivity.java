@@ -256,14 +256,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
         progressBar.setVisibility(View.GONE);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
         progressBar.setVisibility(View.GONE);
         forgotPasswordText.setVisibility(View.GONE);
     }

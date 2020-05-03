@@ -3,6 +3,7 @@ package com.example.authendance;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.content.DialogInterface;
@@ -32,10 +33,14 @@ public class StudentUsersList extends AppCompatActivity {
         setContentView(R.layout.student_user_rv);
 
         db = FirebaseFirestore.getInstance();
+        Toolbar toolbar = findViewById(R.id.toolbarStudents);
+        setSupportActionBar(toolbar);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
 
         FloatingActionButton fab = findViewById(R.id.fab);
         getStudents();
 
+        //Shows student's overall attendance when their ID is clicked
         adapter.setOnItemClickListener(new StudentUserAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(DocumentSnapshot documentSnapshot, int position) {
@@ -44,7 +49,6 @@ public class StudentUsersList extends AppCompatActivity {
 
                 Intent intent = new Intent(StudentUsersList.this, StudentAttendanceScreen.class);
                 intent.putExtra("STU_ID", studentID);
-                //Log.d("STU_ID", studentID);
                 startActivity(intent);
             }
         });
@@ -70,10 +74,12 @@ public class StudentUsersList extends AppCompatActivity {
 
     private void getStudents() {
 
+        //Determines document path for the records of students
        CollectionReference userRef = db.collection("School")
                 .document("0DKXnQhueh18DH7TSjsb")
                 .collection("User");
 
+       //Retrieves student IDs
        Query query = userRef.orderBy("student_id", Query.Direction.DESCENDING);
        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
            @Override
@@ -84,7 +90,7 @@ public class StudentUsersList extends AppCompatActivity {
 
                 }
                 else {
-                    Toast.makeText(StudentUsersList.this, "Error: " + task.getException(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(StudentUsersList.this, "Error: " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_LONG).show();
                 }
            }
        });

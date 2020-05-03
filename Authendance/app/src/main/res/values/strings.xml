@@ -37,7 +37,10 @@
     <string name="reset_password">Reset Password</string>
     <string name="log_out">Log Out</string>
 
-    <string name="enter_text">Enter some text…</string>
+    <string name="qr_attendance_text">QR Attendance</string>
     <string name="qr_code">QR Code placeholder</string>
     <string name="codePlaceholder">Your code</string>
+
+    <string name="toolbar_students">Students</string>
+    <string name="toolbar_teachers">Lecturers</string>
 </resources>

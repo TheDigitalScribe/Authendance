@@ -9,11 +9,12 @@
     tools:context=".CodeScreen">
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/qrAttendanceTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="76dp"
-        android:text="QR attendance"
+        android:layout_marginTop="50dp"
+        android:fontFamily="@font/raleway"
+        android:text="@string/qr_attendance_text"
         android:textColor="#F1EBEB"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"

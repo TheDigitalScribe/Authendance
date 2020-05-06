@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -16,6 +17,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -27,9 +30,10 @@ import java.util.Objects;
 
 public class StudentModules extends AppCompatActivity {
     private ModuleAdapter moduleAdapter;
-
     private FirebaseAuth fAuth;
     private FirebaseFirestore db;
+    private String studentID;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +42,9 @@ public class StudentModules extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
         fAuth = FirebaseAuth.getInstance();
+
+        Intent intent = getIntent();
+        studentID = intent.getStringExtra("STUDENT_ID");
 
         getModules();
     }
@@ -75,12 +82,22 @@ public class StudentModules extends AppCompatActivity {
         RecyclerView recyclerView = findViewById(R.id.classRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(StudentModules.this));
 
-
-
         recyclerView.setAdapter(moduleAdapter);
         moduleAdapter.notifyDataSetChanged();
-    }
 
+        moduleAdapter.setOnItemClickListener(new ModuleAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(DocumentSnapshot documentSnapshot, int position) {
+
+                String module = documentSnapshot.getId();
+
+                Intent intent = new Intent(StudentModules.this, PersonalAttendance.class);
+                intent.putExtra("STU_ID", studentID);
+                intent.putExtra("MOD_ID", module);
+                startActivity(intent);
+            }
+        });
+    }
 
     @Override
     protected void onStart() {

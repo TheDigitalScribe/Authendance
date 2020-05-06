@@ -28,7 +28,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Objects;
 
 //This is the library that allows QR codes to be scanned
@@ -255,7 +254,7 @@ public class CodeScanner extends AppCompatActivity implements ZXingScannerView.R
                                 });
                     }
                 } else {
-                    Log.d(TAG, "Error: " + task.getException());
+                    Toast.makeText(CodeScanner.this, "Error: " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_LONG).show();
                 }
             }
         });

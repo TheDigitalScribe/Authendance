@@ -17,6 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Toast;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -30,6 +31,7 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -64,11 +66,9 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
             @Override
             public void onClick(View v) {
 
-                if(isConnectedtoInternet(GenerateCode.this)){
+                if (isConnectedtoInternet(GenerateCode.this)) {
                     generateCode();
-                }
-
-                else {
+                } else {
                     Toast.makeText(GenerateCode.this, "Please connect to internet to generate code", Toast.LENGTH_LONG).show();
                 }
 
@@ -376,30 +376,25 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
                                                                 intent.putExtra("MOD_ID", moduleID);
                                                                 startActivity(intent);
                                                             }
-                                                        }
-                                                        else {
+                                                        } else {
                                                             Toast.makeText(GenerateCode.this, "Error: " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_LONG).show();
                                                         }
                                                     }
                                                 });
-                                            }
-                                            else {
+                                            } else {
                                                 Toast.makeText(GenerateCode.this, "Nothing found.", Toast.LENGTH_LONG).show();
                                             }
-                                        }
-                                        else {
+                                        } else {
                                             Toast.makeText(GenerateCode.this, "Error: " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_LONG).show();
                                         }
                                     }
                                 });
                             }
                         });
-                    }
-                    else {
+                    } else {
                         Toast.makeText(GenerateCode.this, "Document doesn't exist.", Toast.LENGTH_LONG).show();
                     }
-                }
-                else {
+                } else {
                     Toast.makeText(GenerateCode.this, "Error: " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_LONG).show();
                 }
             }
@@ -421,9 +416,8 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
 
     //Checks if user is connected to the internet
     public static boolean isConnectedtoInternet(@NonNull Context context) {
-        ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (cm == null)
-        {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (cm == null) {
             Toast.makeText(context, "You're not connected to the internet", Toast.LENGTH_SHORT).show();
             return false;
         }

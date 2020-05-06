@@ -1,3 +1,5 @@
+//This fragment shows a list of the students who have NOT attended the selected module on the selected date
+
 package com.example.authendance;
 
 import android.content.Context;
@@ -123,7 +125,7 @@ public class AbsentFragment extends Fragment {
             }
         });
 
-        //Allows the teacher to set the user as present or absent
+        //Allows the teacher to manually set the user as present and updates their attendance record
         attendAdapter.setOnItemLongClickListener(new AttendanceAdapter.OnItemLongClickListener() {
             @Override
             public void onItemLongClick(DocumentSnapshot documentSnapshot, int position) {

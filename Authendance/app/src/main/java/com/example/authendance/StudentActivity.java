@@ -62,7 +62,12 @@ public class StudentActivity extends AppCompatActivity {
         moduleCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                String studentName = nameDisplay.getText().toString();
+                String studentID = idDisplay.getText().toString();
+
                 Intent intent = new Intent(StudentActivity.this, StudentModules.class);
+                intent.putExtra("STUDENT_ID", studentID);
                 startActivity(intent);
             }
         });

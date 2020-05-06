@@ -12,6 +12,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -53,6 +54,8 @@ public class TeacherModules extends AppCompatActivity {
                 if(task.isSuccessful()) {
                     for(QueryDocumentSnapshot queryDocumentSnapshot : Objects.requireNonNull(task.getResult())) {
                         queryDocumentSnapshot.getId();
+                        queryDocumentSnapshot.getString("module_lecturer");
+                        queryDocumentSnapshot.getString("module_date");
                     }
                 }
             }

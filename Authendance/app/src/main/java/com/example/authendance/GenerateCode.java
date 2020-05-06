@@ -48,6 +48,7 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
     private FirebaseFirestore db;
     private String uid;
     private Spinner teacherSpinner;
+    private String currentDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -157,7 +158,7 @@ public class GenerateCode extends AppCompatActivity implements AdapterView.OnIte
                                                 final String qrCode = snapshot.getString("qr_code");
 
                                                 //Gets current date
-                                                final String currentDate = new SimpleDateFormat("dd MM YYYY", Locale.getDefault()).format(new Date());
+                                                currentDate = new SimpleDateFormat("dd MM yyyy", Locale.ENGLISH).format(new Date());
 
                                                 //Adds module field to the generated module document in the Attendance collection
                                                 final Map<String, Object> module = new HashMap<>();

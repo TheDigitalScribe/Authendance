@@ -17,7 +17,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -26,7 +25,6 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.zxing.Result;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -61,7 +59,9 @@ public class CodeScanner extends AppCompatActivity implements ZXingScannerView.R
         }
 
         //Gets current date
-        currentDate = new SimpleDateFormat("dd MM YYYY", Locale.getDefault()).format(new Date());
+        currentDate = new SimpleDateFormat("dd MM yyyy", Locale.ENGLISH).format(new Date());
+        Log.d(TAG, "date: " + currentDate);
+
 
         //Retrieves QR code, module and student ID from ModulePicker.class
         Intent intent = getIntent();

@@ -113,7 +113,7 @@ public class StudentAttendanceScreen extends AppCompatActivity {
                                     startActivity(intent);
                                 }
                             } else {
-                                Toast.makeText(StudentAttendanceScreen.this, "Error: " + task.getException(), Toast.LENGTH_LONG).show();
+                                Toast.makeText(StudentAttendanceScreen.this, "Error: " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_LONG).show();
                             }
                         }
                     });
@@ -293,17 +293,17 @@ public class StudentAttendanceScreen extends AppCompatActivity {
                                             String missedLec = "Lectures Missed: " + missedCounter;
                                             lecMissedTV.setText(missedLec);
                                         } else {
-                                            Toast.makeText(StudentAttendanceScreen.this, "Error: " + task.getException(), Toast.LENGTH_LONG).show();
+                                            Toast.makeText(StudentAttendanceScreen.this, "Error: " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_LONG).show();
                                         }
                                     }
                                 });
                             } else {
-                                Toast.makeText(StudentAttendanceScreen.this, "Error: " + task.getException(), Toast.LENGTH_LONG).show();
+                                Toast.makeText(StudentAttendanceScreen.this, "Error: " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_LONG).show();
                             }
                         }
                     });
                 } else {
-                    Toast.makeText(StudentAttendanceScreen.this, "Error: " + task.getException(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(StudentAttendanceScreen.this, "Error: " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_LONG).show();
                 }
             }
         });

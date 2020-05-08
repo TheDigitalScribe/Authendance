@@ -18,32 +18,3 @@ The student chooses a module they want to scan a code for. If the user tries to 
 To show the list of modules for both teachers and students, a RecyclerView is implemented, along with an adapter, model class and Firestore boilerplate code. The modules are retrieved from the current user's database record.
 
 ZXing library is used for scanning and generating QR codes. 
-
-# Screenshots
-Login 
-
-<img src="Screenshots/loginscreen.jpg" width="200">
-
-Student Dashboard
-
-<img src="Screenshots/studentactivity.jpg" width="200">
-
-Module List
-
-<img src="Screenshots/studentmodules.jpg" width="200">
-
-Module Selector
-
-<img src="Screenshots/modulepicker.jpg" width="200">
-
-Code Screen
-
-<img src="Screenshots/codescreen.jpg" width="200">
-
-Code Scanner
-
-<img src="Screenshots/codescanner.jpg" width="200">
-
-Reset Password 
-
-<img src="Screenshots/resetpassword.jpg" width="200">

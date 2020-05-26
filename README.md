@@ -15,6 +15,6 @@ The teacher can use a dropdown list to pick a module they want to generate a cod
 
 The student chooses a module they want to scan a code for. If the user tries to pick a module that doesn't have a code currently generated, they will not be able to scan. If there is a code generated, the app requests permission from the user to use the camera. If it is granted, they will be able to scan codes. If they attempt to scan a code that isn't the same as the one stored in Firestore, they are informed it is invalid. Otherwise, their attendance is recorded for that module on the current date.
 
-To show the list of modules for both teachers and students, a RecyclerView is implemented, along with an adapter, model class and Firestore boilerplate code. The modules are retrieved from the current user's database record.
+To show the list of modules for both teachers and students, a RecyclerView has been implemented, along with an adapter, model class and Firestore boilerplate code. The modules are retrieved from the current user's database record.
 
 ZXing library is used for scanning and generating QR codes. 

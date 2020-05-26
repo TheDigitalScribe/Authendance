@@ -1,7 +1,7 @@
 # Authendance Summary
 For the Global Classroom module in TU Dublin. 2019/2020 academic year. DT282/3.
 
-Authendance is a student attendance tracker app with QR code implementation, built using Java in Android Studio. Database implementation is accompished via Cloud Firestore. The app allows lecturers to generate QR codes, which students scan with their own Android phones to record their attendance for that specific module on the current date. Each QR code generated is unique. Lecturers can only generate QR codes for their own modules and students can only scan codes for modules they are enrolled in.
+Authendance is a student attendance tracker app with QR code implementation, built using Java in Android Studio. Database implementation is accompished via Cloud Firestore. The app allows lecturers to generate QR codes, which students scan with their own Android phones to record their attendance for that specific module on the current date. Each QR code generated is unique. Lecturers can only generate QR codes for their own modules and students can only scan codes for modules they are enrolled in. Admins can see all lecturers and students, see the attendance overview of the students and check/delete attendance records.
 
 # Under The Hood
 - Programming Language: Java
@@ -18,3 +18,50 @@ The student chooses a module they want to scan a code for. If the user tries to 
 To show the list of modules for both teachers and students, a RecyclerView has been implemented, along with an adapter, model class and Firestore boilerplate code. The modules are retrieved from the current user's database record.
 
 ZXing library is used for scanning and generating QR codes. 
+
+# Screenshots
+
+<h3> Login Screen </h3>
+<img src="Screenshots/loginscreen.jpg" alt="Login Screen" width="200" height="400">
+
+<h3> Teacher Dashboard Screen </h3>
+<img src="Screenshots/teacherpage.jpg" alt="Teacher Screen" width="200" height="400">
+
+<h3> Module Select Screen</h3>
+<img src="Screenshots/codegenerator.jpg" alt="Module Select Screen" width="200" height="400">
+
+<h3> Code Screen </h3>
+<img src="Screenshots/codescreen.jpg" alt="Code Screen" width="200" height="400">
+
+<h3> Attendance Select Screen </h3>
+<img src="Screenshots/attendanceselect.jpg" alt="Attendance Select Screen" width="200" height="400">
+
+<h3> Student Attendance Screen </h3>
+<img src="Screenshots/studentattendance.jpg" alt="Student Attendance Screen" width="200" height="400">
+
+<h3> Student Screen </h3>
+<img src="Screenshots/studentpage.jpg" alt="Student Screen" width="200" height="400">
+
+<h3> Attendance Overview Screen </h3>
+<img src="Screenshots/attendanceoverview.jpg" alt="Attendance Overview Screen" width="200" height="400">
+
+<h3> Personal Attendance Screen </h3>
+<img src="Screenshots/personalattendance.jpg" alt="Personal Attendance Screen" width="200" height="400">
+
+<h3> Modules Screen </h3>
+<img src="Screenshots/modulesscreen.jpg" alt="Modules Screen" width="200" height="400">
+
+<h3> Admin Screen </h3>
+<img src="Screenshots/adminpage.jpg" alt="Admin Screen" width="200" height="400">
+
+<h3> Student List </h3>
+<img src="Screenshots/studentlist.jpg" alt="Student List" width="200" height="400">
+
+<h3> Teacher List </h3>
+<img src="Screenshots/teacherlist.jpg" alt="Teacher List" width="200" height="400">
+
+<h3> Overall Attendance Screen </h3>
+<img src="Screenshots/overallattendance.jpg" alt="Overall Attendance Screen" width="200" height="400">
+
+<h3> Settings Screen </h3>
+<img src="Screenshots/settingspage.jpg" alt="Settings Screen" width="200" height="400">

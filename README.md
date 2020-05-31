@@ -1,4 +1,4 @@
-# Authendance Summary
+# Description
 For the Global Classroom module in TU Dublin.
 
 Authendance is a student attendance tracker Android app with QR code implementation, built using Java in Android Studio. Database implementation is accompished via Cloud Firestore. The app allows lecturers to generate QR codes, which students scan with their own Android phones to record their attendance for that specific module on the current date. Each QR code generated is unique. Lecturers can only generate QR codes for their own modules and students can only scan codes for modules they are enrolled in. Admins can see all lecturers and students, see the attendance overview of the students and check/delete attendance records.

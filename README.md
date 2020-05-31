@@ -21,6 +21,10 @@ To show the list of modules for both teachers and students, a RecyclerView has b
 
 ZXing library is used for scanning and generating QR codes. 
 
+# Stage of Completion
+
+Done. The app accomplishes what it's supposed to do although it is worth looking back and expanding on it in the future.
+
 # Screenshots
 
 <h3> Login Screen </h3>

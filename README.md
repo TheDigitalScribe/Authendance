@@ -3,10 +3,8 @@ Authendance is a student attendance tracker Android app with QR code implementat
 
 Screenshots and demo video below.
 
-# Under The Hood
-- Programming Language: Java
-- IDE: Android Studio 3.6
-- Minimum SDK version: API level 21 
+# How to Use
+For the lecturer's perspective, the login credentials are teacher1@mail.com and password. For the student's, it is student1@mail.com and password. For the admin's, it is admin1@mail.com and password.
 
 # How it Works
 Cloud Firestore handles the login authentication and reset password function. Each user in the database has a user_type field which determines if they are a student or teacher. When the user logs in, this field ensures they are directed to the correct dashboard page. If the incorrect email or password is entered, a Forgot Password prompt appears below which will direct the user to an activity that will allow them to reset their password.
@@ -18,6 +16,11 @@ The student chooses a module they want to scan a code for. If the user tries to 
 To show the list of modules for both teachers and students, a RecyclerView has been implemented, along with an adapter, model class and Firestore boilerplate code. The modules are retrieved from the current user's database record.
 
 ZXing library is used for scanning and generating QR codes. 
+
+# Under The Hood
+- Programming Language: Java
+- IDE: Android Studio 3.6
+- Minimum SDK version: API level 21 
 
 # Stage of Completion
 

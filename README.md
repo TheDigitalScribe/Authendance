@@ -1,6 +1,8 @@
 # Description
 Authendance is a student attendance tracker Android app with QR code implementation, built using Java in Android Studio. Database implementation is accompished via Cloud Firestore. The app allows lecturers to generate QR codes, which students scan with their own Android phones to record their attendance for that specific module on the current date. Each QR code generated is unique. Lecturers can only generate QR codes for their own modules and students can only scan codes for modules they are enrolled in. Admins can see all lecturers and students, see the attendance overview of the students and check/delete attendance records.
 
+Android Studio was the IDE used for this app.
+
 Screenshots and demo video below.
 
 # How to Use
@@ -16,10 +18,6 @@ The student chooses a module they want to scan a code for. If the user tries to 
 To show the list of modules for both teachers and students, a RecyclerView has been implemented, along with an adapter, model class and Firestore boilerplate code. The modules are retrieved from the current user's database record.
 
 ZXing library is used for scanning and generating QR codes. 
-
-# Under The Hood
-- IDE: Android Studio
-- Minimum SDK version: API level 21 
 
 # Test Results
 Our black-box unit testing test results can be found <a href="TestPlanResults.docx">here.</a>

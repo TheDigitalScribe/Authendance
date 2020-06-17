@@ -19,7 +19,7 @@ ZXing library is used for scanning and generating QR codes.
 
 # Under The Hood
 - Programming Language: Java
-- IDE: Android Studio 3.6
+- IDE: Android Studio
 - Minimum SDK version: API level 21 
 
 # Test Results

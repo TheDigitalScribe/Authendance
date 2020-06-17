@@ -18,7 +18,6 @@ To show the list of modules for both teachers and students, a RecyclerView has b
 ZXing library is used for scanning and generating QR codes. 
 
 # Under The Hood
-- Programming Language: Java
 - IDE: Android Studio
 - Minimum SDK version: API level 21 
 

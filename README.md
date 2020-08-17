@@ -5,7 +5,7 @@ Lecturers generate a unique QR code, students scan them using the app. Lecturers
 
 In Cloud Firestore, a field determines the user type (student, lecturer, admin) based on the email. When a QR code is generated, a random string of 26 characters appears in Cloud Firestore. When a student chooses the respective module and scans the code, it checks if the code they scan is equal to the string. If it is, their attendance is recorded for that day.
 
-Screenshots below.
+I had to learn how to integrate Cloud Firestore with Java fairly quickly. It reassured me that I'm disciplined enough to grasp unfamiliar concepts given enough time.
 
 # Demo Video
 

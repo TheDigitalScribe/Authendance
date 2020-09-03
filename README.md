@@ -11,8 +11,6 @@ I had to learn how to integrate Cloud Firestore with Java fairly quickly. It rea
 
 https://youtu.be/GFYiaelAy5A
 
-# How to Use
-For the lecturer's perspective, the login credentials are teacher1@mail.com and password. For the student's, it is student1@mail.com and password. For the admin's, it is admin1@mail.com and password.
 
 # Test Results
 Our black-box unit testing test results can be found <a href="TestPlanResults.docx">here.</a>

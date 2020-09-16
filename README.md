@@ -1,5 +1,5 @@
 # Description
-Android student attendance tracker app with QR code implementation, built with Java in Android Studio. Cloud Firestore was used for backend. 
+Android student attendance tracker app with QR code implementation, built with Java in Android Studio. Cloud Firestore was used for the back end. 
 
 Lecturers generate a unique QR code, students scan them using the app. Lecturers can see student attendance records for their modules and students can see their own personal attendance. Admins can see all students and lecturers and the attendance of all students.
 

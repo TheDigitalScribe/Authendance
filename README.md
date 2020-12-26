@@ -7,14 +7,6 @@ In Cloud Firestore, a field determines the user type (student, lecturer, admin) 
 
 I had to learn how to integrate Cloud Firestore with Java fairly quickly. It reassured me that I'm disciplined enough to grasp unfamiliar concepts given enough time.
 
-# Demo Video
-
-https://youtu.be/GFYiaelAy5A
-
-
-# Test Results
-Our black-box unit testing test results can be found <a href="TestPlanResults.docx">here.</a>
-
 # Screenshots
 
 <h3> Login Screen </h3>

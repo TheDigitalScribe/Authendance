@@ -9,14 +9,17 @@ The project turned out to be a success. The scope was properly defined and reach
 
 # Screenshots
 
-<h3> Login Screen </h3>
-<img src="Screenshots/loginscreen.jpg" alt="Login Screen" width="200" height="400">
+<p float="left">
+  <h3> Login Screen </h3>
+  <img src="Screenshots/loginscreen.jpg" alt="Login Screen" width="200" height="400">
 
-<h3> Teacher Dashboard Screen </h3>
-<img src="Screenshots/teacherpage.jpg" alt="Teacher Screen" width="200" height="400">
+  <h3> Teacher Dashboard Screen </h3>
+  <img src="Screenshots/teacherpage.jpg" alt="Teacher Screen" width="200" height="400">
 
-<h3> Module Select Screen</h3>
-<img src="Screenshots/codegenerator.jpg" alt="Module Select Screen" width="200" height="400">
+  <h3> Module Select Screen</h3>
+  <img src="Screenshots/codegenerator.jpg" alt="Module Select Screen" width="200" height="400">
+</p>
+
 
 <h3> Code Screen </h3>
 <img src="Screenshots/codescreen.jpg" alt="Code Screen" width="200" height="400">

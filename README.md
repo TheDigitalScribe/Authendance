@@ -1,11 +1,11 @@
 # Description
-Android student attendance tracker app with QR code implementation, built with Java in Android Studio. Cloud Firestore was used for the back end. This app was developed as part of a remote group project for a college subject.
+Android student attendance tracker app with QR code implementation, built with Java in Android Studio. Cloud Firestore was used for the back end. This app was developed as part of a remote group project for a college subject in 2020. 
 
-Lecturers generate a unique QR code, students scan them using the app. Lecturers can see student attendance records for their modules and students can see their own personal attendance. Admins can see all students and lecturers and the attendance of all students.
+Lecturers generate a unique QR code for one of their subjects and students can scan them using the app, recording their attendance for that subject on that day. Lecturers can see student attendance records for their modules and students can see their own personal attendance. Admins can see a list of all students and lecturers and the attendance of all students.
 
-In Cloud Firestore, a field determines the user type (student, lecturer, admin) based on the email. When a QR code is generated, a random string of 26 characters appears in Cloud Firestore. When a student chooses the respective module and scans the code, it checks if the code they scan is equal to the string. If it is, their attendance is recorded for that day.
+An agile methodology was undertaken for the duration for project, completing tasks in sprints and testing continuously. There was a pretend client we consulted with to gather requirements for the app and take in her feedback for the direction of the app, implementing it whenever possible. Black-box user testing was conducted towards the end of development. 
 
-I had to learn how to integrate Cloud Firestore with Java fairly quickly. It reassured me that I'm disciplined enough to grasp unfamiliar concepts given enough time.
+The project turned out to be a success. The scope was properly defined and reached and it works as intended. 
 
 # Screenshots
 

@@ -1,4 +1,8 @@
 # Authendance
+
+## Demo
+<img src="AuthendanceDemo.gif" width="400" height="270">
+
 ## Description
 - Android student attendance tracker app with QR code implementation. 
 - Built with Java in Android Studio with Firebase for the backend. 
@@ -18,5 +22,4 @@
 ## Conclusion
 The project turned out to be a success. The scope was properly defined and reached and it works as intended. 
 
-## Demo
-<img src="AuthendanceDemo.gif" width="600" height="400">
+

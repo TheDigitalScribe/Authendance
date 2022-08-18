@@ -1,12 +1,15 @@
 # Authendance
 
+## NOTE
+This app no longer works as the database has been removed. 
+
 ## Demo
 <img src="AuthendanceDemo.gif" width="400" height="270">
 
 ## Description
 - Android student attendance tracker app with QR code implementation. 
 - Built with Java in Android Studio with Firebase for the backend. 
-- App was created in 2020 as part of a group college project. **NB**: This is not currently working as the database was removed.
+- App was created in 2020 as part of a group college project. 
 
 ## How It Works
 - Lecturers generate a unique QR code for one of their subjects with the app.
